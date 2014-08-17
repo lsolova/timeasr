@@ -3,8 +3,8 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
     var measureView,
         measureStorage = new MeasureStorage(),
         actualDay = measureStorage.getTime(TimeUtils.asDay(Date.now())),
-        measuring = false;
-    ;
+        measuring = false
+        ;
 
     var calculateMonthlyAverageForDay = function (day) {
         var fulltime = 0;
@@ -17,28 +17,31 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
             }
         }
         return daycount === 0 ? [0, 0] : [Math.floor(fulltime / daycount), daycount];
-    }
+    };
 
     var updateView = function () {
         var avgInfo = calculateMonthlyAverageForDay(actualDay);
         measureView.update(actualDay, TimeUtils.asHoursAndMinutes(avgInfo[0]), avgInfo[1]);
-    }
+    };
 
     var MeasureController = function () {
         var startedOn = measureStorage.get('startOn');
         measuring = !(startedOn === null || startedOn === undefined);
-    }
+    };
+
     MeasureController.prototype.addView = function (measureViewObj) {
         measureView = measureViewObj;
         updateView();
-    }
+    };
+
     MeasureController.prototype.changeActualDay = function (sign) {
         if (measuring) {
             throw "Measuring in progress. Please pause before day change.";
         }
         actualDay = measureStorage.getTime(TimeUtils.siblingDay(actualDay.getFullDay(), sign));
         updateView();
-    }
+    };
+
     MeasureController.prototype.startStopCounter = function () {
         if (!measuring && TimeUtils.asDay(Date.now()) !== actualDay.getFullDay())
             throw "Measuring allowed on current day only.";
@@ -54,14 +57,14 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
             measureStorage.set(actualDay.getFullDay(), actualDay.getRecordTime());
             measureStorage.remove('startOn');
             measuring = false;
-            console.log('Times:'+startedOn+" -> "+finishedOn);
         }
         console.log('Measure in progress: ' + measuring);
         updateView();
-    }
+    };
+
     MeasureController.prototype.isMeasuringInProgress = function () {
         return measuring;
-    }
+    };
 
     return MeasureController;
 });
