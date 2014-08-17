@@ -1,0 +1,12 @@
+﻿CACHE MANIFEST
+#v0.8.4
+CACHE:
+css/measure.css
+js/app/MeasureController.js
+js/app/MeasureStorage.js
+js/app/MeasureTime.js
+js/app/MeasureView.js
+js/app/TimeUtils.js
+js/lib/require.js
+js/app.js
+index.html

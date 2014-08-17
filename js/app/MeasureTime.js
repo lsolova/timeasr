@@ -1,0 +1,55 @@
+﻿"use strict";
+define(['tu'], function (TimeUtils) {
+    var MeasureTime = function () {
+        this._day = TimeUtils.asDay(Date.now());
+        this._hours = "0";
+        this._minutes = "0";
+    };
+
+    MeasureTime.create = function (day, time) {
+        var mTimeInstance = new MeasureTime();
+        mTimeInstance._day = day;
+        var hourLength = 1;
+        if (time.length === 4) {
+            hourLength = 2;
+        }
+        mTimeInstance._hours = time.substr(0, hourLength);
+        mTimeInstance._minutes = TimeUtils.reduce(time.substr(hourLength));
+        return mTimeInstance;
+    };
+
+    MeasureTime.prototype.getDay = function () {
+        return parseInt(TimeUtils.reduce(this._day.substr(6)));
+    };
+
+    MeasureTime.prototype.getYearAndMonth = function () {
+        return this._day.substr(0, 4) + "/" + this._day.substr(4, 2);
+    };
+
+    MeasureTime.prototype.getFullDay = function () {
+        return this._day;
+    };
+
+    MeasureTime.prototype.getMinutes = function () {
+        return parseInt(this._hours) * 60 + parseInt(this._minutes);
+    };
+
+    MeasureTime.prototype.getTime = function () {
+        return this._hours + ":" + TimeUtils.extend(this._minutes);
+    };
+
+    MeasureTime.prototype.getRecordTime = function () {
+        return "" + this._hours + TimeUtils.extend(this._minutes);
+    };
+
+    MeasureTime.prototype.increment = function (addMinutes) {
+        var newMinutes = parseInt(this._minutes) + addMinutes;
+        while (60 <= newMinutes) {
+            newMinutes = newMinutes-60;
+            this._hours++;
+        }
+        this._minutes = newMinutes;
+    };
+
+    return MeasureTime;
+});

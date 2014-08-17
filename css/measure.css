@@ -1,0 +1,61 @@
+body {
+    font-family: Verdana, Arial, sans-serif;
+    height: 100%;
+    line-height: 21px;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+div#counter {
+    cursor: pointer;
+    font-size: 4em;
+    font-weight: bold;
+    line-height: 4em;
+    text-align: center;
+}
+
+div#counter .running {
+    color: #586BA5;
+}
+
+div#counter .paused {
+    color: #929CB6;
+}
+
+div#summaryToolbar {
+    background-color: #1C3A92;
+    color: #fff;
+    height: 2em;
+    padding-top: 0.5em;
+    text-align: center;
+}
+
+div#summaryToolbar #month {
+    font-weight: bold;
+    margin-right: 2em;
+}
+
+div#summaryToolbar #daycount {
+    background-color: #586BA5;
+    border-radius: .3em;
+    padding: .1em .5em;
+}
+
+div#daySelector {
+    display: table;
+    width: 100%;
+}
+
+div#daySelector .day {
+    background-color: #586BA5;
+    color: #fff;
+    cursor: pointer;
+    display: table-cell;
+    text-align: center;
+}
+
+div#daySelector .actl {
+    background-color: #929CB6;
+    cursor: auto;
+}

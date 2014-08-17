@@ -1,0 +1,27 @@
+﻿<!doctype html>
+<html manifest="timemeasure.appcache">
+<head>
+    <title>EPAM Time Measure</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=300, initial-scale=1.0, user-scalable=no"/>
+    <script data-main="js/app.js" src="js/lib/require.js"></script>
+    <style>
+        @import url('css/measure.css');
+    </style>
+</head>
+<body>
+<div id="measureView">
+    <div id="summaryToolbar">
+        <span id="month"></span>
+        <span id="avgtime"></span>
+        <span id="daycount"></span>
+    </div>
+    <div id="daySelector">
+        <div id="prevDay" class="day"></div>
+        <div id="actlDay" class="day actl"></div>
+        <div id="nextDay" class="day"></div>
+    </div>
+    <div id="counter"><span id="counterValue"></span></div>
+</div>
+</body>
+</html>
