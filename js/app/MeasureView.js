@@ -3,7 +3,7 @@ define(['tu'], function (TimeUtils) {
     var measureController,
         measureViewElement,
         monthE,
-        averageTimeE,
+        statTimeE,
         dayCountE,
         prevDayE,
         actualDayE,
@@ -12,7 +12,7 @@ define(['tu'], function (TimeUtils) {
 
     var bindViewElements = function () {
         monthE = document.getElementById('month');
-        averageTimeE = document.getElementById('avgtime');
+        statTimeE = document.getElementById('stattime');
         dayCountE = document.getElementById('daycount');
         prevDayE = document.getElementById('prevDay');
         actualDayE = document.getElementById('actlDay');
@@ -40,6 +40,13 @@ define(['tu'], function (TimeUtils) {
                 alert(e);
             }
         });
+        statTimeE.addEventListener('click', function(){
+            try {
+                measureController.changeStat();
+            } catch (e) {
+                alert(e);
+            }
+        });
     }
 
     var clearAndFill = function (element, content) {
@@ -60,7 +67,7 @@ define(['tu'], function (TimeUtils) {
             nextDay = TimeUtils.siblingDay(measureTime.getFullDay(), 1);
 
         clearAndFill(monthE, measureTime.getYearAndMonth());
-        clearAndFill(averageTimeE, avgtime);
+        clearAndFill(statTimeE, avgtime);
         clearAndFill(dayCountE, daycount);
         clearAndFill(prevDayE, prevDay.substr(6));
         clearAndFill(actualDayE, actlDay);
