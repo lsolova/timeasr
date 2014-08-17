@@ -16,12 +16,12 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
                 daycount++;
             }
         }
-        return daycount === 0 ? [0, 0] : [Math.floor(fulltime / daycount), daycount];
+        return daycount === 0 ? { statValue: 0, statCount: 0 } : { statValue: Math.floor(fulltime / daycount), statCount: daycount };
     };
 
     var updateView = function () {
-        var avgInfo = calculateMonthlyAverageForDay(actualDay);
-        measureView.update(actualDay, TimeUtils.asHoursAndMinutes(avgInfo[0]), avgInfo[1]);
+        var statInfo = calculateMonthlyAverageForDay(actualDay);
+        measureView.update(actualDay, TimeUtils.asHoursAndMinutes(statInfo.statValue), statInfo.statCount);
     };
 
     var MeasureController = function () {
