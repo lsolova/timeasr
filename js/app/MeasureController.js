@@ -14,7 +14,7 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
             measuredTime
             ;
         for (var i = 1; i < day.getDay(); i++) {
-            measuredTime = measureStorage.getTime(day.getFullDay().substr(0, 6) + TimeUtils.extend(i));
+            measuredTime = measureStorage.getTime(day.getFullDay().substring(0, 6) + TimeUtils.extend(i));
             if (0 < measuredTime.getMinutes()) {
                 statTime += loopCalculation(measuredTime);
                 dayCount++;

@@ -2,7 +2,7 @@
 define(function () {
     var TimeUtils = {
         asTimeInMillis: function (dayString) {
-            return new Date(dayString.substr(0, 4), TimeUtils.reduce(dayString.substr(4, 2)) - 1, TimeUtils.reduce(dayString.substr(6, 2)), 0, 0, 0, 0).getTime();
+            return new Date(dayString.substring(0, 4), TimeUtils.reduce(dayString.substring(4, 2)) - 1, TimeUtils.reduce(dayString.substring(6, 2)), 0, 0, 0, 0).getTime();
         },
         asHoursAndMinutes: function (minutes) {
             return Math.floor(minutes / 60) + ":" + TimeUtils.extend(Math.abs(minutes % 60));
@@ -26,8 +26,8 @@ define(function () {
             return timeSlice;
         },
         reduce: function (timeSliceString) {
-            if (timeSliceString.length === 2 && timeSliceString.substr(0, 1) === '0') {
-                return timeSliceString.substr(1);
+            if (timeSliceString.length === 2 && timeSliceString.substring(0, 1) === '0') {
+                return timeSliceString.substring(1);
             }
             return timeSliceString;
         }
