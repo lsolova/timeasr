@@ -19,11 +19,11 @@ define(['tu'], function (TimeUtils) {
     };
 
     MeasureTime.prototype.getDay = function () {
-        return parseInt(TimeUtils.reduce(this._day.substring(6)), 10);
+        return parseInt(TimeUtils.reduce(this._day.substring(6,8)), 10);
     };
 
     MeasureTime.prototype.getYearAndMonth = function () {
-        return this._day.substring(0, 4) + "/" + this._day.substring(4, 2);
+        return this._day.substring(0, 4) + "/" + this._day.substring(4, 6);
     };
 
     MeasureTime.prototype.getFullDay = function () {
