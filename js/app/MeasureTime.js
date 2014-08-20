@@ -19,7 +19,7 @@ define(['tu'], function (TimeUtils) {
     };
 
     MeasureTime.prototype.getDay = function () {
-        return parseInt(TimeUtils.reduce(this._day.substring(6)));
+        return parseInt(TimeUtils.reduce(this._day.substring(6)), 10);
     };
 
     MeasureTime.prototype.getYearAndMonth = function () {
@@ -31,7 +31,7 @@ define(['tu'], function (TimeUtils) {
     };
 
     MeasureTime.prototype.getMinutes = function () {
-        return parseInt(this._hours) * 60 + parseInt(this._minutes);
+        return parseInt(this._hours, 10) * 60 + parseInt(this._minutes, 10);
     };
 
     MeasureTime.prototype.getTime = function () {
@@ -43,7 +43,7 @@ define(['tu'], function (TimeUtils) {
     };
 
     MeasureTime.prototype.increment = function (addMinutes) {
-        var newMinutes = parseInt(this._minutes) + addMinutes;
+        var newMinutes = parseInt(this._minutes, 10) + addMinutes;
         while (60 <= newMinutes) {
             newMinutes = newMinutes-60;
             this._hours++;
