@@ -47,6 +47,11 @@ define(['tu'], function (TimeUtils) {
                 alert(e);
             }
         });
+        document.addEventListener('visibilitychange', function(){
+            if (!document.hidden) {
+                measureController.visibilityChanged();
+            }
+        });
     };
 
     var clearAndFill = function (element, content) {

@@ -89,6 +89,10 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
         updateView();
     };
 
+    MeasureController.prototype.visibilityChanged = function() {
+        updateView();
+    };
+
     MeasureController.prototype.startStopCounter = function () {
         if (!measuring && TimeUtils.asDay(Date.now()) !== actualDay.getFullDay())
             throw "Measuring allowed on current day only.";
