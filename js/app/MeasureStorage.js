@@ -36,7 +36,7 @@ define(['mt', 'tu'], function (MeasureTime, TimeUtils) {
         }
         ;
     MeasureStorage.prototype.add = function (measureTime) {
-        store.setItem(measureTime.getFullDay(), measureTime.getTime());
+        store.setItem(measureTime.getFullDay(), measureTime.getFormattedTime());
         var firstDay = store.getItem('firstday');
         if (firstDay === null || firstDay === undefined) {
             store.setItem('firstday', measureTime.getFullDay());
@@ -47,7 +47,7 @@ define(['mt', 'tu'], function (MeasureTime, TimeUtils) {
     MeasureStorage.prototype.get = function (key) {
         return store.getItem(key);
     };
-    MeasureStorage.prototype.getTime = function (day) {
+    MeasureStorage.prototype.getTimeOfDay = function (day) {
         var dayValue = store.getItem(day);
         if (dayValue === null || dayValue === undefined) {
             return MeasureTime.create(day, "000");

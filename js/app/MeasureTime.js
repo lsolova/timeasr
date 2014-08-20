@@ -34,7 +34,7 @@ define(['tu'], function (TimeUtils) {
         return parseInt(this._hours, 10) * 60 + parseInt(this._minutes, 10);
     };
 
-    MeasureTime.prototype.getTime = function () {
+    MeasureTime.prototype.getFormattedTime = function () {
         return this._hours + ":" + TimeUtils.extend(this._minutes);
     };
 

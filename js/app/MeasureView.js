@@ -79,7 +79,7 @@ define(['tu'], function (TimeUtils) {
         clearAndFill(prevDayE, prevDay.substring(6));
         clearAndFill(actualDayE, actlDay);
         clearAndFill(nextDayE, nextDay.substring(6));
-        clearAndFill(counterE, measureTime.getTime());
+        clearAndFill(counterE, measureTime.getFormattedTime());
         if (measureController.isMeasuringInProgress()) {
             counterE.setAttribute('class', 'running');
         }
