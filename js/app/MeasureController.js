@@ -4,6 +4,7 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
         measureStorage = new MeasureStorage(),
         actualDay = measureStorage.getTime(TimeUtils.asDay(Date.now())),
         measuring = false,
+        statChangeTimeout,
         STAT = { AVG: {name: 'average'}, DIFF: {name: 'difference'}},
         statState = STAT.AVG
         ;
@@ -78,10 +79,11 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
         switch (statState) {
             case STAT.AVG :
                 statState = STAT.DIFF;
-                setTimeout(this.changeStat, 30000);
+                statChangeTimeout = setTimeout(this.changeStat, 30000);
                 break;
             default :
                 statState = STAT.AVG;
+                window.clearTimeout(statChangeTimeout);
                 break;
         }
         updateView();
@@ -103,7 +105,6 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
             measureStorage.remove('startOn');
             measuring = false;
         }
-        console.log('Measure in progress: ' + measuring);
         updateView();
     };
 
