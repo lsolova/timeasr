@@ -47,31 +47,33 @@ define(['tu'], function (TimeUtils) {
                 alert(e);
             }
         });
-    }
+    };
 
     var clearAndFill = function (element, content) {
         while (element.hasChildNodes()) {
             element.removeChild(element.firstChild);
         }
         element.appendChild(document.createTextNode(content));
-    }
+    };
+
     var MeasureView = function (measureViewDiv, measureControllerObj) {
         measureViewElement = document.getElementById(measureViewDiv);
         measureController = measureControllerObj;
         bindViewElements();
         measureController.addView(this);
-    }
+    };
+
     MeasureView.prototype.update = function (measureTime, avgtime, daycount) {
-        var actlDay = measureTime.getFullDay().substr(6),
+        var actlDay = measureTime.getFullDay().substring(6),
             prevDay = TimeUtils.siblingDay(measureTime.getFullDay(), -1),
             nextDay = TimeUtils.siblingDay(measureTime.getFullDay(), 1);
 
         clearAndFill(monthE, measureTime.getYearAndMonth());
         clearAndFill(statTimeE, avgtime);
         clearAndFill(dayCountE, daycount);
-        clearAndFill(prevDayE, prevDay.substr(6));
+        clearAndFill(prevDayE, prevDay.substring(6));
         clearAndFill(actualDayE, actlDay);
-        clearAndFill(nextDayE, nextDay.substr(6));
+        clearAndFill(nextDayE, nextDay.substring(6));
         clearAndFill(counterE, measureTime.getTime());
         if (measureController.isMeasuringInProgress()) {
             counterE.setAttribute('class', 'running');
@@ -79,7 +81,7 @@ define(['tu'], function (TimeUtils) {
         else {
             counterE.setAttribute('class', 'paused');
         }
-    }
+    };
 
     return MeasureView;
 });

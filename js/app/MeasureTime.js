@@ -13,17 +13,17 @@ define(['tu'], function (TimeUtils) {
         if (time.length === 4) {
             hourLength = 2;
         }
-        mTimeInstance._hours = time.substr(0, hourLength);
-        mTimeInstance._minutes = TimeUtils.reduce(time.substr(hourLength));
+        mTimeInstance._hours = time.substring(0, hourLength);
+        mTimeInstance._minutes = TimeUtils.reduce(time.substring(hourLength));
         return mTimeInstance;
     };
 
     MeasureTime.prototype.getDay = function () {
-        return parseInt(TimeUtils.reduce(this._day.substr(6)));
+        return parseInt(TimeUtils.reduce(this._day.substring(6,8)), 10);
     };
 
     MeasureTime.prototype.getYearAndMonth = function () {
-        return this._day.substr(0, 4) + "/" + this._day.substr(4, 2);
+        return this._day.substring(0, 4) + "/" + this._day.substring(4, 6);
     };
 
     MeasureTime.prototype.getFullDay = function () {
@@ -31,7 +31,7 @@ define(['tu'], function (TimeUtils) {
     };
 
     MeasureTime.prototype.getMinutes = function () {
-        return parseInt(this._hours) * 60 + parseInt(this._minutes);
+        return parseInt(this._hours, 10) * 60 + parseInt(this._minutes, 10);
     };
 
     MeasureTime.prototype.getTime = function () {
@@ -43,7 +43,7 @@ define(['tu'], function (TimeUtils) {
     };
 
     MeasureTime.prototype.increment = function (addMinutes) {
-        var newMinutes = parseInt(this._minutes) + addMinutes;
+        var newMinutes = parseInt(this._minutes, 10) + addMinutes;
         while (60 <= newMinutes) {
             newMinutes = newMinutes-60;
             this._hours++;

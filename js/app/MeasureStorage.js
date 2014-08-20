@@ -1,20 +1,40 @@
 ﻿"use strict";
 define(['mt', 'tu'], function (MeasureTime, TimeUtils) {
-    var store = window.localStorage;
-    var cleanUp = function () {
-        var firstRemoveTime = TimeUtils.asTimeInMillis(store.getItem('firstday'));
-        var firstRemovableTime = Date.now() - (65 * 86400000);
-        if (firstRemoveTime === null)
-            return;
+    var store = window.localStorage,
+        cleanUp = function () {
+            var firstRemoveTime = TimeUtils.asTimeInMillis(store.getItem('firstday')),
+                firstRemovableTime = Date.now() - (65 * 86400000)
+                ;
+            if (firstRemoveTime === null)
+                return;
 
-        while (firstRemoveTime < firstRemovableTime) {
-            store.removeItem(TimeUtils.asDay(firstRemoveTime));
-            firstRemoveTime = firstRemoveTime + 86400000;
+            while (firstRemoveTime < firstRemovableTime) {
+                store.removeItem(TimeUtils.asDay(firstRemoveTime));
+                firstRemoveTime = firstRemoveTime + 86400000;
+            }
+            store.setItem('firstday', TimeUtils.asDay(firstRemoveTime));
+        },
+        upgrade = function(fromVersion, toVersion) {
+            for (var i = fromVersion; i < toVersion; i++) {
+                switch (i) {
+                    default:
+                        break;
+                }
+            }
+        },
+        dbversion,
+        requiredDbVersion = 1,
+        MeasureStorage = function () {
+            dbversion = this.get('dbversion');
+            if (dbversion !== null) {
+                dbversion = parseInt(dbversion, 10);
+            }
+            if (dbversion === null || dbversion !== requiredDbVersion) {
+                upgrade(dbversion, requiredDbVersion);
+                this.set('dbversion', requiredDbVersion);
+            }
         }
-        store.setItem('firstday', TimeUtils.asDay(firstRemoveTime));
-    };
-    var MeasureStorage = function () {
-    };
+        ;
     MeasureStorage.prototype.add = function (measureTime) {
         store.setItem(measureTime.getFullDay(), measureTime.getTime());
         var firstDay = store.getItem('firstday');

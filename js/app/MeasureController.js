@@ -4,39 +4,47 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
         measureStorage = new MeasureStorage(),
         actualDay = measureStorage.getTime(TimeUtils.asDay(Date.now())),
         measuring = false,
+        statChangeTimeout,
         STAT = { AVG: {name: 'average'}, DIFF: {name: 'difference'}},
         statState = STAT.AVG
         ;
 
-    var calculateMonthlyAverageForDay = function (day) {
-        var daycount = 0,
-            fulltime = 0,
+    var calculateStatistics = function(day, loopCalculation, postCalculation) {
+        var dayCount = 0,
+            statTime = 0,
             measuredTime
             ;
         for (var i = 1; i < day.getDay(); i++) {
-            measuredTime = measureStorage.getTime(day.getFullDay().substr(0, 6) + TimeUtils.extend(i));
+            measuredTime = measureStorage.getTime(day.getFullDay().substring(0, 6) + TimeUtils.extend(i));
             if (0 < measuredTime.getMinutes()) {
-                fulltime += (measuredTime.getMinutes());
-                daycount++;
+                statTime += loopCalculation(measuredTime);
+                dayCount++;
             }
         }
-        return daycount === 0 ? { statValue: 0, statCount: 0 } : { statValue: Math.floor(fulltime / daycount), statCount: daycount };
+        return dayCount === 0 ? { statValue: 0, statCount: 0 } : { statValue: postCalculation(statTime, dayCount), statCount: dayCount };
+    };
+
+    var calculateMonthlyAverageForDay = function (day) {
+        return calculateStatistics(day
+            , function(measuredTime) {
+                return measuredTime.getMinutes();
+            }
+            , function(statTime, dayCount) {
+                return Math.floor(statTime / dayCount);
+            }
+        );
     };
 
     var calculateMonthlyDifferenceForDay = function (day) {
-        var daycount = 0,
-            difftime = 0,
-            expectedDayTime = 510,
-            measuredTime
-            ;
-        for (var i = 1; i < day.getDay(); i++) {
-            measuredTime = measureStorage.getTime(day.getFullDay().substr(0, 6) + TimeUtils.extend(i));
-            if (0 < measuredTime.getMinutes()) {
-                difftime += (measuredTime.getMinutes() - expectedDayTime);
-                daycount++;
+        var expectedDayTime = 510;
+        return calculateStatistics( day
+            , function(measuredTime) {
+                return measuredTime.getMinutes() - expectedDayTime;
             }
-        }
-        return daycount === 0 ? { statValue: 0, statCount: 0 } : { statValue: difftime, statCount: daycount };
+            , function(statTime) {
+                return statTime;
+            }
+        );
     };
 
     var updateView = function () {
@@ -71,10 +79,11 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
         switch (statState) {
             case STAT.AVG :
                 statState = STAT.DIFF;
-                setTimeout(this.changeStat, 30000);
+                statChangeTimeout = setTimeout(this.changeStat, 30000);
                 break;
             default :
                 statState = STAT.AVG;
+                window.clearTimeout(statChangeTimeout);
                 break;
         }
         updateView();
@@ -96,7 +105,6 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
             measureStorage.remove('startOn');
             measuring = false;
         }
-        console.log('Measure in progress: ' + measuring);
         updateView();
     };
 
