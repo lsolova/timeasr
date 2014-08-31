@@ -15,15 +15,29 @@ define(['mt', 'tu'], function (MeasureTime, TimeUtils) {
             store.setItem('firstday', TimeUtils.asDay(firstRemoveTime));
         },
         upgrade = function(fromVersion, toVersion) {
-            for (var i = fromVersion; i < toVersion; i++) {
+            var day, dayTime, dayTimeLength, i, j, upgradedTime
+                ;
+            for (i = fromVersion; i < toVersion; i++) {
                 switch (i) {
+                    case 1 :
+                        for (j = 70; j > 0; j--) {
+                            day = TimeUtils.asDay(Date.now() - (j * 86400000));
+                            dayTime = store.getItem(day);
+                            if (dayTime !== null) {
+                                dayTimeLength = dayTime.length;
+                                upgradedTime = (2 < dayTimeLength ? parseInt(dayTime.substring(0, dayTimeLength - 2)) * 60 : 0) + parseInt(dayTime.substring(dayTimeLength - 2));
+                                console.log(dayTime + " converted to " + upgradedTime);
+                                store.setItem(day, upgradedTime);
+                            }
+                        };
+                        break;
                     default:
                         break;
                 }
             }
         },
         dbversion,
-        requiredDbVersion = 1,
+        requiredDbVersion = 2,
         MeasureStorage = function () {
             dbversion = this.get('dbversion');
             if (dbversion !== null) {
@@ -50,7 +64,7 @@ define(['mt', 'tu'], function (MeasureTime, TimeUtils) {
     MeasureStorage.prototype.getTimeOfDay = function (day) {
         var dayValue = store.getItem(day);
         if (dayValue === null || dayValue === undefined) {
-            return MeasureTime.create(day, "000");
+            return MeasureTime.create(day, 0);
         }
         return MeasureTime.create(day, dayValue);
     };
