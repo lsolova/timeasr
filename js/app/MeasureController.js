@@ -2,7 +2,7 @@
 define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
     var measureView,
         measureStorage = new MeasureStorage(),
-        actualDay = measureStorage.getTime(TimeUtils.asDay(Date.now())),
+        actualDay = measureStorage.getTimeOfDay(TimeUtils.asDay(Date.now())),
         measuring = false,
         statChangeTimeout,
         STAT = { AVG: {name: 'average'}, DIFF: {name: 'difference'}},
@@ -15,7 +15,7 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
             measuredTime
             ;
         for (var i = 1; i < day.getDay(); i++) {
-            measuredTime = measureStorage.getTime(day.getFullDay().substring(0, 6) + TimeUtils.extend(i));
+            measuredTime = measureStorage.getTimeOfDay(day.getFullDay().substring(0, 6) + TimeUtils.extend(i));
             if (0 < measuredTime.getMinutes()) {
                 statTime += loopCalculation(measuredTime);
                 dayCount++;
@@ -71,7 +71,7 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
         if (measuring) {
             throw "Measuring in progress. Please pause before day change.";
         }
-        actualDay = measureStorage.getTime(TimeUtils.siblingDay(actualDay.getFullDay(), sign));
+        actualDay = measureStorage.getTimeOfDay(TimeUtils.siblingDay(actualDay.getFullDay(), sign));
         updateView();
     };
 
@@ -86,6 +86,10 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
                 window.clearTimeout(statChangeTimeout);
                 break;
         }
+        updateView();
+    };
+
+    MeasureController.prototype.visibilityChanged = function() {
         updateView();
     };
 
