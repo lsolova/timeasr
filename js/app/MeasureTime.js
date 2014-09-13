@@ -22,10 +22,6 @@ define(['tu'], function (TimeUtils) {
                 return this.minutes;
             };
 
-            MeasureTime.prototype.getRecordTime = function () {
-                return this.minutes;
-            };
-
             MeasureTime.prototype.increment = function (addMinutes) {
                 this.minutes += addMinutes;
             };

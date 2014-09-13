@@ -105,7 +105,7 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
         else {
             var finishedOn = Date.now();
             actualDay.increment(Math.round((finishedOn - startedOn) / 60000));
-            measureStorage.set(actualDay.getFullDay(), actualDay.getRecordTime());
+            measureStorage.set(actualDay.getFullDay(), actualDay.getMinutes());
             measureStorage.remove('startOn');
             measuring = false;
         }
