@@ -29,7 +29,7 @@ define(['mt', 'tu'], function (MeasureTime, TimeUtils) {
                                 console.log(dayTime + " converted to " + upgradedTime);
                                 store.setItem(day, upgradedTime);
                             }
-                        };
+                        }
                         break;
                     default:
                         break;
@@ -50,7 +50,7 @@ define(['mt', 'tu'], function (MeasureTime, TimeUtils) {
         }
         ;
     MeasureStorage.prototype.add = function (measureTime) {
-        store.setItem(measureTime.getFullDay(), measureTime.getFormattedTime());
+        store.setItem(measureTime.getFullDay(), measureTime.getMinutes());
         var firstDay = store.getItem('firstday');
         if (firstDay === null || firstDay === undefined) {
             store.setItem('firstday', measureTime.getFullDay());

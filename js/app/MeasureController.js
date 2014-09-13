@@ -54,7 +54,7 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
         } else if (statState === STAT.DIFF ) {
             statInfo = calculateMonthlyDifferenceForDay(actualDay);
         }
-        measureView.update(actualDay, TimeUtils.asHoursAndMinutes(statInfo.statValue), statInfo.statCount);
+        measureView.update(actualDay, statInfo.statValue, statInfo.statCount);
     };
 
     var MeasureController = function () {

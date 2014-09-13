@@ -74,12 +74,12 @@ define(['tu'], function (TimeUtils) {
             nextDay = TimeUtils.siblingDay(measureTime.getFullDay(), 1);
 
         clearAndFill(monthE, measureTime.getYearAndMonth());
-        clearAndFill(statTimeE, avgtime);
+        clearAndFill(statTimeE, TimeUtils.asHoursAndMinutes(avgtime));
         clearAndFill(dayCountE, daycount);
         clearAndFill(prevDayE, prevDay.substring(6));
         clearAndFill(actualDayE, actlDay);
         clearAndFill(nextDayE, nextDay.substring(6));
-        clearAndFill(counterE, measureTime.getFormattedTime());
+        clearAndFill(counterE, TimeUtils.asHoursAndMinutes(measureTime.getMinutes()));
         if (measureController.isMeasuringInProgress()) {
             counterE.setAttribute('class', 'running');
         }
