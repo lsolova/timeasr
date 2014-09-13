@@ -47,6 +47,19 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
         );
     };
 
+    function getStartOn() {
+        return measureStorage.get('startOn');
+    }
+
+    function getCurrentMeasuringMinutes(startedOn, finishedOn) {
+        finishedOn = finishedOn || Date.now();
+        var measuringMinutes = 0;
+        if (startedOn && startedOn < finishedOn) {
+            measuringMinutes = Math.round((finishedOn - startedOn) / 60000);
+        }
+        return  measuringMinutes;
+    }
+
     var updateView = function () {
         var statInfo;
         if (statState === STAT.AVG ) {
@@ -54,7 +67,7 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
         } else if (statState === STAT.DIFF ) {
             statInfo = calculateMonthlyDifferenceForDay(actualDay);
         }
-        measureView.update(actualDay, statInfo.statValue, statInfo.statCount);
+        measureView.update(actualDay, getCurrentMeasuringMinutes(getStartOn()), statInfo.statValue, statInfo.statCount);
     };
 
     var MeasureController = function () {
@@ -93,18 +106,19 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
         updateView();
     };
 
+
+
     MeasureController.prototype.startStopCounter = function () {
         if (!measuring && TimeUtils.asDay(Date.now()) !== actualDay.getFullDay())
             throw "Measuring allowed on current day only.";
-        var startedOn = measureStorage.get('startOn');
-        if (!startedOn) {
+        var startedOn = getStartOn();
+        if (!measuring) {
             startedOn = Date.now();
             measureStorage.set('startOn', startedOn);
             measuring = true;
         }
         else {
-            var finishedOn = Date.now();
-            actualDay.increment(Math.round((finishedOn - startedOn) / 60000));
+            actualDay.increment(getCurrentMeasuringMinutes(startedOn));
             measureStorage.set(actualDay.getFullDay(), actualDay.getMinutes());
             measureStorage.remove('startOn');
             measuring = false;
