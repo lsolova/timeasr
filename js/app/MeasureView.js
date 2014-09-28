@@ -48,9 +48,7 @@ define(['tu'], function (TimeUtils) {
             }
         });
         document.addEventListener('visibilitychange', function(){
-            if (!document.hidden) {
-                measureController.visibilityChanged();
-            }
+            measureController.changeVisibility(document.hidden);
         });
     };
 

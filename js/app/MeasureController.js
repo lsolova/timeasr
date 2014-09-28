@@ -4,7 +4,8 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
         measureStorage = new MeasureStorage(),
         actualDay = measureStorage.getTimeOfDay(TimeUtils.asDay(Date.now())),
         measuring = false,
-        statChangeTimeout,
+        statChangeTimeoutId,
+        updateOnMeasureIntervalId,
         STAT = { AVG: {name: 'average'}, DIFF: {name: 'difference'}},
         statState = STAT.AVG
         ;
@@ -51,6 +52,17 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
         return measureStorage.get('startOn');
     }
 
+    function setUpdateInterval(allow) {
+        if (allow) {
+            updateOnMeasureIntervalId = setInterval(function(){
+                updateView();
+            },60000);
+        }else
+        if (updateOnMeasureIntervalId) {
+            clearInterval(updateOnMeasureIntervalId);
+        }
+    }
+
     function getCurrentMeasuringMinutes(startedOn, finishedOn) {
         finishedOn = finishedOn || Date.now();
         var measuringMinutes = 0;
@@ -60,7 +72,7 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
         return  measuringMinutes;
     }
 
-    var updateView = function () {
+    function updateView() {
         var statInfo;
         if (statState === STAT.AVG ) {
             statInfo = calculateMonthlyAverageForDay(actualDay);
@@ -68,7 +80,7 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
             statInfo = calculateMonthlyDifferenceForDay(actualDay);
         }
         measureView.update(actualDay, getCurrentMeasuringMinutes(getStartOn()), statInfo.statValue, statInfo.statCount);
-    };
+    }
 
     var MeasureController = function () {
         var startedOn = measureStorage.get('startOn');
@@ -92,21 +104,22 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
         switch (statState) {
             case STAT.AVG :
                 statState = STAT.DIFF;
-                statChangeTimeout = setTimeout(this.changeStat, 30000);
+                statChangeTimeoutId = setTimeout(this.changeStat, 30000);
                 break;
             default :
                 statState = STAT.AVG;
-                window.clearTimeout(statChangeTimeout);
+                window.clearTimeout(statChangeTimeoutId);
                 break;
         }
         updateView();
     };
 
-    MeasureController.prototype.visibilityChanged = function() {
-        updateView();
+    MeasureController.prototype.changeVisibility = function(hidden) {
+        if (!hidden) {
+            updateView();
+        }
+        setUpdateInterval(!hidden);
     };
-
-
 
     MeasureController.prototype.startStopCounter = function () {
         if (!measuring && TimeUtils.asDay(Date.now()) !== actualDay.getFullDay())
@@ -116,12 +129,14 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
             startedOn = Date.now();
             measureStorage.set('startOn', startedOn);
             measuring = true;
+            setUpdateInterval(true);
         }
         else {
             actualDay.increment(getCurrentMeasuringMinutes(startedOn));
             measureStorage.set(actualDay.getFullDay(), actualDay.getMinutes());
             measureStorage.remove('startOn');
             measuring = false;
+            setUpdateInterval(false);
         }
         updateView();
     };
