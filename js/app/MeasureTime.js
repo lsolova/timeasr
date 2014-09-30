@@ -27,6 +27,6 @@ define(['tu'], function (TimeUtils) {
             };
             return new MeasureTime(day, minutes);
         }
-    }
+    };
 
 });

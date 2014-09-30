@@ -22,7 +22,9 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
                 dayCount++;
             }
         }
-        return dayCount === 0 ? { statValue: 0, statCount: 0 } : { statValue: postCalculation(statTime, dayCount), statCount: dayCount };
+        return dayCount === 0
+            ? { statValue: 0, statCount: 0 }
+            : { statValue: postCalculation(statTime, dayCount), statCount: dayCount };
     };
 
     var calculateMonthlyAverageForDay = function (day) {
@@ -122,8 +124,9 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
     };
 
     MeasureController.prototype.startStopCounter = function () {
-        if (!measuring && TimeUtils.asDay(Date.now()) !== actualDay.getFullDay())
+        if (!measuring && TimeUtils.asDay(Date.now()) !== actualDay.getFullDay()) {
             throw "Measuring allowed on current day only.";
+        }
         var startedOn = getStartOn();
         if (!measuring) {
             startedOn = Date.now();

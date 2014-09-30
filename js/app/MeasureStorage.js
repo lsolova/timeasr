@@ -5,8 +5,9 @@ define(['mt', 'tu'], function (MeasureTime, TimeUtils) {
             var firstRemoveTime = TimeUtils.asTimeInMillis(store.getItem('firstday')),
                 firstRemovableTime = Date.now() - (65 * 86400000)
                 ;
-            if (firstRemoveTime === null)
+            if (firstRemoveTime === null) {
                 return;
+            }
 
             while (firstRemoveTime < firstRemovableTime) {
                 store.removeItem(TimeUtils.asDay(firstRemoveTime));
@@ -25,8 +26,11 @@ define(['mt', 'tu'], function (MeasureTime, TimeUtils) {
                             dayTime = store.getItem(day);
                             if (dayTime !== null) {
                                 dayTimeLength = dayTime.length;
-                                upgradedTime = (2 < dayTimeLength ? parseInt(dayTime.substring(0, dayTimeLength - 2)) * 60 : 0) + parseInt(dayTime.substring(dayTimeLength - 2));
-                                console.log(dayTime + " converted to " + upgradedTime);
+                                upgradedTime = (2 < dayTimeLength
+                                        ? parseInt(dayTime.substring(0, dayTimeLength - 2)) * 60
+                                        : 0
+                                    )
+                                    + parseInt(dayTime.substring(dayTimeLength - 2));
                                 store.setItem(day, upgradedTime);
                             }
                         }
