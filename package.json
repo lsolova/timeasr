@@ -1,0 +1,18 @@
+{
+  "name": "timemeasure",
+  "version": "0.8.7",
+  "description": "Time measurement web application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@bitbucket.org:lsolova/timemeasure.git"
+  },
+  "author": "Laszlo Solova",
+  "license": "LGPL",
+  "dependencies": {
+    "sqlite3": "^2.2.7"
+  }
+}

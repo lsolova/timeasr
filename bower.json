@@ -1,0 +1,11 @@
+{
+  "name": "timemeasure",
+  "version": "0.8.7",
+  "authors": [
+    "Laszlo Solova <laszlo@solova.com>"
+  ],
+  "description": "Time measurement web application",
+  "main": "index.html",
+  "license": "LGPL",
+  "private": true
+}
