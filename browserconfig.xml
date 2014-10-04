@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<browserconfig>
+    <msapplication>
+        <tile>
+            <square70x70logo src="appicon_tiny.png"/>
+            <square150x150logo src="appicon_square.png"/>
+            <wide310x150logo src="appicon_wide.png"/>
+            <square310x310logo src="appicon_large.png"/>
+            <TileColor>#1C3A92</TileColor>
+        </tile>
+    </msapplication>
+</browserconfig>
