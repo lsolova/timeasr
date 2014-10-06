@@ -4,7 +4,8 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
         measureStorage = new MeasureStorage(),
         actualDay = measureStorage.getTimeOfDay(TimeUtils.asDay(Date.now())),
         measuring = false,
-        statChangeTimeout,
+        statChangeTimeoutId,
+        updateOnMeasureIntervalId,
         STAT = { AVG: {name: 'average'}, DIFF: {name: 'difference'}},
         statState = STAT.AVG
         ;
@@ -21,7 +22,9 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
                 dayCount++;
             }
         }
-        return dayCount === 0 ? { statValue: 0, statCount: 0 } : { statValue: postCalculation(statTime, dayCount), statCount: dayCount };
+        return dayCount === 0
+            ? { statValue: 0, statCount: 0 }
+            : { statValue: postCalculation(statTime, dayCount), statCount: dayCount };
     };
 
     var calculateMonthlyAverageForDay = function (day) {
@@ -47,15 +50,39 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
         );
     };
 
-    var updateView = function () {
+    function getStartOn() {
+        return measureStorage.get('startOn');
+    }
+
+    function setUpdateInterval(allow) {
+        if (allow) {
+            updateOnMeasureIntervalId = setInterval(function(){
+                updateView();
+            },60000);
+        }else
+        if (updateOnMeasureIntervalId) {
+            clearInterval(updateOnMeasureIntervalId);
+        }
+    }
+
+    function getCurrentMeasuringMinutes(startedOn, finishedOn) {
+        finishedOn = finishedOn || Date.now();
+        var measuringMinutes = 0;
+        if (startedOn && startedOn < finishedOn) {
+            measuringMinutes = Math.round((finishedOn - startedOn) / 60000);
+        }
+        return  measuringMinutes;
+    }
+
+    function updateView() {
         var statInfo;
         if (statState === STAT.AVG ) {
             statInfo = calculateMonthlyAverageForDay(actualDay);
         } else if (statState === STAT.DIFF ) {
             statInfo = calculateMonthlyDifferenceForDay(actualDay);
         }
-        measureView.update(actualDay, TimeUtils.asHoursAndMinutes(statInfo.statValue), statInfo.statCount);
-    };
+        measureView.update(actualDay, getCurrentMeasuringMinutes(getStartOn()), statInfo.statValue, statInfo.statCount);
+    }
 
     var MeasureController = function () {
         var startedOn = measureStorage.get('startOn');
@@ -79,35 +106,40 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
         switch (statState) {
             case STAT.AVG :
                 statState = STAT.DIFF;
-                statChangeTimeout = setTimeout(this.changeStat, 30000);
+                statChangeTimeoutId = setTimeout(this.changeStat, 30000);
                 break;
             default :
                 statState = STAT.AVG;
-                window.clearTimeout(statChangeTimeout);
+                window.clearTimeout(statChangeTimeoutId);
                 break;
         }
         updateView();
     };
 
-    MeasureController.prototype.visibilityChanged = function() {
-        updateView();
+    MeasureController.prototype.changeVisibility = function(hidden) {
+        if (!hidden) {
+            updateView();
+        }
+        setUpdateInterval(!hidden);
     };
 
     MeasureController.prototype.startStopCounter = function () {
-        if (!measuring && TimeUtils.asDay(Date.now()) !== actualDay.getFullDay())
+        if (!measuring && TimeUtils.asDay(Date.now()) !== actualDay.getFullDay()) {
             throw "Measuring allowed on current day only.";
-        var startedOn = measureStorage.get('startOn');
-        if (!startedOn) {
+        }
+        var startedOn = getStartOn();
+        if (!measuring) {
             startedOn = Date.now();
             measureStorage.set('startOn', startedOn);
             measuring = true;
+            setUpdateInterval(true);
         }
         else {
-            var finishedOn = Date.now();
-            actualDay.increment(Math.round((finishedOn - startedOn) / 60000));
-            measureStorage.set(actualDay.getFullDay(), actualDay.getRecordTime());
+            actualDay.increment(getCurrentMeasuringMinutes(startedOn));
+            measureStorage.set(actualDay.getFullDay(), actualDay.getMinutes());
             measureStorage.remove('startOn');
             measuring = false;
+            setUpdateInterval(false);
         }
         updateView();
     };

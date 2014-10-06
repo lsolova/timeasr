@@ -48,9 +48,7 @@ define(['tu'], function (TimeUtils) {
             }
         });
         document.addEventListener('visibilitychange', function(){
-            if (!document.hidden) {
-                measureController.visibilityChanged();
-            }
+            measureController.changeVisibility(document.hidden);
         });
     };
 
@@ -68,18 +66,18 @@ define(['tu'], function (TimeUtils) {
         measureController.addView(this);
     };
 
-    MeasureView.prototype.update = function (measureTime, avgtime, daycount) {
+    MeasureView.prototype.update = function (measureTime, measuringMinutes, avgTime, dayCount) {
         var actlDay = measureTime.getFullDay().substring(6),
             prevDay = TimeUtils.siblingDay(measureTime.getFullDay(), -1),
             nextDay = TimeUtils.siblingDay(measureTime.getFullDay(), 1);
 
         clearAndFill(monthE, measureTime.getYearAndMonth());
-        clearAndFill(statTimeE, avgtime);
-        clearAndFill(dayCountE, daycount);
+        clearAndFill(statTimeE, TimeUtils.asHoursAndMinutes(avgTime));
+        clearAndFill(dayCountE, dayCount);
         clearAndFill(prevDayE, prevDay.substring(6));
         clearAndFill(actualDayE, actlDay);
         clearAndFill(nextDayE, nextDay.substring(6));
-        clearAndFill(counterE, measureTime.getFormattedTime());
+        clearAndFill(counterE, TimeUtils.asHoursAndMinutes(measureTime.getMinutes() + measuringMinutes));
         if (measureController.isMeasuringInProgress()) {
             counterE.setAttribute('class', 'running');
         }

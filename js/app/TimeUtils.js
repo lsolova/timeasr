@@ -2,14 +2,19 @@
 define(function () {
     var TimeUtils = {
         asTimeInMillis: function (dayString) {
-            return new Date(dayString.substring(0, 4), TimeUtils.reduce(dayString.substring(4, 6)) - 1, TimeUtils.reduce(dayString.substring(6,8)), 0, 0, 0, 0).getTime();
+            return new Date(dayString.substr(0, 4), TimeUtils.reduce(dayString.substr(4, 2)) - 1, TimeUtils.reduce(dayString.substr(6, 2)), 0, 0, 0, 0).getTime();
         },
         asHoursAndMinutes: function (minutes) {
-            return Math.floor(minutes / 60) + ":" + TimeUtils.extend(Math.abs(minutes % 60));
+            var signum = minutes < 0 ? -1 : 1,
+                absMinutes = Math.abs(minutes),
+                prefix = signum < 0 ? "-" : "";
+            return prefix + Math.floor(absMinutes / 60) + ":" + TimeUtils.extend(absMinutes % 60);
         },
         asDay: function (timeInMillis) {
             var expDate = new Date(timeInMillis);
-            return expDate.getFullYear() + TimeUtils.extend(expDate.getMonth() + 1) + TimeUtils.extend(expDate.getDate());
+            return expDate.getFullYear()
+                + TimeUtils.extend(expDate.getMonth() + 1)
+                + TimeUtils.extend(expDate.getDate());
         },
         siblingDay: function (day, direction) {
             var mSign = 1;

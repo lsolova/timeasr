@@ -5,7 +5,7 @@ define(['tu'], function (TimeUtils) {
             var MeasureTime = function (day, minutes) {
                 this.day = day || TimeUtils.asDay(Date.now());
                 this.minutes = parseInt(minutes, 10) || 0;
-            }
+            };
             MeasureTime.prototype.getDay = function getDay() {
                 return parseInt(TimeUtils.reduce(this.day.substring(6,8)), 10);
             };
@@ -22,21 +22,11 @@ define(['tu'], function (TimeUtils) {
                 return this.minutes;
             };
 
-            MeasureTime.prototype.getFormattedTime = function () {
-                var fHours = Math.floor(this.minutes/60),
-                    fMinutes = TimeUtils.extend(this.minutes%60);
-                return fHours + ":" + fMinutes;
-            };
-
-            MeasureTime.prototype.getRecordTime = function () {
-                return this.minutes;
-            };
-
             MeasureTime.prototype.increment = function (addMinutes) {
                 this.minutes += addMinutes;
             };
             return new MeasureTime(day, minutes);
         }
-    }
+    };
 
 });

@@ -36,6 +36,10 @@ div#summaryToolbar #month {
     margin-right: 2em;
 }
 
+div#summaryToolbar #stattime {
+    cursor: pointer;
+}
+
 div#summaryToolbar #daycount {
     background-color: #586BA5;
     border-radius: .3em;
@@ -60,9 +64,9 @@ div#daySelector .actl {
     cursor: auto;
 }
 div#copyright {
-    bottom: 0px;
+    bottom: 0;
     font-size: .75em;
-    left: 0px;
+    left: 0;
     padding: 5px;
     position: absolute;
 }
