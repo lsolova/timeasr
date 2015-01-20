@@ -7,7 +7,8 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
         statChangeTimeoutId,
         updateOnMeasureIntervalId,
         STAT = { AVG: {name: 'average'}, DIFF: {name: 'difference'}},
-        statState = STAT.AVG
+        statDefaultState = STAT.DIFF,
+        statState = statDefaultState
         ;
 
     var calculateStatistics = function(day, loopCalculation, postCalculation) {
@@ -76,10 +77,13 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
 
     function updateView() {
         var statInfo;
-        if (statState === STAT.AVG ) {
-            statInfo = calculateMonthlyAverageForDay(actualDay);
-        } else if (statState === STAT.DIFF ) {
-            statInfo = calculateMonthlyDifferenceForDay(actualDay);
+        switch (statState) {
+            case STAT.AVG :
+                statInfo = calculateMonthlyAverageForDay(actualDay);
+                break;
+            case STAT.DIFF :
+                statInfo = calculateMonthlyDifferenceForDay(actualDay);
+                break;
         }
         measureView.update(actualDay, getCurrentMeasuringMinutes(getStartOn()), statInfo.statValue, statInfo.statCount);
     }
@@ -106,12 +110,15 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
         switch (statState) {
             case STAT.AVG :
                 statState = STAT.DIFF;
-                statChangeTimeoutId = setTimeout(this.changeStat, 30000);
                 break;
             default :
                 statState = STAT.AVG;
-                window.clearTimeout(statChangeTimeoutId);
                 break;
+        }
+        if (statState === statDefaultState) {
+            window.clearTimeout(statChangeTimeoutId);
+        } else {
+            statChangeTimeoutId = setTimeout(this.changeStat, 30000);
         }
         updateView();
     };
