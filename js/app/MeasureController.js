@@ -85,13 +85,21 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
                 statInfo = calculateMonthlyDifferenceForDay(actualDay);
                 break;
         }
-        measureView.update(actualDay, getCurrentMeasuringMinutes(getStartOn()), statInfo.statValue, statInfo.statCount);
+        measureView.update({
+            measureTime: actualDay,
+            measuringMinutes: getCurrentMeasuringMinutes(getStartOn()),
+            avgTime: statInfo.statValue,
+            dayCount: statInfo.statCount,
+            timeType: statState
+        });
     }
 
     var MeasureController = function () {
         var startedOn = measureStorage.get('startOn');
         measuring = !(startedOn === null || startedOn === undefined);
     };
+
+    MeasureController.prototype.STAT = STAT;
 
     MeasureController.prototype.addView = function (measureViewObj) {
         measureView = measureViewObj;

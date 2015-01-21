@@ -66,18 +66,30 @@ define(['tu'], function (TimeUtils) {
         measureController.addView(this);
     };
 
-    MeasureView.prototype.update = function (measureTime, measuringMinutes, avgTime, dayCount) {
-        var actlDay = measureTime.getFullDay().substring(6),
-            prevDay = TimeUtils.siblingDay(measureTime.getFullDay(), -1),
-            nextDay = TimeUtils.siblingDay(measureTime.getFullDay(), 1);
-
-        clearAndFill(monthE, measureTime.getYearAndMonth());
-        clearAndFill(statTimeE, TimeUtils.asHoursAndMinutes(avgTime));
-        clearAndFill(dayCountE, dayCount);
+    MeasureView.prototype.update = function (data) {
+        var actlDay = data.measureTime.getFullDay().substring(6),
+            prevDay = TimeUtils.siblingDay(data.measureTime.getFullDay(), -1),
+            nextDay = TimeUtils.siblingDay(data.measureTime.getFullDay(), 1),
+            statTimeValue = TimeUtils.asHoursAndMinutes(data.avgTime),
+            isAvgTimeNonNegativ = data.avgTime >= 0,
+            isTimeTypeDiff = data.timeType === measureController.STAT.DIFF;
+        clearAndFill(monthE, data.measureTime.getYearAndMonth());
+        clearAndFill(statTimeE, (isTimeTypeDiff && isAvgTimeNonNegativ) ? "+" + statTimeValue : statTimeValue);
+        clearAndFill(dayCountE, data.dayCount);
+        if (isTimeTypeDiff) {
+            if (isAvgTimeNonNegativ) {
+                dayCountE.classList.add('more');
+            }else{
+                dayCountE.classList.add('less');
+            }
+        }else{
+            dayCountE.classList.remove('more');
+            dayCountE.classList.remove('less');
+        }
         clearAndFill(prevDayE, prevDay.substring(6));
         clearAndFill(actualDayE, actlDay);
         clearAndFill(nextDayE, nextDay.substring(6));
-        clearAndFill(counterE, TimeUtils.asHoursAndMinutes(measureTime.getMinutes() + measuringMinutes));
+        clearAndFill(counterE, TimeUtils.asHoursAndMinutes(data.measureTime.getMinutes() + data.measuringMinutes));
         if (measureController.isMeasuringInProgress()) {
             counterE.setAttribute('class', 'running');
         }

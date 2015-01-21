@@ -46,6 +46,14 @@ div#summaryToolbar #daycount {
     padding: .1em .5em;
 }
 
+div#summaryToolbar #daycount.more {
+    background-color: rgba(89, 166, 108, 1);
+}
+
+div#summaryToolbar #daycount.less {
+    background-color: rgba(182, 73, 73, 1);
+}
+
 div#daySelector {
     display: table;
     width: 100%;
