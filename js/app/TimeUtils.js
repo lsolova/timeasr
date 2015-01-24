@@ -26,6 +26,9 @@ define(function () {
             }
             return TimeUtils.asDay(TimeUtils.asTimeInMillis(day) + (mSign * 86400000));
         },
+        getMinutesInDay: function (date) {
+            return date.getHours() * 60 + date.getMinutes();
+        },
         extend: function (timeSlice) {
             timeSlice = "" + timeSlice;
             while (timeSlice.length < 2) {
