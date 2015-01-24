@@ -2,7 +2,10 @@
 define(function () {
     var TimeUtils = {
         asTimeInMillis: function (dayString) {
-            return new Date(dayString.substr(0, 4), TimeUtils.reduce(dayString.substr(4, 2)) - 1, TimeUtils.reduce(dayString.substr(6, 2)), 0, 0, 0, 0).getTime();
+            var year = dayString.substring(0, 4),
+                month = TimeUtils.reduce(dayString.substring(4, 6)) - 1,
+                day = TimeUtils.reduce(dayString.substring(6, 8));
+            return new Date(year, month, day, 0, 0, 0, 0).getTime();
         },
         asHoursAndMinutes: function (minutes) {
             var signum = minutes < 0 ? -1 : 1,
@@ -22,6 +25,9 @@ define(function () {
                 mSign = -1;
             }
             return TimeUtils.asDay(TimeUtils.asTimeInMillis(day) + (mSign * 86400000));
+        },
+        getMinutesInDay: function (date) {
+            return date.getHours() * 60 + date.getMinutes();
         },
         extend: function (timeSlice) {
             timeSlice = "" + timeSlice;
