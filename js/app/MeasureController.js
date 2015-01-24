@@ -8,7 +8,8 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
         updateOnMeasureIntervalId,
         STAT = { AVG: {name: 'average'}, DIFF: {name: 'difference'}},
         statDefaultState = STAT.DIFF,
-        statState = statDefaultState
+        statState = statDefaultState,
+        expectedDayTime = 510
         ;
 
     var calculateStatistics = function(day, loopCalculation, postCalculation) {
@@ -40,7 +41,6 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
     };
 
     var calculateMonthlyDifferenceForDay = function (day) {
-        var expectedDayTime = 510;
         return calculateStatistics( day
             , function(measuredTime) {
                 return measuredTime.getMinutes() - expectedDayTime;
@@ -49,6 +49,19 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
                 return statTime;
             }
         );
+    };
+
+    var calculateEstimatedLeavingTime = function (dailyTime, differenceTime) {
+        var leavingTime = -1,
+            calcTime;
+        if (typeof dailyTime === 'number' && typeof differenceTime === 'number'
+                && dailyTime >= 0 && differenceTime >= 0) {
+            calcTime = expectedDayTime - (dailyTime + differenceTime);
+            if (calcTime > 0) {
+                leavingTime = TimeUtils.getMinutesInDay(new Date()) + calcTime;
+            }
+        }
+        return leavingTime;
     };
 
     function getStartOn() {
@@ -76,17 +89,19 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
     }
 
     function updateView() {
-        var statInfo;
+        var statInfo,
+            actualDiff = calculateMonthlyDifferenceForDay(actualDay);
         switch (statState) {
             case STAT.AVG :
                 statInfo = calculateMonthlyAverageForDay(actualDay);
                 break;
             case STAT.DIFF :
-                statInfo = calculateMonthlyDifferenceForDay(actualDay);
+                statInfo = actualDiff;
                 break;
         }
         measureView.update({
             measureTime: actualDay,
+            leaveTime: calculateEstimatedLeavingTime(actualDay.getMinutes(), actualDiff.statValue),
             measuringMinutes: getCurrentMeasuringMinutes(getStartOn()),
             avgTime: statInfo.statValue,
             dayCount: statInfo.statCount,

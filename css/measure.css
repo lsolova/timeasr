@@ -1,6 +1,6 @@
 body {
     font-family: Verdana, Arial, sans-serif;
-    height: 100%;
+    height: 100vh;
     line-height: 21px;
     margin: 0;
     padding: 0;
@@ -8,11 +8,9 @@ body {
 }
 
 div#counter {
-    cursor: pointer;
-    font-size: 4em;
-    font-weight: bold;
-    line-height: 4em;
+    position: relative;
     text-align: center;
+    top: 45vh;
 }
 
 div#counter .running {
@@ -21,6 +19,20 @@ div#counter .running {
 
 div#counter .paused {
     color: #929CB6;
+}
+
+div#counter div {
+    line-height: normal;
+}
+
+div#counter div#counterValue {
+    cursor: pointer;
+    font-size: 4em;
+    font-weight: bold;
+}
+
+div#counter div#leaveValue {
+    color: lightgrey;
 }
 
 div#summaryToolbar {
@@ -52,6 +64,13 @@ div#summaryToolbar #daycount.more {
 
 div#summaryToolbar #daycount.less {
     background-color: rgba(182, 73, 73, 1);
+}
+
+div#topNavBar {
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
 }
 
 div#daySelector {

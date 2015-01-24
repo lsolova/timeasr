@@ -8,7 +8,9 @@ define(['tu'], function (TimeUtils) {
         prevDayE,
         actualDayE,
         nextDayE,
-        counterE;
+        counterContainerE,
+        counterE,
+        leaveE;
 
     var bindViewElements = function () {
         monthE = document.getElementById('month');
@@ -17,7 +19,9 @@ define(['tu'], function (TimeUtils) {
         prevDayE = document.getElementById('prevDay');
         actualDayE = document.getElementById('actlDay');
         nextDayE = document.getElementById('nextDay');
+        counterContainerE = document.getElementById('counter');
         counterE = document.getElementById('counterValue');
+        leaveE = document.getElementById('leaveValue');
 
         prevDayE.addEventListener('click', function () {
             try {
@@ -89,6 +93,7 @@ define(['tu'], function (TimeUtils) {
         clearAndFill(prevDayE, prevDay.substring(6));
         clearAndFill(actualDayE, actlDay);
         clearAndFill(nextDayE, nextDay.substring(6));
+        clearAndFill(leaveE, 'leave ' + (data.leaveTime > 0 ? 'at ' + TimeUtils.asHoursAndMinutes(data.leaveTime) : 'now'));
         clearAndFill(counterE, TimeUtils.asHoursAndMinutes(data.measureTime.getMinutes() + data.measuringMinutes));
         if (measureController.isMeasuringInProgress()) {
             counterE.setAttribute('class', 'running');
