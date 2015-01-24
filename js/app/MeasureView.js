@@ -81,11 +81,7 @@ define(['tu'], function (TimeUtils) {
         clearAndFill(statTimeE, (isTimeTypeDiff && isAvgTimeNonNegativ) ? "+" + statTimeValue : statTimeValue);
         clearAndFill(dayCountE, data.dayCount);
         if (isTimeTypeDiff) {
-            if (isAvgTimeNonNegativ) {
-                dayCountE.classList.add('more');
-            }else{
-                dayCountE.classList.add('less');
-            }
+            dayCountE.classList.add(isAvgTimeNonNegativ ? 'more' : 'less');
         }else{
             dayCountE.classList.remove('more');
             dayCountE.classList.remove('less');
@@ -95,12 +91,7 @@ define(['tu'], function (TimeUtils) {
         clearAndFill(nextDayE, nextDay.substring(6));
         clearAndFill(leaveE, 'leave ' + (data.leaveTime > 0 ? 'at ' + TimeUtils.asHoursAndMinutes(data.leaveTime) : 'now'));
         clearAndFill(counterE, TimeUtils.asHoursAndMinutes(data.measureTime.getMinutes() + data.measuringMinutes));
-        if (measureController.isMeasuringInProgress()) {
-            counterE.setAttribute('class', 'running');
-        }
-        else {
-            counterE.setAttribute('class', 'paused');
-        }
+        counterE.setAttribute('class', measureController.isMeasuringInProgress() ? 'running' : 'paused');
     };
 
     return MeasureView;
