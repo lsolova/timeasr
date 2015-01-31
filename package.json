@@ -2,7 +2,7 @@
   "name": "timemeasure",
   "version": "0.10.0",
   "description": "Time measurement web application",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -13,7 +13,7 @@
   "author": "Laszlo Solova",
   "license": "LGPL",
   "dependencies": {
-    "sqlite3": "^2.2.7"
+    "express": "^4.11.1"
   },
   "devDependencies": {
     "grunt": "^0.4.5",
