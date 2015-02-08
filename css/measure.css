@@ -1,3 +1,8 @@
+@font-face {
+    font-family: TimeasrIcons;
+    src: url('TimeasrIcons.woff');
+}
+
 body {
     font-family: Verdana, Arial, sans-serif;
     height: 100vh;
@@ -33,6 +38,15 @@ div#counter div#counterValue {
 
 div#counter div#leaveValue {
     color: lightgrey;
+}
+
+div#counter div#leaveValue:before {
+    font-family: TimeasrIcons;
+    padding-right: .5em;
+}
+
+div#counter div#leaveValue.t-bef:before {
+    content: 't';
 }
 
 div#summaryToolbar {

@@ -89,7 +89,15 @@ define(['tu'], function (TimeUtils) {
         clearAndFill(prevDayE, prevDay.substring(6));
         clearAndFill(actualDayE, actlDay);
         clearAndFill(nextDayE, nextDay.substring(6));
-        clearAndFill(leaveE, 'leave ' + (data.leaveTime > 0 ? 'at ' + TimeUtils.asHoursAndMinutes(data.leaveTime) : 'now'));
+        leaveE.classList.remove('l-bef');
+        leaveE.classList.remove('t-bef');
+        if (data.leave.value > 0) {
+            clearAndFill(leaveE, TimeUtils.asHoursAndMinutes(data.leave.value));
+            leaveE.classList.add('t-bef');
+        }else{
+            clearAndFill(leaveE, 'now');
+            leaveE.classList.add('t-bef');
+        }
         clearAndFill(counterE, TimeUtils.asHoursAndMinutes(data.measureTime.getMinutes() + data.measuringMinutes));
         counterE.setAttribute('class', measureController.isMeasuringInProgress() ? 'running' : 'paused');
     };
