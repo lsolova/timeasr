@@ -6,7 +6,8 @@ require.config({
         mt: '../app/MeasureTime',
         ms: '../app/MeasureStorage',
         mv: '../app/MeasureView',
-        tu: '../app/TimeUtils'
+        tu: '../app/TimeUtils',
+        du: '../app/DomUtils'
     }
 });
 require(['mv', 'mc'], function (MeasureView, MeasureController) {

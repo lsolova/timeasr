@@ -1,5 +1,5 @@
 ﻿"use strict";
-define(['tu'], function (TimeUtils) {
+define(['tu', 'du'], function (TimeUtils, DomUtils) {
     var measureController,
         measureViewElement,
         monthE,
@@ -56,11 +56,12 @@ define(['tu'], function (TimeUtils) {
         });
     };
 
-    var clearAndFill = function (element, content) {
-        while (element.hasChildNodes()) {
-            element.removeChild(element.firstChild);
+    var updateDayElement = function(element, day) {
+        element.classList.remove('nowork');
+        DomUtils.clearAndFill(element, day.text);
+        if (day.type) {
+            element.classList.add(day.type);
         }
-        element.appendChild(document.createTextNode(content));
     };
 
     var MeasureView = function (measureViewDiv, measureControllerObj) {
@@ -71,34 +72,29 @@ define(['tu'], function (TimeUtils) {
     };
 
     MeasureView.prototype.update = function (data) {
-        var actlDay = data.measureTime.getFullDay().substring(6),
-            prevDay = TimeUtils.siblingDay(data.measureTime.getFullDay(), -1),
-            nextDay = TimeUtils.siblingDay(data.measureTime.getFullDay(), 1),
-            statTimeValue = TimeUtils.asHoursAndMinutes(data.avgTime),
+        var statTimeValue = TimeUtils.asHoursAndMinutes(data.avgTime),
             isAvgTimeNonNegativ = data.avgTime >= 0,
             isTimeTypeDiff = data.timeType === measureController.STAT.DIFF;
-        clearAndFill(monthE, data.measureTime.getYearAndMonth());
-        clearAndFill(statTimeE, (isTimeTypeDiff && isAvgTimeNonNegativ) ? "+" + statTimeValue : statTimeValue);
-        clearAndFill(dayCountE, data.dayCount);
+        DomUtils.clearAndFill(monthE, data.measureTime.getYearAndMonth());
+        DomUtils.clearAndFill(statTimeE, (isTimeTypeDiff && isAvgTimeNonNegativ) ? "+" + statTimeValue : statTimeValue);
+        DomUtils.clearAndFill(dayCountE, data.dayCount);
         if (isTimeTypeDiff) {
             dayCountE.classList.add(isAvgTimeNonNegativ ? 'more' : 'less');
         }else{
-            dayCountE.classList.remove('more');
-            dayCountE.classList.remove('less');
+            DomUtils.removeClasses(dayCountE, ['less', 'more']);
         }
-        clearAndFill(prevDayE, prevDay.substring(6));
-        clearAndFill(actualDayE, actlDay);
-        clearAndFill(nextDayE, nextDay.substring(6));
-        leaveE.classList.remove('l-bef');
-        leaveE.classList.remove('t-bef');
+        updateDayElement(prevDayE, data.days.yesterday);
+        updateDayElement(actualDayE, data.days.today);
+        updateDayElement(nextDayE, data.days.tomorrow);
+        DomUtils.removeClasses(leaveE, ['l-bef', 't-bef']);
         if (data.leave.value > 0) {
-            clearAndFill(leaveE, TimeUtils.asHoursAndMinutes(data.leave.value));
+            DomUtils.clearAndFill(leaveE, TimeUtils.asHoursAndMinutes(data.leave.value));
             leaveE.classList.add('t-bef');
         }else{
-            clearAndFill(leaveE, 'now');
+            DomUtils.clearAndFill(leaveE, 'now');
             leaveE.classList.add('t-bef');
         }
-        clearAndFill(counterE, TimeUtils.asHoursAndMinutes(data.measureTime.getMinutes() + data.measuringMinutes));
+        DomUtils.clearAndFill(counterE, TimeUtils.asHoursAndMinutes(data.measureTime.getMinutes() + data.measuringMinutes));
         counterE.setAttribute('class', measureController.isMeasuringInProgress() ? 'running' : 'paused');
     };
 

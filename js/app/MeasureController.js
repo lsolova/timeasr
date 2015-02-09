@@ -91,7 +91,8 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
     function updateView() {
         var statInfo,
             actualDiff = calculateMonthlyDifferenceForDay(actualDay),
-            currentMeasuringMinutes = getCurrentMeasuringMinutes(getStartOn());
+            currentMeasuringMinutes = getCurrentMeasuringMinutes(getStartOn()),
+            fullActualDay = actualDay.getFullDay();
 
         switch (statState) {
             case STAT.AVG :
@@ -101,8 +102,14 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
                 statInfo = actualDiff;
                 break;
         }
+
         measureView.update({
             measureTime: actualDay,
+            days: {
+                yesterday: { type:'nonwork', text: TimeUtils.siblingDay(fullActualDay, -1).substring(6) },
+                today: { type:'nonwork', text: fullActualDay.substring(6) },
+                tomorrow: { type:'nonwork', text: TimeUtils.siblingDay(fullActualDay, 1).substring(6) }
+            },
             leave: {
                 type: 't',
                 value: calculateEstimatedLeavingTime(actualDay.getMinutes() + currentMeasuringMinutes, 0) % 1440 //actualDiff.statValue)
