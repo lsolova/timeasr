@@ -1,5 +1,4 @@
 var express = require('express'),
-    workdayResolver = require('./WorkdayResolver'),
     app = express(),
     ipaddress,
     port;
@@ -10,14 +9,7 @@ module.exports = {
         port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
     },
     start: function() {
-        var rootDir = __dirname + '/../public',
-            year,
-            month;
-        app.use('/api/workdays/:year/:month', function (req, res) {
-            year = parseInt(req.params.year, 10);
-            month = parseInt(req.params.month, 10);
-            res.send(workdayResolver.getWorkDays(year, month));
-        });
+        var rootDir = __dirname + '/../public';
         app.use('/', express.static(rootDir));
         app.listen(port, ipaddress);
     }

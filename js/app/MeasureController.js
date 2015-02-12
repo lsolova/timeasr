@@ -106,9 +106,9 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
         measureView.update({
             measureTime: actualDay,
             days: {
-                yesterday: { type:'nonwork', text: TimeUtils.siblingDay(fullActualDay, -1).substring(6) },
-                today: { type:'nonwork', text: fullActualDay.substring(6) },
-                tomorrow: { type:'nonwork', text: TimeUtils.siblingDay(fullActualDay, 1).substring(6) }
+                yesterday: TimeUtils.siblingDay(fullActualDay, -1).substring(6),
+                today: fullActualDay.substring(6),
+                tomorrow: TimeUtils.siblingDay(fullActualDay, 1).substring(6)
             },
             leave: {
                 type: 't',

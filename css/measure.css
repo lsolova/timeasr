@@ -15,7 +15,7 @@ body {
 div#counter {
     position: relative;
     text-align: center;
-    top: 45vh;
+    top: 40vh;
 }
 
 div#counter .running {
@@ -94,21 +94,16 @@ div#daySelector {
 
 div#daySelector .day {
     background-color: #586BA5;
-    border-top: 3px solid transparent;
     color: #fff;
     cursor: pointer;
     display: table-cell;
-    padding-bottom: 1px;
+    padding: 1px 0 2px 0;
     text-align: center;
 }
 
 div#daySelector .actl {
     background-color: #929CB6;
     cursor: auto;
-}
-
-div#daySelector .day.nonwork {
-    border-top-color: rgba(89, 166, 108, 1);
 }
 
 div#copyright:after {

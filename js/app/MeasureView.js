@@ -56,14 +56,6 @@ define(['tu', 'du'], function (TimeUtils, DomUtils) {
         });
     };
 
-    var updateDayElement = function(element, day) {
-        element.classList.remove('nowork');
-        DomUtils.clearAndFill(element, day.text);
-        if (day.type) {
-            element.classList.add(day.type);
-        }
-    };
-
     var MeasureView = function (measureViewDiv, measureControllerObj) {
         measureViewElement = document.getElementById(measureViewDiv);
         measureController = measureControllerObj;
@@ -83,9 +75,9 @@ define(['tu', 'du'], function (TimeUtils, DomUtils) {
         }else{
             DomUtils.removeClasses(dayCountE, ['less', 'more']);
         }
-        updateDayElement(prevDayE, data.days.yesterday);
-        updateDayElement(actualDayE, data.days.today);
-        updateDayElement(nextDayE, data.days.tomorrow);
+        DomUtils.clearAndFill(prevDayE, data.days.yesterday);
+        DomUtils.clearAndFill(actualDayE, data.days.today);
+        DomUtils.clearAndFill(nextDayE, data.days.tomorrow);
         DomUtils.removeClasses(leaveE, ['l-bef', 't-bef']);
         if (data.leave.value > 0) {
             DomUtils.clearAndFill(leaveE, TimeUtils.asHoursAndMinutes(data.leave.value));
