@@ -52,7 +52,7 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
     };
 
     var calculateEstimatedLeavingTime = function (dailyTime, differenceTime) {
-        var leavingTime = -1,
+        var leavingTime,
             calcTime;
         if (typeof dailyTime === 'number' && typeof differenceTime === 'number'
                 && dailyTime >= 0 && differenceTime >= 0) {
@@ -110,10 +110,16 @@ define(['ms', 'tu'], function (MeasureStorage, TimeUtils) {
                 today: fullActualDay.substring(6),
                 tomorrow: TimeUtils.siblingDay(fullActualDay, 1).substring(6)
             },
-            leave: {
-                type: 't',
-                value: calculateEstimatedLeavingTime(actualDay.getMinutes() + currentMeasuringMinutes, 0) % 1440 //actualDiff.statValue)
-            },
+            leave: [
+                {
+                    type: 't',
+                    value: calculateEstimatedLeavingTime(actualDay.getMinutes() + currentMeasuringMinutes, 0) % 1440 || 'now'
+                },
+                {
+                    type: 'l',
+                    value: calculateEstimatedLeavingTime(actualDay.getMinutes() + currentMeasuringMinutes, actualDiff.statValue) % 1440 || 'now'
+                }
+            ],
             measuringMinutes: currentMeasuringMinutes,
             avgTime: statInfo.statValue,
             dayCount: statInfo.statCount,

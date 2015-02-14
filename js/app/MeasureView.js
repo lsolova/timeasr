@@ -10,7 +10,10 @@ define(['tu', 'du'], function (TimeUtils, DomUtils) {
         nextDayE,
         counterContainerE,
         counterE,
-        leaveE;
+        leaveE,
+        leaveData,
+        leaveChangeTimeoutId,
+        currentLeaveCount = 0;
 
     var bindViewElements = function () {
         monthE = document.getElementById('month');
@@ -44,16 +47,36 @@ define(['tu', 'du'], function (TimeUtils, DomUtils) {
                 alert(e);
             }
         });
-        statTimeE.addEventListener('click', function(){
+        statTimeE.addEventListener('click', function () {
             try {
                 measureController.changeStat();
             } catch (e) {
                 alert(e);
             }
         });
-        document.addEventListener('visibilitychange', function(){
+        document.addEventListener('visibilitychange', function () {
             measureController.changeVisibility(document.hidden);
         });
+    };
+
+    var changeLeave = function () {
+        var cLeave;
+        if (leaveData.length <= currentLeaveCount) {
+            currentLeaveCount = 0;
+        }
+        if (leaveChangeTimeoutId) {
+            window.clearTimeout(leaveChangeTimeoutId);
+        }
+        cLeave = leaveData[currentLeaveCount];
+        DomUtils.removeClasses(leaveE, ['l-bef', 't-bef']);
+        leaveE.classList.add(cLeave.type + '-bef');
+        if (typeof cLeave.value === 'number') {
+            DomUtils.clearAndFill(leaveE, TimeUtils.asHoursAndMinutes(cLeave.value));
+        }else{
+            DomUtils.clearAndFill(leaveE, cLeave.value);
+        }
+        currentLeaveCount++;
+        leaveChangeTimeoutId = window.setTimeout(changeLeave, 5000);
     };
 
     var MeasureView = function (measureViewDiv, measureControllerObj) {
@@ -78,14 +101,8 @@ define(['tu', 'du'], function (TimeUtils, DomUtils) {
         DomUtils.clearAndFill(prevDayE, data.days.yesterday);
         DomUtils.clearAndFill(actualDayE, data.days.today);
         DomUtils.clearAndFill(nextDayE, data.days.tomorrow);
-        DomUtils.removeClasses(leaveE, ['l-bef', 't-bef']);
-        if (data.leave.value > 0) {
-            DomUtils.clearAndFill(leaveE, TimeUtils.asHoursAndMinutes(data.leave.value));
-            leaveE.classList.add('t-bef');
-        }else{
-            DomUtils.clearAndFill(leaveE, 'now');
-            leaveE.classList.add('t-bef');
-        }
+        leaveData = data.leave;
+        changeLeave();
         DomUtils.clearAndFill(counterE, TimeUtils.asHoursAndMinutes(data.measureTime.getMinutes() + data.measuringMinutes));
         counterE.setAttribute('class', measureController.isMeasuringInProgress() ? 'running' : 'paused');
     };

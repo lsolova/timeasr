@@ -45,6 +45,10 @@ div#counter div#leaveValue:before {
     padding-right: .5em;
 }
 
+div#counter div#leaveValue.l-bef:before {
+    content: 'l';
+}
+
 div#counter div#leaveValue.t-bef:before {
     content: 't';
 }
