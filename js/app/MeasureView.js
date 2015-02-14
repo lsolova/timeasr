@@ -76,7 +76,9 @@ define(['tu', 'du'], function (TimeUtils, DomUtils) {
             DomUtils.clearAndFill(leaveE, cLeave.value);
         }
         currentLeaveCount++;
-        leaveChangeTimeoutId = window.setTimeout(changeLeave, 5000);
+        if (!document.hidden) {
+            leaveChangeTimeoutId = window.setTimeout(changeLeave, 5000);
+        }
     };
 
     var MeasureView = function (measureViewDiv, measureControllerObj) {
