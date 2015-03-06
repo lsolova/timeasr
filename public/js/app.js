@@ -2,14 +2,19 @@
 require.config({
     baseUrl: 'js/lib',
     paths: {
+        ap: '../app/Application',
+        cm: '../app/common',
+        ct: '../app/Controller',
         mc: '../app/MeasureController',
         mt: '../app/MeasureTime',
         ms: '../app/MeasureStorage',
         mv: '../app/MeasureView',
         tu: '../app/TimeUtils',
-        du: '../app/DomUtils'
+        du: '../app/DomUtils',
+        vw: '../app/View'
     }
 });
-require(['mv', 'mc'], function (MeasureView, MeasureController) {
-    new MeasureView('measureView', new MeasureController());
+require(['ap'], function (Application) {
+    var timeasr = new Application();
+    timeasr.init();
 });
