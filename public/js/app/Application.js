@@ -21,7 +21,7 @@ define(['cm', 'du', 'sc', 'sv', 'mc', 'mv', 'ms'], function (common, DomUtils, S
         controllers.settings = new SettingsController(measureStorage);
         views.measure = new MeasureView('measure', controllers.measure);
         views.settings = new SettingsView('settings', controllers.settings);
-        common.eventBus.subscribe('click:viewchange', self.showView);
+        common.eventBus.subscribe('click:viewchange', this.showView);
         this.showView({change: 'measure'});
     };
 
