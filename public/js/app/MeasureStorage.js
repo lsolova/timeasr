@@ -1,6 +1,7 @@
 ﻿"use strict";
 define(['mt', 'tu'], function (MeasureTime, TimeUtils) {
     var store = window.localStorage,
+        self,
         cleanUp = function () {
             var firstRemoveTime = TimeUtils.asTimeInMillis(store.getItem('firstday')),
                 firstRemovableTime = Date.now() - (65 * 86400000)
@@ -43,6 +44,7 @@ define(['mt', 'tu'], function (MeasureTime, TimeUtils) {
         dbversion,
         requiredDbVersion = 2,
         MeasureStorage = function () {
+            self = this;
             dbversion = this.get('dbversion');
             if (dbversion !== null) {
                 dbversion = parseInt(dbversion, 10);
@@ -64,6 +66,26 @@ define(['mt', 'tu'], function (MeasureTime, TimeUtils) {
     };
     MeasureStorage.prototype.get = function (key) {
         return store.getItem(key);
+    };
+    MeasureStorage.prototype.getOrSet = function (key, defaultValue) {
+        var result = self.get(key);
+        if (!result || result === null) {
+            self.set(key, defaultValue);
+            result = defaultValue;
+        }
+        return result;
+    };
+    MeasureStorage.prototype.getDailyWorkload = function (month) {
+        return parseInt(self.getOrSet(month + 'dwl', 510), 10);
+    };
+    MeasureStorage.prototype.setDailyWorkload = function (month, value) {
+        self.set(month + 'dwl', value);
+    };
+    MeasureStorage.prototype.getMonthlyAdjustment = function (month) {
+        return parseInt(self.getOrSet(month + 'mwa', 0), 10);
+    };
+    MeasureStorage.prototype.setMonthlyAdjustment = function (month, value) {
+        self.set(month + 'mwa', value);
     };
     MeasureStorage.prototype.getTimeOfDay = function (day) {
         var dayValue = store.getItem(day);

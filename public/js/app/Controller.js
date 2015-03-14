@@ -1,6 +1,7 @@
 "use strict";
 define(function () {
-    var Controller = function () {
+    var Controller = function (modelHandler) {
+        this.modelHandler = modelHandler;
         return this;
     };
     Controller.prototype.setView = function (viewObj) {

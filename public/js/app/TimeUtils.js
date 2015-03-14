@@ -7,6 +7,12 @@ define(function () {
                 day = TimeUtils.reduce(dayString.substring(6, 8));
             return new Date(year, month, day, 0, 0, 0, 0).getTime();
         },
+        asMinutes: function (hoursAndMinutes) {
+            if (hoursAndMinutes.match(/^-?\d{1,2}:\d{2}$/) ) {
+                var splittedHM = hoursAndMinutes.split(':');
+                return parseInt(splittedHM[0], 10) * 60 + parseInt(splittedHM[1], 10);
+            }
+        },
         asHoursAndMinutes: function (minutes) {
             var signum = minutes < 0 ? -1 : 1,
                 absMinutes = Math.abs(minutes),
@@ -18,6 +24,10 @@ define(function () {
             return expDate.getFullYear()
                 + TimeUtils.extend(expDate.getMonth() + 1)
                 + TimeUtils.extend(expDate.getDate());
+        },
+        asMonth: function (timeInMillis) {
+            var expDate = new Date(timeInMillis);
+            return expDate.getFullYear() + TimeUtils.extend(expDate.getMonth() + 1);
         },
         siblingDay: function (day, direction) {
             var mSign = 1;

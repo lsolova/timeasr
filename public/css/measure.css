@@ -41,7 +41,7 @@ div#counter div#leaveValue {
 }
 
 div#counter div#leaveValue:before {
-    font-family: TimeasrIcons;
+    font-family: TimeasrIcons, sans-serif;
     padding-right: .5em;
 }
 
@@ -53,12 +53,25 @@ div#counter div#leaveValue.t-bef:before {
     content: 't';
 }
 
-div#summaryToolbar {
+div#summaryToolbar, div#topTitleBar {
     background-color: #1C3A92;
     color: #fff;
     height: 2em;
     padding-top: 0.5em;
+}
+
+div#summaryToolbar {
     text-align: center;
+}
+
+div#topTitleBar {
+    margin-bottom: 1em;
+}
+
+div#topTitleBar h1 {
+    font-size: 1em;
+    margin: 0;
+    padding: 0 0.5em;
 }
 
 div#summaryToolbar #month {
@@ -112,7 +125,7 @@ div#daySelector .actl {
 
 div#copyright:after {
     content: 's';
-    font-family: TimeasrIcons;
+    font-family: TimeasrIcons, sans-serif;
     padding: 0 5px;
 }
 
@@ -122,4 +135,30 @@ div#copyright {
     left: 0;
     padding: 5px;
     position: absolute;
+}
+div.menuBar {
+    cursor: pointer;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+div.menuBar span {
+    color: #fff;
+    display: inline-block;
+    font-family: TimeasrIcons, sans-serif;
+    font-size: 1.5em;
+    height: 2em;
+    padding-top: .5em;
+    text-align: center;
+    width: 1.5em;
+}
+
+div.settingsrow {
+    font-size: .75em;
+    padding: .5em 1em;
+}
+
+div.settingsrow label, div#license span {
+    display: block;
 }

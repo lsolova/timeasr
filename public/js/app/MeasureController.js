@@ -1,14 +1,16 @@
 ﻿"use strict";
 define(['ms', 'tu', 'ct', 'cm'], function (MeasureStorage, TimeUtils, Controller, common) {
     var measureStorage = new MeasureStorage(),
-        actualDay = measureStorage.getTimeOfDay(TimeUtils.asDay(Date.now())),
+        now = Date.now(),
+        actualDay = measureStorage.getTimeOfDay(TimeUtils.asDay(now)),
         measuring = false,
         statChangeTimeoutId,
         updateOnMeasureIntervalId,
         STAT = { AVG: {name: 'average'}, DIFF: {name: 'difference'}},
         statDefaultState = STAT.DIFF,
         statState = statDefaultState,
-        expectedDayTime = 510,
+        expectedDayTime = measureStorage.getDailyWorkload(TimeUtils.asMonth(now)),
+        monthlyAdjustment = measureStorage.getMonthlyAdjustment(TimeUtils.asMonth(now)),
         self
         ;
 
@@ -113,11 +115,11 @@ define(['ms', 'tu', 'ct', 'cm'], function (MeasureStorage, TimeUtils, Controller
                 },
                 {
                     type: 'l',
-                    value: calculateEstimatedLeavingTime(actualDay.getMinutes() + currentMeasuringMinutes, actualDiff.statValue) % 1440 || 'now'
+                    value: calculateEstimatedLeavingTime(actualDay.getMinutes() + currentMeasuringMinutes, actualDiff.statValue + monthlyAdjustment) % 1440 || 'now'
                 }
             ],
             measuringMinutes: currentMeasuringMinutes,
-            avgTime: statInfo.statValue,
+            avgTime: statInfo.statValue + monthlyAdjustment,
             dayCount: statInfo.statCount,
             timeType: statState
         };

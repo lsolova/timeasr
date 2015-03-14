@@ -9,6 +9,8 @@ require.config({
         mt: '../app/MeasureTime',
         ms: '../app/MeasureStorage',
         mv: '../app/MeasureView',
+        sc: '../app/SettingsController',
+        sv: '../app/SettingsView',
         tu: '../app/TimeUtils',
         du: '../app/DomUtils',
         vw: '../app/View'
