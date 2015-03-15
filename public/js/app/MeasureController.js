@@ -168,6 +168,9 @@ define(['ms', 'tu', 'ct', 'cm'], function (MeasureStorage, TimeUtils, Controller
 
     MeasureController.prototype.changeVisibility = function(hidden) {
         if ((!hidden.source || hidden.source === 'measure') && !hidden.change) {
+            // Temporary update - later removeable
+            expectedDayTime = measureStorage.getDailyWorkload(TimeUtils.asMonth(now));
+            monthlyAdjustment = measureStorage.getMonthlyAdjustment(TimeUtils.asMonth(now));
             self.updateView(createViewModel());
         }
         setUpdateInterval(!hidden.change);
