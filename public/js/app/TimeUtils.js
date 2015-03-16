@@ -9,8 +9,15 @@ define(function () {
         },
         asMinutes: function (hoursAndMinutes) {
             if (hoursAndMinutes.match(/^-?\d{1,2}:\d{2}$/) ) {
-                var splittedHM = hoursAndMinutes.split(':');
-                return parseInt(splittedHM[0], 10) * 60 + parseInt(splittedHM[1], 10);
+                var isNegative =  hoursAndMinutes.lastIndexOf('-') === 0,
+                    sign = 1,
+                    splittedHM;
+                if (isNegative) {
+                    hoursAndMinutes = hoursAndMinutes.substring(1);
+                    sign = -1;
+                }
+                splittedHM = hoursAndMinutes.split(':');
+                return  (parseInt(splittedHM[0], 10) * 60 + parseInt(splittedHM[1], 10)) * sign;
             }
         },
         asHoursAndMinutes: function (minutes) {
