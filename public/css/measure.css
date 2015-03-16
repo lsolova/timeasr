@@ -12,6 +12,10 @@ body {
     width: 100%;
 }
 
+div.view {
+    display: none;
+}
+
 div#counter {
     position: relative;
     text-align: center;
