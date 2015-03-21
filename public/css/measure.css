@@ -3,6 +3,11 @@
     src: url('TimeasrIcons.woff');
 }
 
+@font-face {
+    font-family: SolovaLogo;
+    src: url('SolovaLogo.woff');
+}
+
 body {
     font-family: Verdana, Arial, sans-serif;
     height: 100vh;
@@ -129,7 +134,7 @@ div#daySelector .actl {
 
 div#copyright:after {
     content: 's';
-    font-family: TimeasrIcons, sans-serif;
+    font-family: SolovaLogo, sans-serif;
     padding: 0 5px;
 }
 
@@ -165,4 +170,5 @@ div.settingsrow {
 
 div.settingsrow label, div#license span {
     display: block;
+    margin-top: 15px;
 }
