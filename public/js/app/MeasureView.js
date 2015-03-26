@@ -42,7 +42,7 @@ define(['tu', 'du', 'vw', 'cm'], function (TimeUtils, DomUtils, View, common) {
         });
     };
 
-    var changeLeave = function () {
+    var changeLeave = function (isHidden) {
         var cLeave;
         if (leaveData.length <= currentLeaveCount) {
             currentLeaveCount = 0;
@@ -50,17 +50,22 @@ define(['tu', 'du', 'vw', 'cm'], function (TimeUtils, DomUtils, View, common) {
         if (leaveChangeTimeoutId) {
             window.clearTimeout(leaveChangeTimeoutId);
         }
+
+        DomUtils.removeClasses(leaveE, ['l-bef', 't-bef', 'hidden']);
         cLeave = leaveData[currentLeaveCount];
-        DomUtils.removeClasses(leaveE, ['l-bef', 't-bef']);
         leaveE.classList.add(cLeave.type + '-bef');
-        if (typeof cLeave.value === 'number') {
-            DomUtils.clearAndFill(leaveE, TimeUtils.asHoursAndMinutes(cLeave.value));
-        }else{
-            DomUtils.clearAndFill(leaveE, cLeave.value);
-        }
-        currentLeaveCount++;
-        if (!document.hidden) {
-            leaveChangeTimeoutId = window.setTimeout(changeLeave, 5000);
+        if (isHidden) {
+            leaveE.classList.add('hidden');
+        } else {
+            if (typeof cLeave.value === 'number') {
+                DomUtils.clearAndFill(leaveE, TimeUtils.asHoursAndMinutes(cLeave.value));
+            }else{
+                DomUtils.clearAndFill(leaveE, cLeave.value);
+            }
+            currentLeaveCount++;
+            if (!document.hidden) {
+                leaveChangeTimeoutId = window.setTimeout(changeLeave, 5000);
+            }
         }
     };
 
@@ -86,7 +91,7 @@ define(['tu', 'du', 'vw', 'cm'], function (TimeUtils, DomUtils, View, common) {
         DomUtils.clearAndFill(actualDayE, data.days.today);
         DomUtils.clearAndFill(nextDayE, data.days.tomorrow);
         leaveData = data.leave;
-        changeLeave();
+        changeLeave(!this.controller.isMeasuringInProgress());
         DomUtils.clearAndFill(counterE, TimeUtils.asHoursAndMinutes(data.measureTime.getMinutes() + data.measuringMinutes));
         counterE.setAttribute('class', this.controller.isMeasuringInProgress() ? 'running' : 'paused');
     };

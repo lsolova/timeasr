@@ -29,6 +29,7 @@ div#counter {
 
 div#counter .running {
     color: #586BA5;
+    transition: color 5s ease;
 }
 
 div#counter .paused {
@@ -47,6 +48,8 @@ div#counter div#counterValue {
 
 div#counter div#leaveValue {
     color: lightgrey;
+    opacity: 1;
+    transition: opacity 5s ease;
 }
 
 div#counter div#leaveValue:before {
@@ -60,6 +63,11 @@ div#counter div#leaveValue.l-bef:before {
 
 div#counter div#leaveValue.t-bef:before {
     content: 't';
+}
+
+div#counter div#leaveValue.hidden {
+    opacity: 0;
+    transition: none;
 }
 
 div#summaryToolbar, div#topTitleBar {
