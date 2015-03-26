@@ -26,9 +26,7 @@ define(['ms', 'tu', 'ct', 'cm'], function (MeasureStorage, TimeUtils, Controller
                 dayCount++;
             }
         }
-        return dayCount === 0
-            ? { statValue: 0, statCount: 0 }
-            : { statValue: postCalculation(statTime, dayCount), statCount: dayCount };
+        return { statValue: postCalculation(statTime, dayCount), statCount: dayCount };
     };
 
     var calculateMonthlyAverageForDay = function (day) {
@@ -37,7 +35,7 @@ define(['ms', 'tu', 'ct', 'cm'], function (MeasureStorage, TimeUtils, Controller
                 return measuredTime.getMinutes();
             }
             , function(statTime, dayCount) {
-                return Math.floor(statTime / dayCount);
+                return dayCount === 0 ? 0 : Math.floor((statTime + monthlyAdjustment) / dayCount);
             }
         );
     };
@@ -48,7 +46,7 @@ define(['ms', 'tu', 'ct', 'cm'], function (MeasureStorage, TimeUtils, Controller
                 return measuredTime.getMinutes() - expectedDayTime;
             }
             , function(statTime) {
-                return statTime;
+                return statTime + monthlyAdjustment;
             }
         );
     };
@@ -119,7 +117,7 @@ define(['ms', 'tu', 'ct', 'cm'], function (MeasureStorage, TimeUtils, Controller
                 }
             ],
             measuringMinutes: currentMeasuringMinutes,
-            avgTime: statInfo.statValue + monthlyAdjustment,
+            avgTime: statInfo.statValue,
             dayCount: statInfo.statCount,
             timeType: statState
         };
