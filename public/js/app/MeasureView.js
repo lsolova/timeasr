@@ -10,6 +10,7 @@ define(['tu', 'du', 'vw', 'cm'], function (TimeUtils, DomUtils, View, common) {
         counterContainerE,
         counterE,
         leaveE,
+        notificationE,
         leaveData,
         leaveChangeTimeoutId,
         currentLeaveCount = 0;
@@ -24,6 +25,7 @@ define(['tu', 'du', 'vw', 'cm'], function (TimeUtils, DomUtils, View, common) {
         counterContainerE = document.getElementById('counter');
         counterE = document.getElementById('counterValue');
         leaveE = document.getElementById('leaveValue');
+        notificationE = document.getElementById('notification');
 
         prevDayE.addEventListener('click', function () {
             common.eventBus.publish('click:day', {change: -1});
@@ -40,6 +42,14 @@ define(['tu', 'du', 'vw', 'cm'], function (TimeUtils, DomUtils, View, common) {
         document.addEventListener('visibilitychange', function () {
             common.eventBus.publish('change:visibility', {change: document.hidden});
         });
+    };
+
+    var showNotification = function (content) {
+        DomUtils.clearAndFill(notificationE, content);
+        notificationE.classList.add('show');
+        window.setTimeout(function () {
+            notificationE.classList.remove('show');
+        }, 5000);
     };
 
     var changeLeave = function (isHidden) {
@@ -94,6 +104,12 @@ define(['tu', 'du', 'vw', 'cm'], function (TimeUtils, DomUtils, View, common) {
         changeLeave(!this.controller.isMeasuringInProgress());
         DomUtils.clearAndFill(counterE, TimeUtils.asHoursAndMinutes(data.measureTime.getMinutes() + data.measuringMinutes));
         counterE.setAttribute('class', this.controller.isMeasuringInProgress() ? 'running' : 'paused');
+        if (data.nowStarted) {
+            showNotification('Started');
+        } else
+        if (data.nowStarted === false ){
+            showNotification('Paused');
+        }
     };
 
     return MeasureView;

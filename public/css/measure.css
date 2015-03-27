@@ -29,7 +29,6 @@ div#counter {
 
 div#counter .running {
     color: #586BA5;
-    transition: color 5s ease;
 }
 
 div#counter .paused {
@@ -179,4 +178,29 @@ div.settingsrow {
 div.settingsrow label, div#license span {
     display: block;
     margin-top: 15px;
+}
+
+div#notification {
+    background-color: yellowGreen;
+    position: absolute;
+    height: 3em;
+    left: 20vw;
+    width: 60vw;
+
+    top: -3em;
+    opacity: 0;
+    transition: opacity 2s ease-out, top 1s ease 2s;
+
+    text-align: center;
+    vertical-align: middle;
+    font-size: 2.5em;
+    font-weight: bold;
+    color: white;
+    line-height: 2.75em;
+}
+
+div#notification.show {
+    top: 1.5em;
+    opacity: 1;
+    transition: opacity 500ms, top 1s ease;
 }

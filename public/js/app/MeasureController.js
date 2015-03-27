@@ -178,7 +178,8 @@ define(['ms', 'tu', 'ct', 'cm'], function (MeasureStorage, TimeUtils, Controller
         if (!measuring && TimeUtils.asDay(Date.now()) !== actualDay.getFullDay()) {
             return; // Do nothing
         }
-        var startedOn = measureStorage.get('startOn');
+        var startedOn = measureStorage.get('startOn'),
+            viewModel;
         if (!measuring) {
             startedOn = Date.now();
             measureStorage.set('startOn', startedOn);
@@ -192,7 +193,9 @@ define(['ms', 'tu', 'ct', 'cm'], function (MeasureStorage, TimeUtils, Controller
             measuring = false;
             setUpdateInterval(false);
         }
-        self.updateView(createViewModel());
+        viewModel = createViewModel();
+        viewModel.nowStarted = measuring;
+        self.updateView(viewModel);
     };
 
     MeasureController.prototype.isMeasuringInProgress = function () {
