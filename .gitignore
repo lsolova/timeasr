@@ -1,3 +1,4 @@
 .idea
 *.iml
+gitid.txt
 node_modules
