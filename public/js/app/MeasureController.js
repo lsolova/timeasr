@@ -10,9 +10,10 @@ define(['ms', 'tu', 'ct', 'cm'], function (MeasureStorage, TimeUtils, Controller
         statDefaultState = STAT.DIFF,
         statState = statDefaultState,
         expectedDayTime = measureStorage.getDailyWorkload(TimeUtils.asMonth(now)),
-        monthlyAdjustment = measureStorage.getMonthlyAdjustment(TimeUtils.asMonth(now)),
-        self
-        ;
+        monthlyAdjustment = TimeUtils.calculateMonthlyAdjustmentFromDetails(
+                measureStorage.getMonthlyAdjustment(TimeUtils.asMonth(now)
+            )),
+        self;
 
     var calculateStatistics = function(day, loopCalculation, postCalculation) {
         var dayCount = 0,
@@ -168,7 +169,9 @@ define(['ms', 'tu', 'ct', 'cm'], function (MeasureStorage, TimeUtils, Controller
         if ((!hidden.source || hidden.source === 'measure') && !hidden.change) {
             // Temporary update - later removeable
             expectedDayTime = measureStorage.getDailyWorkload(TimeUtils.asMonth(now));
-            monthlyAdjustment = measureStorage.getMonthlyAdjustment(TimeUtils.asMonth(now));
+            monthlyAdjustment = TimeUtils.calculateMonthlyAdjustmentFromDetails(
+                measureStorage.getMonthlyAdjustment(TimeUtils.asMonth(now))
+            );
             self.updateView(createViewModel());
         }
         setUpdateInterval(!hidden.change);

@@ -1,6 +1,7 @@
 ﻿"use strict";
 define(function () {
-    var TimeUtils = {
+    var timeregex = /^[+]?([-]?\d{1,2}:\d{2}) .*$/,
+        TimeUtils = {
         asTimeInMillis: function (dayString) {
             var year = dayString.substring(0, 4),
                 month = TimeUtils.reduce(dayString.substring(4, 6)) - 1,
@@ -58,6 +59,24 @@ define(function () {
                 return timeSliceString.substring(1);
             }
             return timeSliceString;
+        },
+        calculateMonthlyAdjustmentFromDetails: function (valueList) {
+            var splitted,
+                splitTrimmed,
+                summarizedValue = 0,
+                splitHoursAndMinutes,
+                i;
+            if (valueList) {
+                splitted = valueList.split('\n');
+                for (i = 0; i < splitted.length; i++) {
+                    splitTrimmed = splitted[i].trim();
+                    if (splitTrimmed.length > 0 && timeregex.test(splitTrimmed)) {
+                        splitHoursAndMinutes = timeregex.exec(splitTrimmed)[1];
+                        summarizedValue += TimeUtils.asMinutes(splitHoursAndMinutes);
+                    }
+                }
+            }
+            return summarizedValue;
         }
     };
     return TimeUtils;

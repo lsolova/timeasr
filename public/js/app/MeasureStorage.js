@@ -82,7 +82,7 @@ define(['mt', 'tu'], function (MeasureTime, TimeUtils) {
         self.set(month + 'dwl', value);
     };
     MeasureStorage.prototype.getMonthlyAdjustment = function (month) {
-        return parseInt(self.getOrSet(month + 'mwa', 0), 10);
+        return self.getOrSet(month + 'mwa', TimeUtils.asHoursAndMinutes(0));
     };
     MeasureStorage.prototype.setMonthlyAdjustment = function (month, value) {
         self.set(month + 'mwa', value);

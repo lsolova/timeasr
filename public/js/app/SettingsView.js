@@ -2,17 +2,19 @@
 define(['tu', 'du', 'vw', 'cm'], function (TimeUtils, DomUtils, View, common) {
 
     var dailyWlInputE,
-        montlyWlAdjInputE,
+        monthlyWlAdjInputE,
+        monthlyWlAdjSumE,
         monthLabelE;
     var bindViewElements = function () {
         dailyWlInputE = document.getElementById('dailywl');
-        montlyWlAdjInputE = document.getElementById('monthlywladj');
+        monthlyWlAdjInputE = document.getElementById('monthlywladj');
+        monthlyWlAdjSumE = document.getElementById('monthlywladjsum');
         monthLabelE = document.getElementById('dwlForMonth');
         dailyWlInputE.addEventListener('change', function () {
             common.eventBus.publish('change:dailywl', {change: dailyWlInputE.value});
         });
-        montlyWlAdjInputE.addEventListener('change', function () {
-            common.eventBus.publish('change:montlywladj', {change: montlyWlAdjInputE.value});
+        monthlyWlAdjInputE.addEventListener('change', function () {
+            common.eventBus.publish('change:montlywladj', {change: monthlyWlAdjInputE.value});
         });
     };
 
@@ -25,7 +27,8 @@ define(['tu', 'du', 'vw', 'cm'], function (TimeUtils, DomUtils, View, common) {
     SettingsView.prototype.update = function (data) {
         DomUtils.clearAndFill(monthLabelE, data.month);
         dailyWlInputE.value = TimeUtils.asHoursAndMinutes(data.dailyWorkload);
-        montlyWlAdjInputE.value = TimeUtils.asHoursAndMinutes(data.monthlyAdjustment);
+        monthlyWlAdjInputE.value = data.monthlyAdjustmentDetails;
+        DomUtils.clearAndFill(monthlyWlAdjSumE, TimeUtils.asHoursAndMinutes(data.monthlyAdjustment));
     };
 
     return SettingsView;

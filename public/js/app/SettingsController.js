@@ -3,14 +3,15 @@ define(['tu', 'ct', 'cm'], function (TimeUtils,Controller, common) {
     var currentMonth,
         dailyWorkload,
         monthlyAdjustment,
-
+        monthlyAdjustmentDetails,
         self;
 
     function createViewModel() {
         return {
             month: currentMonth.substr(0,4)+'/'+currentMonth.substr(4),
             dailyWorkload: dailyWorkload,
-            monthlyAdjustment: monthlyAdjustment
+            monthlyAdjustment: monthlyAdjustment,
+            monthlyAdjustmentDetails: monthlyAdjustmentDetails
         }
     }
 
@@ -19,7 +20,8 @@ define(['tu', 'ct', 'cm'], function (TimeUtils,Controller, common) {
         self = this;
         currentMonth = TimeUtils.asMonth(Date.now());
         dailyWorkload = modelHandler.getDailyWorkload(currentMonth);
-        monthlyAdjustment = modelHandler.getMonthlyAdjustment(currentMonth);
+        monthlyAdjustmentDetails = modelHandler.getMonthlyAdjustment(currentMonth);
+        monthlyAdjustment = TimeUtils.calculateMonthlyAdjustmentFromDetails(monthlyAdjustmentDetails);
         common.eventBus.subscribe('change:dailywl', this.setDailyWorkload);
         common.eventBus.subscribe('change:montlywladj', this.setMonthlyAdjustment);
         common.eventBus.subscribe('change:visibility', this.changeVisibility);
@@ -34,8 +36,9 @@ define(['tu', 'ct', 'cm'], function (TimeUtils,Controller, common) {
         self.updateView(createViewModel());
     };
     SettingsController.prototype.setMonthlyAdjustment = function (changeObj) {
-        monthlyAdjustment = TimeUtils.asMinutes(changeObj.change);
-        self.modelHandler.setMonthlyAdjustment(currentMonth, monthlyAdjustment);
+        monthlyAdjustmentDetails = changeObj.change;
+        monthlyAdjustment = TimeUtils.calculateMonthlyAdjustmentFromDetails(monthlyAdjustmentDetails);
+        self.modelHandler.setMonthlyAdjustment(currentMonth, monthlyAdjustmentDetails);
         self.updateView(createViewModel());
     };
     SettingsController.prototype.changeVisibility = function(hidden) {
