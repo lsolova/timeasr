@@ -113,7 +113,7 @@ define(['ms', 'tu', 'ct', 'cm'], function (MeasureStorage, TimeUtils, Controller
                 },
                 {
                     type: 'l',
-                    value: calculateEstimatedLeavingTime(actualDay.getMinutes() + currentMeasuringMinutes, actualDiff.statValue + monthlyAdjustment) % 1440 || 'now'
+                    value: calculateEstimatedLeavingTime(actualDay.getMinutes() + currentMeasuringMinutes, actualDiff.statValue) % 1440 || 'now'
                 }
             ],
             measuringMinutes: currentMeasuringMinutes,
