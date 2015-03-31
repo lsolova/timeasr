@@ -1,4 +1,7 @@
-.idea
 *.iml
+.idea
+.openshift/cron
+.openshift/markers
+.openshift/README.md
 gitid.txt
 node_modules
