@@ -92,10 +92,9 @@ define(['tu', 'du', 'vw', 'cm'], function (TimeUtils, DomUtils, View, common) {
         DomUtils.clearAndFill(monthE, data.measureTime.getYearAndMonth());
         DomUtils.clearAndFill(statTimeE, (isTimeTypeDiff && isAvgTimeNonNegativ) ? "+" + statTimeValue : statTimeValue);
         DomUtils.clearAndFill(dayCountE, data.dayCount);
+        DomUtils.removeClasses(dayCountE, ['less', 'more']);
         if (isTimeTypeDiff) {
             dayCountE.classList.add(isAvgTimeNonNegativ ? 'more' : 'less');
-        }else{
-            DomUtils.removeClasses(dayCountE, ['less', 'more']);
         }
         DomUtils.clearAndFill(prevDayE, data.days.yesterday);
         DomUtils.clearAndFill(actualDayE, data.days.today);
