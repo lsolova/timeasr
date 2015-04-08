@@ -49,7 +49,7 @@ define(['tu', 'du', 'vw', 'cm'], function (TimeUtils, DomUtils, View, common) {
         notificationE.classList.add('show');
         window.setTimeout(function () {
             notificationE.classList.remove('show');
-        }, 5000);
+        }, 2000);
     };
 
     var changeLeave = function (isHidden) {

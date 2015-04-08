@@ -184,12 +184,12 @@ div#notification {
     background-color: yellowGreen;
     position: absolute;
     height: 3em;
-    left: 20vw;
-    width: 60vw;
+    left: 2vw;
+    width: 96vw;
 
     top: -3em;
     opacity: 0;
-    transition: opacity 2s ease-out, top 1s ease 2s;
+    transition: opacity 500ms ease-out, top 100ms ease 500ms;
 
     text-align: center;
     vertical-align: middle;
@@ -200,7 +200,7 @@ div#notification {
 }
 
 div#notification.show {
-    top: 1.5em;
+    top: 0;
     opacity: 1;
-    transition: opacity 500ms, top 1s ease;
+    transition: opacity 250ms, top 500ms ease;
 }
