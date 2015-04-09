@@ -1,3 +1,4 @@
+*.appcache
 *.iml
 .idea
 .openshift/cron

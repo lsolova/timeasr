@@ -14,6 +14,7 @@
     "maxparams": 3,
     "newcap": true,
     "noarg": true,
+    "node": true,
     "strict": true,
     "undef": true,
     "unused": true,
