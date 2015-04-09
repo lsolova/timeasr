@@ -5,6 +5,10 @@ define(['tu', 'du', 'vw', 'cm'], function (TimeUtils, DomUtils, View, common) {
         monthlyWlAdjInputE,
         monthlyWlAdjSumE,
         monthLabelE;
+
+    var adjustTextAreaHeight = function () {
+        monthlyWlAdjInputE.style.height = monthlyWlAdjInputE.scrollHeight + 'px';
+    };
     var bindViewElements = function () {
         dailyWlInputE = document.getElementById('dailywl');
         monthlyWlAdjInputE = document.getElementById('monthlywladj');
@@ -12,6 +16,11 @@ define(['tu', 'du', 'vw', 'cm'], function (TimeUtils, DomUtils, View, common) {
         monthLabelE = document.getElementById('dwlForMonth');
         dailyWlInputE.addEventListener('change', function () {
             common.eventBus.publish('change:dailywl', {change: dailyWlInputE.value});
+        });
+        monthlyWlAdjInputE.addEventListener('keypress', adjustTextAreaHeight);
+        monthlyWlAdjInputE.addEventListener('load', adjustTextAreaHeight);
+        monthlyWlAdjInputE.addEventListener('focus', function () {
+           monthlyWlAdjInputE.setSelectionRange(0,0);
         });
         monthlyWlAdjInputE.addEventListener('change', function () {
             common.eventBus.publish('change:montlywladj', {change: monthlyWlAdjInputE.value});

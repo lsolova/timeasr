@@ -175,6 +175,13 @@ div.settingsrow {
     padding: .5em 1em;
 }
 
+div.settingsrow #monthlywladj {
+    overflow-y: hidden;
+    margin: 0;
+    padding: 0;
+    width: 90vw;
+}
+
 div.settingsrow label, div#license span {
     display: block;
     margin-top: 15px;
