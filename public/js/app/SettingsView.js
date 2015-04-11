@@ -18,7 +18,6 @@ define(['tu', 'du', 'vw', 'cm'], function (TimeUtils, DomUtils, View, common) {
             common.eventBus.publish('change:dailywl', {change: dailyWlInputE.value});
         });
         monthlyWlAdjInputE.addEventListener('keypress', adjustTextAreaHeight);
-        monthlyWlAdjInputE.addEventListener('load', adjustTextAreaHeight);
         monthlyWlAdjInputE.addEventListener('focus', function () {
            monthlyWlAdjInputE.setSelectionRange(0,0);
         });
@@ -37,6 +36,7 @@ define(['tu', 'du', 'vw', 'cm'], function (TimeUtils, DomUtils, View, common) {
         DomUtils.clearAndFill(monthLabelE, data.month);
         dailyWlInputE.value = TimeUtils.asHoursAndMinutes(data.dailyWorkload);
         monthlyWlAdjInputE.value = data.monthlyAdjustmentDetails;
+        adjustTextAreaHeight();
         DomUtils.clearAndFill(monthlyWlAdjSumE, TimeUtils.asHoursAndMinutes(data.monthlyAdjustment));
     };
 
