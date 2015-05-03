@@ -2,7 +2,6 @@
 define(['ms', 'tu', 'ct', 'cm'], function (MeasureStorage, TimeUtils, Controller, common) {
     var measureStorage = new MeasureStorage(),
         now = Date.now(),
-        actualDay = measureStorage.getTimeOfDay(TimeUtils.asDay(now)),
         measuring = false,
         statChangeTimeoutId,
         updateOnMeasureIntervalId,
@@ -87,6 +86,7 @@ define(['ms', 'tu', 'ct', 'cm'], function (MeasureStorage, TimeUtils, Controller
 
     function createViewModel() {
         var statInfo,
+            actualDay = measureStorage.getActualDay(),
             actualDiff = calculateMonthlyDifferenceForDay(actualDay),
             currentMeasuringMinutes = getCurrentMeasuringMinutes(measureStorage.get('startOn')),
             fullActualDay = actualDay.getFullDay();
@@ -144,7 +144,7 @@ define(['ms', 'tu', 'ct', 'cm'], function (MeasureStorage, TimeUtils, Controller
         if (measuring) {
             return;
         }
-        actualDay = measureStorage.getTimeOfDay(TimeUtils.siblingDay(actualDay.getFullDay(), sign.change));
+        measureStorage.setActualDay(sign);
         self.updateView(createViewModel());
     };
 
@@ -178,7 +178,7 @@ define(['ms', 'tu', 'ct', 'cm'], function (MeasureStorage, TimeUtils, Controller
     };
 
     MeasureController.prototype.startStopCounter = function () {
-        if (!measuring && TimeUtils.asDay(Date.now()) !== actualDay.getFullDay()) {
+        if (!measuring && TimeUtils.asDay(Date.now()) !== measureStorage.getActualDay().getFullDay()) {
             return; // Do nothing
         }
         var startedOn = measureStorage.get('startOn'),
@@ -190,8 +190,7 @@ define(['ms', 'tu', 'ct', 'cm'], function (MeasureStorage, TimeUtils, Controller
             setUpdateInterval(true);
         }
         else {
-            actualDay.increment(getCurrentMeasuringMinutes(startedOn));
-            measureStorage.set(actualDay.getFullDay(), actualDay.getMinutes());
+            measureStorage.incrementActualDay(getCurrentMeasuringMinutes(startedOn));
             measureStorage.remove('startOn');
             measuring = false;
             setUpdateInterval(false);

@@ -89,7 +89,7 @@ define(['tu', 'du', 'vw', 'cm'], function (TimeUtils, DomUtils, View, common) {
         var statTimeValue = TimeUtils.asHoursAndMinutes(data.avgTime),
             isAvgTimeNonNegativ = data.avgTime >= 0,
             isTimeTypeDiff = data.timeType === this.controller.STAT.DIFF;
-        DomUtils.clearAndFill(monthE, data.measureTime.getYearAndMonth());
+        DomUtils.clearAndFill(monthE, data.measureTime.getYearAndMonth('/'));
         DomUtils.clearAndFill(statTimeE, (isTimeTypeDiff && isAvgTimeNonNegativ) ? "+" + statTimeValue : statTimeValue);
         DomUtils.clearAndFill(dayCountE, data.dayCount);
         DomUtils.removeClasses(dayCountE, ['less', 'more']);

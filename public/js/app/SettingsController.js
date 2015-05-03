@@ -1,12 +1,23 @@
 "use strict";
-define(['tu', 'ct', 'cm'], function (TimeUtils,Controller, common) {
+define(['tu', 'ct', 'cm'], function (TimeUtils, Controller, common) {
     var currentMonth,
         dailyWorkload,
         monthlyAdjustment,
         monthlyAdjustmentDetails,
         self;
 
+    function loadData(actualMonth) {
+        dailyWorkload = self.modelHandler.getDailyWorkload(actualMonth);
+        monthlyAdjustmentDetails = self.modelHandler.getMonthlyAdjustment(actualMonth);
+        monthlyAdjustment = TimeUtils.calculateMonthlyAdjustmentFromDetails(monthlyAdjustmentDetails);
+    }
+
     function createViewModel() {
+        var actualMonth = self.modelHandler.getActualDay().getYearAndMonth('');
+        if (currentMonth !== actualMonth) {
+            currentMonth = actualMonth;
+            loadData(currentMonth);
+        }
         return {
             month: currentMonth.substr(0,4)+'/'+currentMonth.substr(4),
             dailyWorkload: dailyWorkload,
@@ -19,9 +30,7 @@ define(['tu', 'ct', 'cm'], function (TimeUtils,Controller, common) {
         Controller.call(this, modelHandler);
         self = this;
         currentMonth = TimeUtils.asMonth(Date.now());
-        dailyWorkload = modelHandler.getDailyWorkload(currentMonth);
-        monthlyAdjustmentDetails = modelHandler.getMonthlyAdjustment(currentMonth);
-        monthlyAdjustment = TimeUtils.calculateMonthlyAdjustmentFromDetails(monthlyAdjustmentDetails);
+        loadData(currentMonth);
         common.eventBus.subscribe('change:dailywl', this.setDailyWorkload);
         common.eventBus.subscribe('change:montlywladj', this.setMonthlyAdjustment);
         common.eventBus.subscribe('change:visibility', this.changeVisibility);

@@ -1,6 +1,7 @@
 ﻿"use strict";
 define(['mt', 'tu'], function (MeasureTime, TimeUtils) {
     var store = window.localStorage,
+        actualDay,
         self,
         cleanUp = function () {
             var firstRemoveTime = TimeUtils.asTimeInMillis(store.getItem('firstday')),
@@ -53,6 +54,7 @@ define(['mt', 'tu'], function (MeasureTime, TimeUtils) {
                 upgrade(dbversion, requiredDbVersion);
                 this.set('dbversion', requiredDbVersion);
             }
+            actualDay = this.getTimeOfDay(TimeUtils.asDay(Date.now()));
         }
         ;
     MeasureStorage.prototype.add = function (measureTime) {
@@ -74,6 +76,16 @@ define(['mt', 'tu'], function (MeasureTime, TimeUtils) {
             result = defaultValue;
         }
         return result;
+    };
+    MeasureStorage.prototype.getActualDay = function () {
+        return actualDay;
+    };
+    MeasureStorage.prototype.incrementActualDay = function (currentMeasuringMinutes) {
+        actualDay.increment(currentMeasuringMinutes);
+        self.set(actualDay.getFullDay(), actualDay.getMinutes());
+    };
+    MeasureStorage.prototype.setActualDay = function (sign) {
+        actualDay = self.getTimeOfDay(TimeUtils.siblingDay(actualDay.getFullDay(), sign.change));
     };
     MeasureStorage.prototype.getDailyWorkload = function (month) {
         return parseInt(self.getOrSet(month + 'dwl', 510), 10);

@@ -10,8 +10,8 @@ define(['tu'], function (TimeUtils) {
                 return parseInt(TimeUtils.reduce(this.day.substring(6,8)), 10);
             };
 
-            MeasureTime.prototype.getYearAndMonth = function () {
-                return this.day.substring(0, 4) + "/" + this.day.substring(4, 6);
+            MeasureTime.prototype.getYearAndMonth = function (separator) {
+                return this.day.substring(0, 4) + separator + this.day.substring(4, 6);
             };
 
             MeasureTime.prototype.getFullDay = function () {
