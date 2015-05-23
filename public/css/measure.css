@@ -81,7 +81,11 @@ div#summaryToolbar {
 }
 
 div#topTitleBar {
+    left: 0;
     margin-bottom: 1em;
+    position: fixed;
+    top: 0;
+    width: 100vw;
 }
 
 div#topTitleBar h1 {
@@ -114,7 +118,7 @@ div#summaryToolbar #daycount.less {
 }
 
 div#topNavBar {
-    position:absolute;
+    position:fixed;
     top:0;
     left:0;
     width:100%;
@@ -150,11 +154,11 @@ div#copyright {
     font-size: .75em;
     left: 0;
     padding: 5px;
-    position: absolute;
+    position: fixed;
 }
 div.menuBar {
     cursor: pointer;
-    position: absolute;
+    position: fixed;
     right: 0;
     top: 0;
 }
@@ -168,6 +172,10 @@ div.menuBar span {
     padding-top: .5em;
     text-align: center;
     width: 1.5em;
+}
+
+div#settings {
+    padding-bottom:2em;
 }
 
 div.settingsrow {
