@@ -4,5 +4,6 @@
 .openshift/cron
 .openshift/markers
 .openshift/README.md
+.vscode
 gitid.txt
 node_modules
