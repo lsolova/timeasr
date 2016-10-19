@@ -11,7 +11,7 @@
     "url": "git@bitbucket.org:lsolova/timemeasure.git"
   },
   "author": "Laszlo Solova",
-  "license": "LGPL",
+  "license": "LGPL-3.0",
   "dependencies": {
     "express": "^4.11.1",
     "mustache": "^2.0.0"
@@ -20,6 +20,7 @@
     "grunt": "^0.4.5",
     "grunt-contrib-uglify": "^0.6.0",
     "gulp": "^3.9.1",
-    "gulp-eslint": "^3.0.1"
+    "gulp-eslint": "^3.0.1",
+    "stylelint": "^7.5.0"
   }
 }
