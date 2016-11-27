@@ -21,3 +21,5 @@ gulp.task('stylelint', function () {
             ]
         }));
 });
+
+gulp.task('precommit', ['eslint', 'stylelint']);

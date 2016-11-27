@@ -4,7 +4,8 @@
   "description": "Time measurement web application",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "precommit": "gulp precommit"
   },
   "repository": {
     "type": "git",
@@ -21,6 +22,7 @@
     "grunt-contrib-uglify": "^0.6.0",
     "gulp": "^3.9.1",
     "gulp-eslint": "^3.0.1",
-    "gulp-stylelint": "^3.4.0"
+    "gulp-stylelint": "^3.4.0",
+    "husky": "^0.11.9"
   }
 }
