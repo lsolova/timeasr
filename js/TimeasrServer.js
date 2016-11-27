@@ -8,12 +8,16 @@ var express = require('express'),
 var walk = function(dir, prefix, done) {
     var results = [];
     fs.readdir(dir, function(err, list) {
-        if (err) return done(err);
         var i = 0;
+        if (err) {
+            return done(err);
+        }
         (function next() {
             var file = list[i++],
                 absoluteFile = dir + '/' + file;
-            if (!file) return done(null, results);
+            if (!file) {
+                return done(null, results);
+            }
             fs.stat(absoluteFile, function(err, stat) {
                 if (stat && stat.isDirectory()) {
                     walk(absoluteFile, prefix + file + '/', function(err, res) {
@@ -29,7 +33,7 @@ var walk = function(dir, prefix, done) {
                     next();
                 }
             });
-        })();
+        }());
     });
 };
 

@@ -1,6 +1,7 @@
 "use strict";
 define(['tu', 'ct', 'cm'], function (TimeUtils, Controller, common) {
-    var currentMonth,
+    var SettingsController,
+        currentMonth,
         dailyWorkload,
         monthlyAdjustment,
         monthlyAdjustmentDetails,
@@ -26,7 +27,7 @@ define(['tu', 'ct', 'cm'], function (TimeUtils, Controller, common) {
         }
     }
 
-    var SettingsController = function (modelHandler) {
+    SettingsController = function (modelHandler) {
         Controller.call(this, modelHandler);
         self = this;
         currentMonth = TimeUtils.asMonth(Date.now());
@@ -55,6 +56,6 @@ define(['tu', 'ct', 'cm'], function (TimeUtils, Controller, common) {
             self.updateView(createViewModel());
         }
     };
-
+    
     return SettingsController;
 });

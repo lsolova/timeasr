@@ -1,4 +1,8 @@
+'use strict';
+
+var timeasrSrv;
+
 require('./js/shim');
-var timeasrSrv = require('./js/TimeasrServer');
+timeasrSrv = require('./js/TimeasrServer');
 timeasrSrv.init();
 timeasrSrv.start();

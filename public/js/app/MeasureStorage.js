@@ -29,10 +29,10 @@ define(['mt', 'tu'], function (MeasureTime, TimeUtils) {
                             if (dayTime !== null) {
                                 dayTimeLength = dayTime.length;
                                 upgradedTime = (2 < dayTimeLength
-                                        ? parseInt(dayTime.substring(0, dayTimeLength - 2)) * 60
+                                        ? parseInt(dayTime.substring(0, dayTimeLength - 2), 10) * 60
                                         : 0
                                     )
-                                    + parseInt(dayTime.substring(dayTimeLength - 2));
+                                    + parseInt(dayTime.substring(dayTimeLength - 2), 10);
                                 store.setItem(day, upgradedTime);
                             }
                         }
@@ -58,8 +58,8 @@ define(['mt', 'tu'], function (MeasureTime, TimeUtils) {
         }
         ;
     MeasureStorage.prototype.add = function (measureTime) {
-        store.setItem(measureTime.getFullDay(), measureTime.getMinutes());
         var firstDay = store.getItem('firstday');
+        store.setItem(measureTime.getFullDay(), measureTime.getMinutes());
         if (firstDay === null || firstDay === undefined) {
             store.setItem('firstday', measureTime.getFullDay());
         } else {

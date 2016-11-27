@@ -1,6 +1,7 @@
 ﻿"use strict";
 define(['ms', 'tu', 'ct', 'cm'], function (MeasureStorage, TimeUtils, Controller, common) {
     var measureStorage = new MeasureStorage(),
+        MeasureController,
         now = Date.now(),
         measuring = false,
         statChangeTimeoutId,
@@ -17,9 +18,9 @@ define(['ms', 'tu', 'ct', 'cm'], function (MeasureStorage, TimeUtils, Controller
     var calculateStatistics = function(day, loopCalculation, postCalculation) {
         var dayCount = 0,
             statTime = 0,
-            measuredTime
-            ;
-        for (var i = 1; i < day.getDay(); i++) {
+            measuredTime,
+            i;
+        for (i = 1; i < day.getDay(); i++) {
             measuredTime = measureStorage.getTimeOfDay(day.getFullDay().substring(0, 6) + TimeUtils.extend(i));
             if (0 < measuredTime.getMinutes()) {
                 statTime += loopCalculation(measuredTime);
@@ -76,8 +77,8 @@ define(['ms', 'tu', 'ct', 'cm'], function (MeasureStorage, TimeUtils, Controller
     }
 
     function getCurrentMeasuringMinutes(startedOn, finishedOn) {
-        finishedOn = finishedOn || Date.now();
         var measuringMinutes = 0;
+        finishedOn = finishedOn || Date.now();
         if (startedOn && startedOn < finishedOn) {
             measuringMinutes = Math.round((finishedOn - startedOn) / 60000);
         }
@@ -110,11 +111,15 @@ define(['ms', 'tu', 'ct', 'cm'], function (MeasureStorage, TimeUtils, Controller
             leave: [
                 {
                     type: 't',
-                    value: calculateEstimatedLeavingTime(actualDay.getMinutes() + currentMeasuringMinutes, 0) % 1440 || 'now'
+                    value: calculateEstimatedLeavingTime(
+                        actualDay.getMinutes() + currentMeasuringMinutes, 0
+                    ) % 1440 || 'now'
                 },
                 {
                     type: 'l',
-                    value: calculateEstimatedLeavingTime(actualDay.getMinutes() + currentMeasuringMinutes, actualDiff.statValue) % 1440 || 'now'
+                    value: calculateEstimatedLeavingTime(
+                        actualDay.getMinutes() + currentMeasuringMinutes, actualDiff.statValue
+                    ) % 1440 || 'now'
                 }
             ],
             measuringMinutes: currentMeasuringMinutes,
@@ -124,9 +129,9 @@ define(['ms', 'tu', 'ct', 'cm'], function (MeasureStorage, TimeUtils, Controller
         };
     }
 
-    var MeasureController = function () {
-        Controller.call(this);
+    MeasureController = function () {
         var startedOn = measureStorage.get('startOn');
+        Controller.call(this);
         self = this;
         measuring = !(startedOn === null || startedOn === undefined);
         common.eventBus.subscribe('click:day', this.changeActualDay);
@@ -178,11 +183,12 @@ define(['ms', 'tu', 'ct', 'cm'], function (MeasureStorage, TimeUtils, Controller
     };
 
     MeasureController.prototype.startStopCounter = function () {
+        var startedOn,
+            viewModel;
         if (!measuring && TimeUtils.asDay(Date.now()) !== measureStorage.getActualDay().getFullDay()) {
             return; // Do nothing
         }
-        var startedOn = measureStorage.get('startOn'),
-            viewModel;
+        startedOn = measureStorage.get('startOn');
         if (!measuring) {
             startedOn = Date.now();
             measureStorage.set('startOn', startedOn);

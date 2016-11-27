@@ -1,5 +1,6 @@
 "use strict";
-define(['cm', 'du', 'sc', 'sv', 'mc', 'mv', 'ms'], function (common, DomUtils, SettingsController, SettingsView, MeasureController, MeasureView, MeasureStorage) {
+define(['cm', 'du', 'sc', 'sv', 'mc', 'mv', 'ms'],
+        function (common, DomUtils, SettingsController, SettingsView, MeasureController, MeasureView, MeasureStorage) {
     var views = {},
         controllers = {},
         activeView;
@@ -26,10 +27,11 @@ define(['cm', 'du', 'sc', 'sv', 'mc', 'mv', 'ms'], function (common, DomUtils, S
     };
 
     Application.prototype.showView = function (name) {
+        var view;
         if (activeView) {
             activeView.hide();
         } else {
-            for(var view in views) {
+            for(view in views) {
                 if (views.hasOwnProperty(view)) {
                     views[view].hide();
                 }

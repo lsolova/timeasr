@@ -9,10 +9,11 @@ define(function () {
             return new Date(year, month, day, 0, 0, 0, 0).getTime();
         },
         asMinutes: function (hoursAndMinutes) {
+             var isNegative,
+                sign = 1,
+                splittedHM;
             if (hoursAndMinutes.match(/^-?\d{1,2}:\d{2}$/) ) {
-                var isNegative =  hoursAndMinutes.lastIndexOf('-') === 0,
-                    sign = 1,
-                    splittedHM;
+                isNegative =  hoursAndMinutes.lastIndexOf('-') === 0;
                 if (isNegative) {
                     hoursAndMinutes = hoursAndMinutes.substring(1);
                     sign = -1;
