@@ -1,8 +1,8 @@
 'use strict';
 
-const gulp = require('gulp');
-const eslint = require('gulp-eslint');
-const stylelint = require('stylelint');
+const gulp = require('gulp'),
+      eslint = require('gulp-eslint'),
+      stylelint = require('gulp-stylelint');
 
 gulp.task('test', ['eslint', 'stylelint']);
 
@@ -14,16 +14,10 @@ gulp.task('eslint', function () {
 });
 
 gulp.task('stylelint', function () {
-    return stylelint.lint({
-        configFile: '.stylelintrc.js',
-        files: ['public/css/*.css'],
-        formatter: 'string'
-    }).then(function (result) {
-        if (result.errored) {
-            process.stderr.write(result.output);
-            process.exit(1);
-        } else {
-            process.stdout.write(result.output);
-        }
-    });
+    return gulp.src(['public/css/*.css'])
+        .pipe(stylelint({
+            reporters: [
+                {formatter: 'string', console: true}
+            ]
+        }));
 });

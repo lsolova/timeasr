@@ -21,6 +21,6 @@
     "grunt-contrib-uglify": "^0.6.0",
     "gulp": "^3.9.1",
     "gulp-eslint": "^3.0.1",
-    "stylelint": "^7.5.0"
+    "gulp-stylelint": "^3.4.0"
   }
 }
