@@ -1,8 +1,10 @@
 'use strict';
 
 const gulp = require('gulp'),
+      clean = require('gulp-clean'),
       eslint = require('gulp-eslint'),
-      stylelint = require('gulp-stylelint');
+      stylelint = require('gulp-stylelint'),
+      webpack = require('webpack-stream');
 
 gulp.task('test', ['eslint', 'stylelint']);
 
@@ -22,4 +24,15 @@ gulp.task('stylelint', function () {
         }));
 });
 
-gulp.task('precommit', ['eslint', 'stylelint']);
+gulp.task('webpack',['cleandist'] , function () {
+  return gulp.src(['public/js/app.js'])
+    .pipe(webpack({output: {filename: 'measr.js'}}))
+    .pipe(gulp.dest('dist/'));
+});
+
+gulp.task('cleandist', function () {
+  return gulp.src('dist/*', {read: false})
+    .pipe(clean());
+});
+
+gulp.task('precommit', ['test']);
