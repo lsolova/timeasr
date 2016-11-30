@@ -9,7 +9,7 @@ const gulp = require('gulp'),
 gulp.task('test', ['eslint', 'stylelint']);
 
 gulp.task('eslint', function () {
-    return gulp.src(['**/*.js', '!node_modules/**', '!public/js/lib/**'])
+    return gulp.src(['**/*.js', '!node_modules/**', '!dist/**', '!public/js/lib/**'])
         .pipe(eslint())
         .pipe(eslint.format())
         .pipe(eslint.failAfterError());
@@ -25,8 +25,8 @@ gulp.task('stylelint', function () {
 });
 
 gulp.task('webpack',['cleandist'] , function () {
-  return gulp.src(['public/js/app.js'])
-    .pipe(webpack({output: {filename: 'measr.js'}}))
+  return gulp.src(['./src/webpackentry.js'])
+    .pipe(webpack(require('./webpack.config.js')))
     .pipe(gulp.dest('dist/'));
 });
 
