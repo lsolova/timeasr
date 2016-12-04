@@ -3,10 +3,11 @@
 const gulp = require('gulp'),
       clean = require('gulp-clean'),
       eslint = require('gulp-eslint'),
+      mocha = require('gulp-mocha'),
       stylelint = require('gulp-stylelint'),
       webpack = require('webpack-stream');
 
-gulp.task('test', ['eslint', 'stylelint']);
+gulp.task('test', ['eslint', 'stylelint', 'unit-test']);
 
 gulp.task('eslint', function () {
     return gulp.src(['**/*.js', '!node_modules/**', '!dist/**', '!public/js/lib/**'])
@@ -22,6 +23,13 @@ gulp.task('stylelint', function () {
                 {formatter: 'string', console: true}
             ]
         }));
+});
+
+gulp.task('unit-test', function () {
+  return gulp.src('src/**/*.test.js', {read: false})
+    .pipe(mocha({
+      reporter: 'spec'
+    }));
 });
 
 gulp.task('webpack',['cleandist'] , function () {
