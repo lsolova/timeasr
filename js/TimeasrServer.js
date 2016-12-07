@@ -63,7 +63,7 @@ module.exports = {
         createAppcacheFile();
     },
     start: function() {
-        var rootDir = __dirname + '/../public';
+        var rootDir = __dirname + '/../dist';
         app.use('/', express.static(rootDir));
         app.listen(port, ipaddress);
     }
