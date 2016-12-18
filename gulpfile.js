@@ -5,6 +5,7 @@ const gulp = require('gulp'),
       eslint = require('gulp-eslint'),
       mocha = require('gulp-mocha'),
       stylelint = require('gulp-stylelint'),
+      webdriver = require('gulp-webdriver'),
       webpack = require('webpack-stream');
 
 gulp.task('test', ['eslint', 'stylelint', 'unit-test']);
@@ -31,6 +32,10 @@ gulp.task('unit-test', function () {
       reporter: 'spec'
     }));
 });
+
+gulp.task('test-cucumber', function () { 
+    return gulp.src('wdio.conf.js').pipe(webdriver()); 
+}); 
 
 gulp.task('webpack',['cleandist'] , function () {
   return gulp.src(['./src/webpackentry.js'])
