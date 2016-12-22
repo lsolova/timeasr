@@ -1,9 +1,10 @@
 {
   "name": "timemeasure",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "Time measurement web application",
   "main": "server.js",
   "scripts": {
+    "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "precommit": "gulp precommit"
   },
