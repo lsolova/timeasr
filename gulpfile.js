@@ -2,10 +2,11 @@
 
 const gulp = require('gulp'),
       clean = require('gulp-clean'),
+      connect = require('gulp-connect'),
       eslint = require('gulp-eslint'),
       mocha = require('gulp-mocha'),
       stylelint = require('gulp-stylelint'),
-      webdriver = require('gulp-webdriver'),
+      wdio = require('gulp-wdio'),
       webpack = require('webpack-stream');
 
 gulp.task('test', ['eslint', 'stylelint', 'unit-test']);
@@ -33,13 +34,25 @@ gulp.task('unit-test', function () {
     }));
 });
 
-gulp.task('test-cucumber', function () { 
-    return gulp.src('wdio.conf.js').pipe(webdriver()); 
+gulp.task('web-test', function () { 
+    var wdioResult;
+    connect.server({
+        name: 'Timeasr Dev Server',
+        port: 8080,
+        root: 'dist'
+    });
+    wdioResult = gulp.src('./configs/wdio.conf.js').pipe(wdio({
+        type: 'selenium',
+        wdio: {}
+    }));
+    return wdioResult.once('end', function () {
+        connect.serverClose();
+    }); 
 }); 
 
 gulp.task('webpack',['cleandist'] , function () {
   return gulp.src(['./src/webpackentry.js'])
-    .pipe(webpack(require('./webpack.config.js')))
+    .pipe(webpack(require('./configs/webpack.config.js')))
     .pipe(gulp.dest('dist/'));
 });
 

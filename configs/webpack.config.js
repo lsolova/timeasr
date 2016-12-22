@@ -3,28 +3,30 @@
 var path = require('path'),
     webpack = require('webpack'),
     ExtractTextPlugin = require("extract-text-webpack-plugin"),
-    measrCss = new ExtractTextPlugin("measr.css"),
-    uglifyJs = new webpack.optimize.UglifyJsPlugin(),
+    measrCss = new ExtractTextPlugin("timeasr.css"),
+    //uglifyJs = new webpack.optimize.UglifyJsPlugin(),
     bannerJs = new webpack.BannerPlugin('Timeasr by Laszlo Solova');
 
 module.exports = {
     context: __dirname,
-    entry: './src/js/client.js',
+    entry: './src/client/js/client.js',
     output: {
         path: path.join(__dirname, 'dist'),
-        filename: 'measr.js'
+        filename: 'timeasr.js'
     },
     module: {
         loaders: [
             { test: /\.css$/, loader: measrCss.extract('css-loader?minimize') },
-            { test: /\.woff$/, loader: 'file-loader?name=[name].[ext]&publicPath=font/' },
-            { test: /\.png$/, loader: 'file-loader?name=[name].[ext]&publicPath==img/' },
+            
+            { test: /\.woff$/, loader: 'file-loader?name=[name].[ext]' },
+            { test: /\.png$/, loader: 'file-loader?name=[name].[ext]' },
+            { test: /\.ico$/, loader: 'file-loader?name=[name].[ext]' },
             { test: /\.html$/, loader: 'file-loader?name=[name].[ext]' }
         ]
     },
     plugins: [
         measrCss,
-        uglifyJs,
+        //uglifyJs,
         bannerJs
     ]
 }

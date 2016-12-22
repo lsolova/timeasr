@@ -12,7 +12,7 @@ module.exports = function () {
         return keyString;
     }
     this.Given(/^I am visiting the Timeasr page$/, function () {
-        browser.url('http://timeasr.solova.com');
+        browser.url('http://localhost:8080');
     });
     this.When(/^I click on the element with id "([^"]*)"$/, function (elementId, callback) {
         if (browser.waitForVisible(elementId, 2000)) {
