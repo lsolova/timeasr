@@ -2,7 +2,7 @@
 
 var timeasrSrv;
 
-require('./js/shim');
+require('./src/server/shim');
 timeasrSrv = require('./src/server/TimeasrServer');
 timeasrSrv.init();
 timeasrSrv.start();

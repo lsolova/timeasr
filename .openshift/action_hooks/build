@@ -3,3 +3,6 @@ GITDIR=${OPENSHIFT_HOMEDIR}/git/${OPENSHIFT_APP_NAME}.git
 echo "Create git id file."
 cd $GITDIR
 git rev-parse --short HEAD > ${OPENSHIFT_REPO_DIR}gitid.txt
+echo "Run build."
+gulp webpack
+echo "Build finished."

@@ -1,5 +1,6 @@
 var express = require('express'),
     fs = require('fs'),
+    appRoot = "/dist",
     mustache = require('mustache'),
     app = express(),
     ipaddress,
@@ -38,20 +39,20 @@ var walk = function(dir, prefix, done) {
 };
 
 function createAppcacheFile() {
-    var rootDir = process.env.PWD;
-    walk(rootDir + '/public', '', function (err, list) {
-        fs.readFile(rootDir + '/gitid.txt', {encoding: 'utf8'}, function (err, data) {
-            var gitid = data;
-            fs.readFile(rootDir + '/js/appcache_template.mst', {encoding: 'utf8'}, function(err, data) {
+    var gitRoot = process.env.PWD;
+    walk(gitRoot + appRoot, '', function (err, list) {
+        fs.readFile(gitRoot + appRoot + '/gitid.txt', {encoding: 'utf8'}, function (err, data) {
+            var gitid = data,
+                templatePath = gitRoot + '/src/server/appcache_template.mst';
+            fs.readFile(templatePath, {encoding: 'utf8'}, function(err, data) {
                 var template = data,
                     content = {
                         gitid: gitid,
                         cachefiles: list
                     },
                     rendered = mustache.render(template, content);
-                fs.writeFile(rootDir + '/public/timeasr.appcache', rendered);
+                fs.writeFile(gitRoot + appRoot + '/timeasr.appcache', rendered);
             });
-
         });
     });
 }
@@ -63,7 +64,7 @@ module.exports = {
         createAppcacheFile();
     },
     start: function() {
-        var rootDir = __dirname + '/../dist';
+        var rootDir = __dirname + '/..' + appRoot;
         app.use('/', express.static(rootDir));
         app.listen(port, ipaddress);
     }
