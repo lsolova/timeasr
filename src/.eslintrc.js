@@ -13,5 +13,8 @@ module.exports = {
         'es6': true,
         'mocha': true,
         'node': true
+    },
+    "parserOptions": {
+        "sourceType": "module"
     }
 }
