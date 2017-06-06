@@ -4,20 +4,19 @@ var path = require('path'),
     webpack = require('webpack'),
     ExtractTextPlugin = require("extract-text-webpack-plugin"),
     measrCss = new ExtractTextPlugin("timeasr.css"),
-    //uglifyJs = new webpack.optimize.UglifyJsPlugin(),
     bannerJs = new webpack.BannerPlugin('Timeasr by Laszlo Solova');
 
 module.exports = {
     context: __dirname,
-    entry: './src/client/js/client.js',
+    entry: '../src/client/js/client.js',
     output: {
-        path: path.join(__dirname, 'dist'),
+        path: path.join(__dirname, '../dist'),
         filename: 'timeasr.js'
     },
     module: {
         loaders: [
             { test: /\.css$/, loader: measrCss.extract('css-loader?minimize') },
-            
+            { test: /\.jsx$/, loader: 'babel-loader', query: { presets: ['es2015', 'react']} },
             { test: /\.woff$/, loader: 'file-loader?name=[name].[ext]' },
             { test: /\.png$/, loader: 'file-loader?name=[name].[ext]' },
             { test: /\.ico$/, loader: 'file-loader?name=[name].[ext]' },
@@ -26,7 +25,10 @@ module.exports = {
     },
     plugins: [
         measrCss,
-        //uglifyJs,
         bannerJs
-    ]
+    ],
+    devServer: {
+        contentBase: path.join(__dirname, '../dist')
+    },
+    devtool: 'source-map'
 }
