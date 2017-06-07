@@ -1,19 +1,19 @@
-'use strict';
+// @deprecated
 
-module.exports = {
-    topics: {},
-    subscribe: function subscribe(topic, listener) {
-        if(!this.topics[topic]) {
-            this.topics[topic] = [];
-        }
-        this.topics[topic].push(listener);
-    },
-    publish: function publish(topic, data) {
-        if(!this.topics[topic] || this.topics[topic].length < 1) {
-            return;
-        }
-        this.topics[topic].forEach(function(listener) {
-            listener(data || {});
-        });
+const topics = {};
+
+export function subscribe(topic, listener) {
+    if(!topics[topic]) {
+        topics[topic] = [];
     }
+    topics[topic].push(listener);
+}
+
+export function publish(topic, data) {
+    if(!topics[topic] || topics[topic].length < 1) {
+        return;
+    }
+    topics[topic].forEach(function(listener) {
+        listener(data || {});
+    });
 }

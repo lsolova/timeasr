@@ -1,10 +1,9 @@
 'use strict';
 
-const common = require('../utils/common'),
-      domUtils = require('../utils/dom'),
-      eventBus = require('../utils/eventBus'),
-      TimeUtils = require('../utils/time'),
-      View = require('./View');
+import * as domUtils from '../utils/dom';
+import * as eventBus from '../utils/eventBus';
+import * as TimeUtils from '../utils/timeConversion';
+import View from './View';
 
 var SettingsView;
 var dailyWlInputE,
@@ -33,17 +32,18 @@ var dailyWlInputE,
     };
 
     SettingsView = function (viewDomElemId, controllerObj) {
-        View.call(this, viewDomElemId, controllerObj, bindViewElements);
-        return this;
+        let viewInstance = new View(viewDomElemId, controllerObj, bindViewElements);
+        viewInstance.update = update;
+        controllerObj.setView(viewInstance);
+        return viewInstance;
     };
-    common.inherit(SettingsView, View);
 
-    SettingsView.prototype.update = function (data) {
+    function update(data) {
         domUtils.clearAndFill.call(monthLabelE, data.month);
         dailyWlInputE.value = TimeUtils.asHoursAndMinutes(data.dailyWorkload);
         monthlyWlAdjInputE.value = data.monthlyAdjustmentDetails;
         adjustTextAreaHeight();
         domUtils.clearAndFill.call(monthlyWlAdjSumE, TimeUtils.asHoursAndMinutes(data.monthlyAdjustment));
-    };
+    }
 
-module.exports = SettingsView;
+export default SettingsView;

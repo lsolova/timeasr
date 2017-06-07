@@ -1,10 +1,9 @@
-'use strict';
+import * as domUtils from'../utils/dom';
+import * as eventBus from '../utils/eventBus';
+import * as timeUtils from '../utils/time';
+import View from './View';
 
-const common = require('../utils/common'),
-      domUtils = require('../utils/dom'),
-      eventBus = require('../utils/eventBus'),
-      timeUtils = require('../utils/time'),
-      View = require('./View');
+let viewInstance;
 
 var monthE,
         statTimeE,
@@ -31,10 +30,10 @@ var monthE,
         notificationE = document.getElementById('notification');
 
         prevDayE.addEventListener('click', function () {
-            eventBus.publish('click:day', {change: -1});
+            eventBus.publish('click:day', { change: -1 });
         });
         nextDayE.addEventListener('click', function () {
-            eventBus.publish('click:day', {change: 1});
+            eventBus.publish('click:day', { change: 1 });
         });
         counterE.addEventListener('click', function () {
             eventBus.publish('click:startstop', {});
@@ -43,17 +42,17 @@ var monthE,
             eventBus.publish('click:stat', {});
         });
         document.addEventListener('visibilitychange', function () {
-            eventBus.publish('change:visibility', {change: document.hidden});
+            eventBus.publish('change:visibility', { change: document.hidden });
         });
-    };
+};
 
-    var showNotification = function (content) {
-        domUtils.clearAndFill.call(notificationE, content);
-        notificationE.classList.add('show');
-        window.setTimeout(function () {
-            notificationE.classList.remove('show');
-        }, 2000);
-    };
+var showNotification = function (content) {
+    domUtils.clearAndFill.call(notificationE, content);
+    notificationE.classList.add('show');
+    window.setTimeout(function () {
+        notificationE.classList.remove('show');
+    }, 2000);
+};
 
     var changeLeave = function (isHidden) {
         var cLeave;
@@ -72,7 +71,7 @@ var monthE,
         } else {
             if (typeof cLeave.value === 'number') {
                 domUtils.clearAndFill.call(leaveE, timeUtils.asHoursAndMinutes(cLeave.value));
-            }else{
+            } else {
                 domUtils.clearAndFill.call(leaveE, cLeave.value);
             }
             currentLeaveCount++;
@@ -83,13 +82,14 @@ var monthE,
     };
 
     var MeasureView = function (viewDomElemId, controllerObj) {
-        View.call(this, viewDomElemId, controllerObj, bindViewElements);
-        return this;
+        viewInstance = new View(viewDomElemId, controllerObj, bindViewElements);
+        viewInstance.update = update;
+        controllerObj.changeVisibility();
+        return viewInstance;
     };
-    common.inherit(MeasureView, View);
 
-    MeasureView.prototype.update = function (data) {
-        var statTimeValue = timeUtils.asHoursAndMinutes(data.avgTime),
+    function update(data) {
+        const statTimeValue = timeUtils.asHoursAndMinutes(data.avgTime),
             isAvgTimeNonNegativ = data.avgTime >= 0,
             isTimeTypeDiff = data.timeType === this.controller.STAT.DIFF;
         domUtils.clearAndFill.call(monthE, data.measureTime.getYearAndMonth('/'));
@@ -113,9 +113,8 @@ var monthE,
         if (data.nowStarted) {
             showNotification('Started');
         } else
-        if (data.nowStarted === false ){
+        if (data.nowStarted === false) {
             showNotification('Paused');
         }
-    };
-
-module.exports = MeasureView;
+    }
+export default MeasureView;

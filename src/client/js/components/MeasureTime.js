@@ -1,8 +1,7 @@
-'use strict';
+import * as timeUtils from '../utils/timeConversion';
+import { now } from '../utils/dateWrapper';
 
-var timeUtils = require('../utils/time');
-
-var MeasureTime = function (day = timeUtils.asDay(Date.now()), minutes = 0) {
+var MeasureTime = function (day = timeUtils.asDay(now()), minutes = 0) {
     this.day = day;
     this.minutes = parseInt(minutes, 10);
 };
@@ -27,8 +26,6 @@ MeasureTime.prototype.addMinutes = function (addMinutes = 0) {
     this.minutes += addMinutes;
 };
 
-module.exports = {
-    create: function(day, minutes) {
-        return new MeasureTime(day, minutes);
-    }
+export function create(day, minutes) {
+    return new MeasureTime(day, minutes);
 }

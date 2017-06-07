@@ -1,16 +1,14 @@
-'use strict';
+import * as measureTime from './MeasureTime';
 
-const measureTime = require('./MeasureTime'),
-      chai = require('chai');
-
-chai.should();
+import { should } from 'chai';
+should();
 
 describe("MeasureTime", function () {
-    
+
     it('Define and check two MeasureTime objects', function () {
         var mTime1 = measureTime.create('20150405', 15),
             mTime2 = measureTime.create('20160408', 74);
-        
+
         mTime1.getYearAndMonth().should.equal('201504');
         mTime1.getDay().should.equal(5);
         mTime1.getMinutes().should.equal(15);
@@ -42,7 +40,7 @@ describe("MeasureTime", function () {
             mTime.getMinutes().should.equal(89);
         });
     });
-    
+
 
 });
 
