@@ -1,4 +1,4 @@
-import * as timeUtils from './time-calculation';
+import * as timeUtils from './timeCalculation';
 
 import { should } from 'chai';
 should();

@@ -1,4 +1,4 @@
-import * as timeUtils from './time-conversion';
+import * as timeUtils from './timeConversion';
 import { now } from './dateWrapper';
 
 import { expect, should } from 'chai';
