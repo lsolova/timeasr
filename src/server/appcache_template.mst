@@ -1,6 +1,0 @@
-CACHE MANIFEST
-#Commit {{gitid}}
-CACHE:
-{{#cachefiles}}
-{{{.}}}
-{{/cachefiles}}
