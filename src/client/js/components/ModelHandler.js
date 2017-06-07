@@ -1,5 +1,5 @@
 import * as MeasureTime from './MeasureTime';
-import * as timeUtils from '../utils/time-conversion';
+import * as timeUtils from '../utils/timeConversion';
 import * as store from './PersistentStore';
 import { now } from '../utils/dateWrapper';
 
@@ -36,16 +36,16 @@ function upgrade(fromVersion, toVersion) {
         ;
     for (i = fromVersion; i < toVersion; i++) {
         switch (i) {
-            case 1 :
+            case 1:
                 for (j = 70; j > 0; j--) {
                     day = timeUtils.asDay(now() - (j * 86400000));
                     dayTime = store.get(day);
                     if (dayTime !== null) {
                         dayTimeLength = dayTime.length;
                         upgradedTime = (2 < dayTimeLength
-                                ? parseInt(dayTime.substring(0, dayTimeLength - 2), 10) * 60
-                                : 0
-                            )
+                            ? parseInt(dayTime.substring(0, dayTimeLength - 2), 10) * 60
+                            : 0
+                        )
                             + parseInt(dayTime.substring(dayTimeLength - 2), 10);
                         store.set(day, upgradedTime);
                     }
@@ -83,7 +83,9 @@ export default function ModelHandler() {
         incrementActualDay,
         setActualDay,
         setDailyWorkload,
-        setMonthlyAdjustment
+        setMonthlyAdjustment,
+        getMonthlyMeasuredTimes,
+        lastStartTime
     }
 }
 
@@ -137,4 +139,24 @@ export function getTimeOfDay(day) {
         return MeasureTime.create(day, 0);
     }
     return MeasureTime.create(day, dayValue);
+}
+
+export function getMonthlyMeasuredTimes(day) {
+    const measuredTimes = [];
+    for (let i = 1; i < day.getDay(); i++) {
+        measuredTimes.push(getTimeOfDay(day.getFullDay().substring(0, 6) + timeUtils.addLeadingZeros(i)));
+    }
+    return measuredTimes;
+}
+
+export function lastStartTime(value) {
+    if (value) {
+        store.set(storeConfig.keys.lastStartTime, value);
+    } else
+        if (value === null) {
+            store.remove(storeConfig.keys.lastStartTime);
+        } else {
+            value = store.get(storeConfig.keys.lastStartTime, value)
+        }
+    return value;
 }

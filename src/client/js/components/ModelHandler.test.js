@@ -1,5 +1,5 @@
 import * as modelHandler from './ModelHandler';
-import { asDay } from '../utils/time-conversion';
+import { asDay } from '../utils/timeConversion';
 import * as store from './PersistentStore';
 import * as dateWrapper from '../utils/dateWrapper';
 
@@ -33,6 +33,29 @@ describe('ModelHandler', function () {
         });
     });
 
+    describe('#getMonthlyMeasuredTimes', function () {
+        it('with two measured days', function () {
+            let timeResult;
+            storeGetStub.callsFake(function (dayIndex) {
+                let dayMinutes = {
+                    '20150401': '145',
+                    '20150402': '120'
+                };
+                return Object.keys(dayMinutes).includes(dayIndex) ? dayMinutes[dayIndex] : null;
+            });
+            timeResult = modelHandler.getMonthlyMeasuredTimes({
+                getDay: function () {
+                    return 4;
+                },
+                getFullDay: function () {
+                    return '20150404'
+                }
+            });
+            timeResult[0].getMinutes().should.equal(145);
+            timeResult[1].getMinutes().should.equal(120);
+        });
+    });
+
     describe('#getActualDay', function () {
         it('getting day (fake date wrapper testing)', function () {
             const fakeTime = 1496733252000,
@@ -46,6 +69,6 @@ describe('ModelHandler', function () {
     });
 
     describe('#setActualDay', function () {
-        xit('', function () {});
+        xit('', function () { });
     });
 });
