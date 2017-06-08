@@ -1,75 +1,23 @@
-'use strict';
+import Controller from './Controller';
+import ModelHandler from './ModelHandler';
+import * as timeConversionUtils from '../utils/timeConversion';
+import { now } from '../utils/dateWrapper';
+import { calculateMonthlyAdjustmentFromDetails,
+         calculateMonthlyDifference,
+         estimateLeavingTime
+         } from '../utils/timeCalculation';
 
-const common = require('../utils/common'),
-      Controller = require('./Controller'),
-      eventBus = require('../utils/eventBus'),
-      MeasureStorage = require('./MeasureStorage'),
-      timeUtils = require('../utils/time');
+let controllerInstance;
 
-var measureStorage = new MeasureStorage(),
+var modelHandler = new ModelHandler(),
         MeasureController,
-        now = Date.now(),
-        measuring = false,
-        statChangeTimeoutId,
+        nowInMillis = now(),
+        measureInProgress = false,
         updateOnMeasureIntervalId,
-        STAT = { AVG: {name: 'average'}, DIFF: {name: 'difference'}},
-        statDefaultState = STAT.DIFF,
-        statState = statDefaultState,
-        expectedDayTime = measureStorage.getDailyWorkload(timeUtils.asMonth(now)),
-        monthlyAdjustment = timeUtils.calculateMonthlyAdjustmentFromDetails(
-                measureStorage.getMonthlyAdjustment(timeUtils.asMonth(now)
-            )),
-        self;
-
-    var calculateStatistics = function(day, loopCalculation, postCalculation) {
-        var dayCount = 0,
-            statTime = 0,
-            measuredTime,
-            i;
-        for (i = 1; i < day.getDay(); i++) {
-            measuredTime = measureStorage.getTimeOfDay(day.getFullDay().substring(0, 6) + timeUtils.addLeadingZeros(i));
-            if (0 < measuredTime.getMinutes()) {
-                statTime += loopCalculation(measuredTime);
-                dayCount++;
-            }
-        }
-        return { statValue: postCalculation(statTime, dayCount), statCount: dayCount };
-    };
-
-    var calculateMonthlyAverageForDay = function (day) {
-        return calculateStatistics(day
-            , function(measuredTime) {
-                return measuredTime.getMinutes();
-            }
-            , function(statTime, dayCount) {
-                return dayCount === 0 ? 0 : Math.floor((statTime + monthlyAdjustment) / dayCount);
-            }
-        );
-    };
-
-    var calculateMonthlyDifferenceForDay = function (day) {
-        return calculateStatistics( day
-            , function(measuredTime) {
-                return measuredTime.getMinutes() - expectedDayTime;
-            }
-            , function(statTime) {
-                return statTime + monthlyAdjustment;
-            }
-        );
-    };
-
-    var calculateEstimatedLeavingTime = function (dailyTime, differenceTime) {
-        var leavingTime,
-            calcTime;
-        if (typeof dailyTime === 'number' && typeof differenceTime === 'number'
-                && dailyTime >= 0) {
-            calcTime = expectedDayTime - (dailyTime + differenceTime);
-            if (calcTime > 0) {
-                leavingTime = timeUtils.getMinutesInDay(new Date()) + calcTime;
-            }
-        }
-        return leavingTime;
-    };
+        expectedDayTime = modelHandler.getDailyWorkload(timeConversionUtils.asMonth(nowInMillis)),
+        monthlyAdjustment = calculateMonthlyAdjustmentFromDetails(
+                modelHandler.getMonthlyAdjustment(timeConversionUtils.asMonth(nowInMillis)
+            ));
 
     function setUpdateInterval(allow) {
         if (allow) {
@@ -84,7 +32,7 @@ var measureStorage = new MeasureStorage(),
 
     function getCurrentMeasuringMinutes(startedOn, finishedOn) {
         var measuringMinutes = 0;
-        finishedOn = finishedOn || Date.now();
+        finishedOn = finishedOn || now();
         if (startedOn && startedOn < finishedOn) {
             measuringMinutes = Math.round((finishedOn - startedOn) / 60000);
         }
@@ -92,128 +40,105 @@ var measureStorage = new MeasureStorage(),
     }
 
     function createViewModel() {
-        var statInfo,
-            actualDay = measureStorage.getActualDay(),
-            actualDiff = calculateMonthlyDifferenceForDay(actualDay),
-            currentMeasuringMinutes = getCurrentMeasuringMinutes(measureStorage.get('startOn')),
-            fullActualDay = actualDay.getFullDay();
-
-        switch (statState) {
-            case STAT.AVG :
-                statInfo = calculateMonthlyAverageForDay(actualDay);
-                break;
-            case STAT.DIFF :
-                statInfo = actualDiff;
-                break;
-        }
+        var actualDay = modelHandler.getActualDay(),
+            actualDiff = calculateMonthlyDifference(
+                modelHandler.getMonthlyMeasuredTimes(actualDay), monthlyAdjustment, expectedDayTime
+            ),
+            currentMeasuringMinutes = getCurrentMeasuringMinutes(modelHandler.lastStartTime()),
+            fullActualDay = actualDay.getFullDay()
+            ;
 
         return {
             measureTime: actualDay,
             days: {
-                yesterday: timeUtils.siblingDay(fullActualDay, -1).substring(6),
+                yesterday: timeConversionUtils.siblingDay(fullActualDay, -1).substring(6),
                 today: fullActualDay.substring(6),
-                tomorrow: timeUtils.siblingDay(fullActualDay, 1).substring(6)
+                tomorrow: timeConversionUtils.siblingDay(fullActualDay, 1).substring(6)
             },
             leave: [
                 {
                     type: 't',
-                    value: calculateEstimatedLeavingTime(
-                        actualDay.getMinutes() + currentMeasuringMinutes, 0
-                    ) % 1440 || 'now'
+                    value: timeConversionUtils.asHoursAndMinutes(estimateLeavingTime(
+                        actualDay.getMinutes() + currentMeasuringMinutes, 0, expectedDayTime
+                    ) % 1440) || 'now'
                 },
                 {
                     type: 'l',
-                    value: calculateEstimatedLeavingTime(
-                        actualDay.getMinutes() + currentMeasuringMinutes, actualDiff.statValue
-                    ) % 1440 || 'now'
+                    value: timeConversionUtils.asHoursAndMinutes(estimateLeavingTime(
+                        actualDay.getMinutes() + currentMeasuringMinutes, actualDiff.statValue, expectedDayTime
+                    ) % 1440) || 'now'
                 }
             ],
             measuringMinutes: currentMeasuringMinutes,
-            avgTime: statInfo.statValue,
-            dayCount: statInfo.statCount,
-            timeType: statState
+            actualMinutes: timeConversionUtils.asHoursAndMinutes(actualDay.getMinutes() + currentMeasuringMinutes),
+            avgTime: timeConversionUtils.asHoursAndMinutes(actualDiff.statValue),
+            dayCount: actualDiff.statCount
         };
     }
 
     MeasureController = function () {
-        var startedOn = measureStorage.get('startOn');
-        Controller.call(this);
-        self = this;
-        measuring = !(startedOn === null || startedOn === undefined);
-        eventBus.subscribe('click:day', this.changeActualDay);
-        eventBus.subscribe('click:startstop', this.startStopCounter);
-        eventBus.subscribe('click:stat', this.changeStat);
-        eventBus.subscribe('change:visibility', this.changeVisibility);
-        return this;
+        var startedOn = modelHandler.lastStartTime();
+        controllerInstance = new Controller();
+        measureInProgress = !(startedOn === null || startedOn === undefined);
+        Object.assign(controllerInstance, {
+            changeToPreviousDay,
+            changeToNextDay,
+            changeVisibility,
+            startOrStop
+        });
+        return controllerInstance;
     };
 
-    common.inherit(MeasureController, Controller);
-
-    MeasureController.prototype.STAT = STAT;
-
-    MeasureController.prototype.changeActualDay = function (sign) {
-        if (measuring) {
+    function changeActualDay(sign) {
+        if (measureInProgress) {
             return;
         }
-        measureStorage.setActualDay(sign);
-        self.updateView(createViewModel());
-    };
+        modelHandler.setActualDay(sign);
+        controllerInstance.updateView(createViewModel());
+    }
 
-    MeasureController.prototype.changeStat = function() {
-        switch (statState) {
-            case STAT.AVG :
-                statState = STAT.DIFF;
-                break;
-            default :
-                statState = STAT.AVG;
-                break;
-        }
-        if (statState === statDefaultState) {
-            window.clearTimeout(statChangeTimeoutId);
-        } else {
-            statChangeTimeoutId = setTimeout(self.changeStat, 30000);
-        }
-        self.updateView(createViewModel());
-    };
+    function changeToPreviousDay() {
+        changeActualDay(-1);
+    }
 
-    MeasureController.prototype.changeVisibility = function(hidden) {
-        if ((!hidden.source || hidden.source === 'measure') && !hidden.change) {
+    function changeToNextDay() {
+        changeActualDay(1);
+    }
+
+    function changeVisibility(hidden) {
+        if (!hidden) {
             // Temporary update - later removeable
-            expectedDayTime = measureStorage.getDailyWorkload(timeUtils.asMonth(now));
-            monthlyAdjustment = timeUtils.calculateMonthlyAdjustmentFromDetails(
-                measureStorage.getMonthlyAdjustment(timeUtils.asMonth(now))
+            expectedDayTime = modelHandler.getDailyWorkload(timeConversionUtils.asMonth(nowInMillis));
+            monthlyAdjustment = calculateMonthlyAdjustmentFromDetails(
+                modelHandler.getMonthlyAdjustment(timeConversionUtils.asMonth(nowInMillis))
             );
-            self.updateView(createViewModel());
+            controllerInstance.updateView(createViewModel());
         }
-        setUpdateInterval(!hidden.change);
-    };
+        setUpdateInterval(!hidden);
+    }
 
-    MeasureController.prototype.startStopCounter = function () {
+    function startOrStop() {
         var startedOn,
             viewModel;
-        if (!measuring && timeUtils.asDay(Date.now()) !== measureStorage.getActualDay().getFullDay()) {
+        if (!measureInProgress && timeConversionUtils.asDay(now()) !== modelHandler.getActualDay().getFullDay()) {
             return; // Do nothing
         }
-        startedOn = measureStorage.get('startOn');
-        if (!measuring) {
-            startedOn = Date.now();
-            measureStorage.set('startOn', startedOn);
-            measuring = true;
+        startedOn = modelHandler.lastStartTime();
+        if (!measureInProgress) {
+            startedOn = now();
+            modelHandler.lastStartTime(startedOn);
+            measureInProgress = true;
             setUpdateInterval(true);
         }
         else {
-            measureStorage.incrementActualDay(getCurrentMeasuringMinutes(startedOn));
-            measureStorage.remove('startOn');
-            measuring = false;
+            modelHandler.incrementActualDay(getCurrentMeasuringMinutes(startedOn));
+            modelHandler.lastStartTime(null);
+            measureInProgress = false;
             setUpdateInterval(false);
         }
         viewModel = createViewModel();
-        viewModel.nowStarted = measuring;
-        self.updateView(viewModel);
-    };
+        viewModel.nowStarted = measureInProgress;
+        controllerInstance.updateView(viewModel);
+    }
 
-    MeasureController.prototype.isMeasuringInProgress = function () {
-        return measuring;
-    };
-
-    module.exports = MeasureController;
+export default MeasureController;
