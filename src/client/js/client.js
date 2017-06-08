@@ -1,9 +1,6 @@
-'use strict';
-
-require('../index.html');
-require('../style/measure.css');
-const Application = require('./components/Application');
+import '../index.html';
+import Application from './components/Application';
 
 window.onload = function () {
-    new Application().init();
+    new Application();
 }

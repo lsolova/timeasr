@@ -1,21 +1,17 @@
 'use strict';
 
-const eventBus = require('../utils/eventBus'),
-      MeasureController = require('./MeasureController'),
-      MeasureStorage = require('./MeasureStorage'),
-      MeasureView = require('./MeasureView'),
-      SettingsController = require('./SettingsController'),
-      SettingsView = require('./SettingsView');
-var Application,
-    views = {},
-    controllers = {},
-    activeView;
+import * as eventBus from '../utils/eventBus';
+import MeasureController from './MeasureController';
+import ModelHandler from './ModelHandler';
+import MeasureView from './MeasureView.jsx';
+import SettingsController from './SettingsController';
+import SettingsView from './SettingsView';
 
-Application = function () {
-    this.bindEvents();
-};
+const views = {};
+const controllers = {};
+let activeView;
 
-Application.prototype.bindEvents = function bindEvents() {
+function bindEvents() {
     var switchViewMeasureE = document.getElementById('switchview-measure'),
         switchViewSettingsE = document.getElementById('switchview-settings');
 
@@ -27,17 +23,17 @@ Application.prototype.bindEvents = function bindEvents() {
     });
 }
 
-Application.prototype.init = function init() {
-    var measureStorage = new MeasureStorage();
-    controllers.measure = new MeasureController(measureStorage);
-    controllers.settings = new SettingsController(measureStorage);
+function init() {
+    var modelHandler = ModelHandler();
+    controllers.measure =new MeasureController(modelHandler);
+    controllers.settings = new SettingsController(modelHandler);
     views.measure = new MeasureView('measure', controllers.measure);
     views.settings = new SettingsView('settings', controllers.settings);
-    eventBus.subscribe('click:viewchange', this.showView);
-    this.showView({change: 'measure'});
-};
+    eventBus.subscribe('click:viewchange', showView);
+    showView({change: 'measure'});
+}
 
-Application.prototype.showView = function showView(name) {
+function showView(name) {
     var view;
     if (activeView) {
         activeView.hide();
@@ -50,6 +46,9 @@ Application.prototype.showView = function showView(name) {
     }
     activeView = views[name.change];
     activeView.show();
-};
+}
 
-module.exports = Application;
+export default function () {
+    bindEvents();
+    init();
+}
