@@ -1,7 +1,10 @@
 import * as domUtils from '../utils/dom';
-import * as eventBus from '../utils/eventBus';
-import * as timeUtils from '../utils/time';
 import View from './View';
+import { showNotification } from './notification';
+
+import React from 'react';
+import ReactDOM from 'react-dom';
+import RemainingTimeInfo from './react/RemainingTimeInfo.jsx';
 
 let viewInstance;
 
@@ -11,12 +14,8 @@ var monthE,
     prevDayE,
     actualDayE,
     nextDayE,
-    counterE,
-    leaveE,
-    notificationE,
-    leaveData,
-    leaveChangeTimeoutId,
-    currentLeaveCount = 0;
+    counterE
+    ;
 
 var bindViewElements = function () {
     monthE = document.getElementById('month');
@@ -26,59 +25,30 @@ var bindViewElements = function () {
     actualDayE = document.getElementById('actlDay');
     nextDayE = document.getElementById('nextDay');
     counterE = document.getElementById('counterValue');
-    leaveE = document.getElementById('leaveValue');
-    notificationE = document.getElementById('notification');
 
-    prevDayE.addEventListener('click', function () {
-        eventBus.publish('click:day', { change: -1 });
+    prevDayE.addEventListener('click', () => {
+        this.controller.changeToPreviousDay();
     });
-    nextDayE.addEventListener('click', function () {
-        eventBus.publish('click:day', { change: 1 });
+    nextDayE.addEventListener('click', () => {
+        this.controller.changeToNextDay();
     });
-    counterE.addEventListener('click', function () {
-        eventBus.publish('click:startstop', {});
+    counterE.addEventListener('click', () => {
+        this.controller.startOrStop();
     });
-    statTimeE.addEventListener('click', function () {
-        eventBus.publish('click:stat', {});
-    });
-    document.addEventListener('visibilitychange', function () {
-        eventBus.publish('change:visibility', { change: document.hidden });
+    document.addEventListener('visibilitychange', () => {
+        this.controller.changeVisibility(document.hidden);
     });
 };
 
-var showNotification = function (content) {
-    domUtils.clearAndFill.call(notificationE, content);
-    notificationE.classList.add('show');
-    window.setTimeout(function () {
-        notificationE.classList.remove('show');
-    }, 2000);
-};
-
-var changeLeave = function (isHidden) {
-    var cLeave;
-    if (leaveData.length <= currentLeaveCount) {
-        currentLeaveCount = 0;
-    }
-    if (leaveChangeTimeoutId) {
-        window.clearTimeout(leaveChangeTimeoutId);
-    }
-
-    domUtils.removeClasses(leaveE, ['l-bef', 't-bef', 'hidden']);
-    cLeave = leaveData[currentLeaveCount];
-    leaveE.classList.add(cLeave.type + '-bef');
-    if (isHidden) {
-        leaveE.classList.add('hidden');
-    } else {
-        if (typeof cLeave.value === 'number') {
-            domUtils.clearAndFill.call(leaveE, timeUtils.asHoursAndMinutes(cLeave.value));
-        } else {
-            domUtils.clearAndFill.call(leaveE, cLeave.value);
-        }
-        currentLeaveCount++;
-        if (!document.hidden) {
-            leaveChangeTimeoutId = window.setTimeout(changeLeave, 5000);
-        }
-    }
+var changeLeave = function (isHidden, leaveData) {
+    const values = leaveData.reduce((acc, leaveDataItem) => {
+        acc[leaveDataItem.type] = leaveDataItem.value;
+        return acc;
+    }, {});
+    ReactDOM.render(
+        <RemainingTimeInfo hidden={isHidden} timeType={leaveData[0].type} timeValues={values}></RemainingTimeInfo>,
+        document.getElementById('leaveValueC')
+    );
 };
 
 var MeasureView = function (viewDomElemId, controllerObj) {
@@ -89,32 +59,28 @@ var MeasureView = function (viewDomElemId, controllerObj) {
 };
 
 function update(data) {
-    const statTimeValue = timeUtils.asHoursAndMinutes(data.avgTime),
-        isAvgTimeNonNegativ = data.avgTime >= 0,
-        isTimeTypeDiff = data.timeType === this.controller.STAT.DIFF;
+    const statTimeValue = data.avgTime,
+        isAvgTimePositive = statTimeValue > 0,
+        notificationText = data.nowStarted === true ? 'Started' : data.nowStarted === false ? 'Paused' : undefined
+        ;
+
     domUtils.clearAndFill.call(monthE, data.measureTime.getYearAndMonth('/'));
-    domUtils.clearAndFill.call(statTimeE, (isTimeTypeDiff && isAvgTimeNonNegativ)
-        ? "+" + statTimeValue
-        : statTimeValue
-    );
+    domUtils.clearAndFill.call(statTimeE, (isAvgTimePositive ? '+' : '') + statTimeValue);
     domUtils.clearAndFill.call(dayCountE, data.dayCount);
-    domUtils.removeClasses(dayCountE, ['less', 'more']);
-    if (isTimeTypeDiff) {
-        dayCountE.classList.add(isAvgTimeNonNegativ ? 'more' : 'less');
+    domUtils.removeClasses.call(dayCountE, ['less', 'more']);
+    if (statTimeValue !== 0) {
+        dayCountE.classList.add(isAvgTimePositive ? 'more' : 'less');
     }
     domUtils.clearAndFill.call(prevDayE, data.days.yesterday);
     domUtils.clearAndFill.call(actualDayE, data.days.today);
     domUtils.clearAndFill.call(nextDayE, data.days.tomorrow);
-    leaveData = data.leave;
-    changeLeave(!this.controller.isMeasuringInProgress());
-    domUtils.clearAndFill.call(counterE,
-        timeUtils.asHoursAndMinutes(data.measureTime.getMinutes() + data.measuringMinutes));
-    counterE.setAttribute('class', this.controller.isMeasuringInProgress() ? 'running' : 'paused');
-    if (data.nowStarted) {
-        showNotification('Started');
-    } else
-        if (data.nowStarted === false) {
-            showNotification('Paused');
-        }
+
+    changeLeave(!data.nowStarted, data.leave);
+
+    domUtils.clearAndFill.call(counterE, data.actualMinutes);
+    counterE.setAttribute('class', data.nowStarted ? 'running' : 'paused');
+
+    showNotification(notificationText);
 }
+
 export default MeasureView;
