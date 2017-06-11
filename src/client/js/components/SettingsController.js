@@ -1,29 +1,29 @@
 'use strict';
 
 import Controller from './Controller';
-import { inherit } from '../utils/common';
-import * as eventBus from '../utils/eventBus';
-import * as timeConversionUtils from '../utils/timeConversion';
+import { asMinutes, asMonth } from '../utils/timeConversion';
 import { now } from '../utils/dateWrapper';
 import { calculateMonthlyAdjustmentFromDetails } from '../utils/timeCalculation';
 
-var SettingsController,
-        currentMonth,
+var     currentMonth,
         dailyWorkload,
         monthlyAdjustment,
         monthlyAdjustmentDetails;
 
+let controllerInstance,
+    modelHandler;
+
     function loadData(actualMonth) {
-        dailyWorkload = this.modelHandler.getDailyWorkload(actualMonth);
-        monthlyAdjustmentDetails = this.modelHandler.getMonthlyAdjustment(actualMonth);
+        dailyWorkload = modelHandler.getDailyWorkload(actualMonth);
+        monthlyAdjustmentDetails = modelHandler.getMonthlyAdjustment(actualMonth);
         monthlyAdjustment = calculateMonthlyAdjustmentFromDetails(monthlyAdjustmentDetails);
     }
 
     function createViewModel() {
-        var actualMonth = this.modelHandler.getActualDay().getYearAndMonth('');
+        var actualMonth = modelHandler.getActualDay().getYearAndMonth('');
         if (currentMonth !== actualMonth) {
             currentMonth = actualMonth;
-            loadData.call(this, currentMonth);
+            loadData(currentMonth);
         }
         return {
             month: currentMonth.substr(0,4)+'/'+currentMonth.substr(4),
@@ -33,31 +33,33 @@ var SettingsController,
         }
     }
 
-    SettingsController = function (modelHandler) {
-        Controller.call(this, modelHandler);
-        currentMonth = timeConversionUtils.asMonth(now());
-        loadData.call(this, currentMonth);
-        eventBus.subscribe('change:dailywl', setDailyWorkload);
-        eventBus.subscribe('change:montlywladj', setMonthlyAdjustment);
-        eventBus.subscribe('change:visibility', changeVisibility.bind(this));
-    };
-    inherit(SettingsController, Controller);
+    export default function SettingsController(modelH) {
+        controllerInstance = new Controller();
+        modelHandler = modelH;
+        currentMonth = asMonth(now());
+        loadData(currentMonth);
+        Object.assign(controllerInstance, {
+            setDailyWorkload,
+            setMonthlyAdjustment,
+            changeVisibility
+        });
+        return controllerInstance;
+    }
 
-    function setDailyWorkload(changeObj) {
-        dailyWorkload = timeConversionUtils.asMinutes(changeObj.change);
-        this.modelHandler.setDailyWorkload(currentMonth, dailyWorkload);
-        this.updateView(createViewModel());
+    function setDailyWorkload(change) {
+        dailyWorkload = asMinutes(change);
+        modelHandler.setDailyWorkload(currentMonth, dailyWorkload);
+        controllerInstance.updateView(createViewModel());
     }
-    function setMonthlyAdjustment(changeObj) {
-        monthlyAdjustmentDetails = changeObj.change;
+
+    function setMonthlyAdjustment(monthlyAdjustmentDetails) {
         monthlyAdjustment = calculateMonthlyAdjustmentFromDetails(monthlyAdjustmentDetails);
-        this.modelHandler.setMonthlyAdjustment(currentMonth, monthlyAdjustmentDetails);
-        this.updateView(this.createViewModel());
+        modelHandler.setMonthlyAdjustment(currentMonth, monthlyAdjustmentDetails);
+        controllerInstance.updateView(createViewModel());
     }
+
     function changeVisibility(hidden) {
-        if ((!hidden.source || hidden.source === 'settings') && !hidden.change) {
-            this.updateView(createViewModel.call(this));
+        if (!hidden) {
+            controllerInstance.updateView(createViewModel());
         }
     }
-
-export default SettingsController;
