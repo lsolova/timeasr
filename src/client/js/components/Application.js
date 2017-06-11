@@ -1,6 +1,5 @@
 'use strict';
 
-import * as eventBus from '../utils/eventBus';
 import MeasureController from './MeasureController';
 import ModelHandler from './ModelHandler';
 import MeasureView from './MeasureView.jsx';
@@ -15,11 +14,11 @@ function bindEvents() {
     var switchViewMeasureE = document.getElementById('switchview-measure'),
         switchViewSettingsE = document.getElementById('switchview-settings');
 
-    switchViewMeasureE.addEventListener('click', function () {
-        eventBus.publish('click:viewchange', { change: 'settings' });
+    switchViewMeasureE.addEventListener('click', () => {
+        showView('settings');
     });
-    switchViewSettingsE.addEventListener('click', function () {
-        eventBus.publish('click:viewchange', { change: 'measure' });
+    switchViewSettingsE.addEventListener('click', () => {
+        showView('measure');
     });
 }
 
@@ -29,8 +28,7 @@ function init() {
     controllers.settings = new SettingsController(modelHandler);
     views.measure = new MeasureView('measure', controllers.measure);
     views.settings = new SettingsView('settings', controllers.settings);
-    eventBus.subscribe('click:viewchange', showView);
-    showView({change: 'measure'});
+    showView('measure');
 }
 
 function showView(name) {
@@ -44,7 +42,7 @@ function showView(name) {
             }
         }
     }
-    activeView = views[name.change];
+    activeView = views[name];
     activeView.show();
 }
 
