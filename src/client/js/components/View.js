@@ -1,5 +1,3 @@
-import * as eventBus from '../utils/eventBus';
-
 export default function View(viewDomElemId, controllerObj, bindingFunction) {
     this.name = viewDomElemId;
     this.viewDomElem = document.getElementById(viewDomElemId);
@@ -12,11 +10,11 @@ export default function View(viewDomElemId, controllerObj, bindingFunction) {
 }
 View.prototype.show = function show() {
     this.viewDomElem.style.display = 'block';
-    eventBus.publish('change:visibility', {source: this.name, change: false});
+    this.controller.changeVisibility();
 }
 View.prototype.hide = function hide() {
     this.viewDomElem.style.display = 'none';
-    eventBus.publish('change:visibility', {source: this.name, change: true});
+    this.controller.changeVisibility(true);
 }
 View.prototype.getName = function getName() {
     return this.name;

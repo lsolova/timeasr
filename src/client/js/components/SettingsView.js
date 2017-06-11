@@ -1,7 +1,6 @@
 'use strict';
 
 import * as domUtils from '../utils/dom';
-import * as eventBus from '../utils/eventBus';
 import * as TimeUtils from '../utils/timeConversion';
 import View from './View';
 
@@ -19,22 +18,22 @@ var dailyWlInputE,
         monthlyWlAdjInputE = document.getElementById('monthlywladj');
         monthlyWlAdjSumE = document.getElementById('monthlywladjsum');
         monthLabelE = document.getElementById('dwlForMonth');
-        dailyWlInputE.addEventListener('change', function () {
-            eventBus.publish('change:dailywl', {change: dailyWlInputE.value});
+        dailyWlInputE.addEventListener('change', () => {
+            this.controller.setDailyWorkload(dailyWlInputE.value);
         });
         monthlyWlAdjInputE.addEventListener('keypress', adjustTextAreaHeight);
         monthlyWlAdjInputE.addEventListener('focus', function () {
            monthlyWlAdjInputE.setSelectionRange(0,0);
         });
-        monthlyWlAdjInputE.addEventListener('change', function () {
-            eventBus.publish('change:montlywladj', {change: monthlyWlAdjInputE.value});
+        monthlyWlAdjInputE.addEventListener('change', () => {
+            this.controller.setMonthlyAdjustment(monthlyWlAdjInputE.value);
         });
     };
 
     SettingsView = function (viewDomElemId, controllerObj) {
         let viewInstance = new View(viewDomElemId, controllerObj, bindViewElements);
         viewInstance.update = update;
-        controllerObj.setView(viewInstance);
+        controllerObj.changeVisibility();
         return viewInstance;
     };
 
