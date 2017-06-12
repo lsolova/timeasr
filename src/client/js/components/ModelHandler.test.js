@@ -7,14 +7,29 @@ import { should } from 'chai';
 import { stub } from 'sinon';
 should();
 
+function applyFakeTime(callable) {
+    // return function () {
+        const fakeTime = 1496733252000, // GMT 6 June 2017 07:14:12
+            dateStub = stub(dateWrapper, 'now');
+        dateStub.callsFake(function () {
+            return fakeTime;
+        });
+        callable.call(this, fakeTime);
+        dateStub.restore();
+    // }
+}
+
 describe('ModelHandler', function () {
-    let storeGetStub;
+    let storeGetStub,
+        storeSetStub;
 
     beforeEach(function () {
         storeGetStub = stub(store, "get");
+        storeSetStub = stub(store, "set");
     });
     afterEach(function () {
         storeGetStub.restore();
+        storeSetStub.restore();
     });
 
     describe('#getTimeOfDay', function () {
@@ -58,17 +73,25 @@ describe('ModelHandler', function () {
 
     describe('#getActualDay', function () {
         it('getting day (fake date wrapper testing)', function () {
-            const fakeTime = 1496733252000,
-                dateStub = stub(dateWrapper, 'now');
-            dateStub.callsFake(function () {
-                return fakeTime;
+            applyFakeTime(function (fakeTime) {
+                modelHandler.getActualDay().getFullDay().should.equal(asDay(fakeTime));
             });
-            modelHandler.getActualDay().getFullDay().should.equal(asDay(fakeTime));
-            dateStub.restore();
         });
     });
 
     describe('#setActualDay', function () {
-        xit('', function () { });
+        it('change day to previous', function () {
+            applyFakeTime(function (fakeTime) {
+                const expectedTime = fakeTime - 86400000;
+                modelHandler.setActualDay(-1).getFullDay().should.equal(asDay(expectedTime));
+            });
+        });
+
+        it('change day to next', function () {
+            applyFakeTime(function (fakeTime) {
+                const expectedTime = fakeTime + 86400000;
+                modelHandler.setActualDay(1).getFullDay().should.equal(asDay(expectedTime));
+            });
+        });
     });
 });

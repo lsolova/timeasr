@@ -14,8 +14,6 @@ const storeConfig = {
     }
 };
 
-let _actualDay;
-
 function cleanup() {
     var firstRemoveTime = timeUtils.asTimeInMillis(store.get(storeConfig.keys.oldestDay)),
         firstRemovableTime = now() - (65 * 86400000)
@@ -100,10 +98,7 @@ export function add(measureTime) {
 }
 
 export function getActualDay() {
-    if (!_actualDay) {
-        _actualDay = getTimeOfDay(timeUtils.asDay(now()));
-    }
-    return _actualDay;
+    return getTimeOfDay(timeUtils.asDay(now()));
 }
 
 export function incrementActualDay(currentMeasuringMinutes) {
@@ -113,8 +108,7 @@ export function incrementActualDay(currentMeasuringMinutes) {
 }
 
 export function setActualDay(sign) {
-    _actualDay = getTimeOfDay(timeUtils.siblingDay(getActualDay().getFullDay(), sign));
-    return _actualDay;
+    return getTimeOfDay(timeUtils.siblingDay(getActualDay().getFullDay(), sign));
 }
 
 export function getDailyWorkload(month) {
