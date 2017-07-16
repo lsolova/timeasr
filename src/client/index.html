@@ -1,7 +1,6 @@
 <!doctype html>
 <html>
     <head>
-        <script src="timeasr.js"></script>
         <style>
             @import url('timeasr.css');
         </style>
@@ -23,7 +22,9 @@
         </div>
         <div id="counter">
             <div id="counterValue"></div>
-            <div id="leaveValueC"></div>
+            <div id="leaveValueC">
+                <timeinfo :is-hidden="timeInfo.isHidden" :time-values="timeInfo.timeValues"></timeinfo>
+            </div>
         </div>
         <div class="menuBar">
             <span id="switchview-measure">g</span>
@@ -55,5 +56,6 @@
     <div id="notification"></div>
     <div id="copyright"></div>
 
+    <script src="timeasr.js"></script>
     </body>
 </html>

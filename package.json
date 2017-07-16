@@ -22,9 +22,7 @@
   "license": "LGPL-3.0",
   "dependencies": {
     "express": "^4.11.1",
-    "mustache": "^2.0.0",
-    "react": "^15.5.4",
-    "react-dom": "^15.5.4"
+    "mustache": "^2.0.0"
   },
   "devDependencies": {
     "babel-core": "^6.24.1",
@@ -46,6 +44,7 @@
     "less-loader": "^4.0.3",
     "mocha": "^3.2.0",
     "sinon": "^2.2.0",
+    "vue": "^2.4.1",
     "webpack": "^2.4.1",
     "webpack-dev-server": "^2.4.5"
   }

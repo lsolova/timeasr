@@ -2,11 +2,16 @@ import * as domUtils from '../utils/dom';
 import View from './View';
 import { showNotification } from './notification';
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import RemainingTimeInfo from './react/RemainingTimeInfo.jsx';
+import Vue from 'vue';
+import './vue/RemainingTimeInfo.js';
 
 let viewInstance;
+const viewData = {
+    timeInfo: {
+        isHidden: true,
+        timeValues: {}
+    }
+}
 
 var monthE,
     statTimeE,
@@ -38,6 +43,11 @@ var bindViewElements = function () {
     document.addEventListener('visibilitychange', () => {
         this.controller.changeVisibility(document.hidden);
     });
+
+    new Vue({
+        el: '#leaveValueC',
+        data: viewData
+    })
 };
 
 var changeLeave = function (isHidden, leaveData) {
@@ -45,10 +55,8 @@ var changeLeave = function (isHidden, leaveData) {
         acc[leaveDataItem.type] = leaveDataItem.value;
         return acc;
     }, {});
-    ReactDOM.render(
-        <RemainingTimeInfo hidden={isHidden} timeType={leaveData[0].type} timeValues={values}></RemainingTimeInfo>,
-        document.getElementById('leaveValueC')
-    );
+    viewData.timeInfo.isHidden = isHidden;
+    viewData.timeInfo.timeValues = values;
 };
 
 var MeasureView = function (viewDomElemId, controllerObj) {

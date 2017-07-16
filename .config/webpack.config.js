@@ -16,7 +16,7 @@ module.exports = {
     module: {
         loaders: [
             { test: /\.css$/, loader: measrCss.extract('css-loader?minimize') },
-            { test: /\.jsx$/, loader: 'babel-loader', query: { presets: ['es2015', 'react']} },
+            { test: /\.js$/, loader: 'babel-loader', query: { presets: ['es2015']} },
             { test: /\.woff$/, loader: 'file-loader?name=[name].[ext]' },
             { test: /\.png$/, loader: 'file-loader?name=[name].[ext]' },
             { test: /\.ico$/, loader: 'file-loader?name=[name].[ext]' },
@@ -30,5 +30,11 @@ module.exports = {
     devServer: {
         contentBase: path.join(__dirname, '../dist')
     },
-    devtool: 'source-map'
+    devtool: 'source-map',
+    resolve: {
+        alias: {
+            'vue$': 'vue/dist/vue.esm.js'
+        }
+    }
+
 }
