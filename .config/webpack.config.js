@@ -8,7 +8,7 @@ var path = require('path'),
 
 module.exports = {
     context: __dirname,
-    entry: '../src/client/js/client.js',
+    entry: '../src/client/js/index.jsx',
     output: {
         path: path.join(__dirname, '../dist'),
         filename: 'timeasr.js'

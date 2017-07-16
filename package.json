@@ -5,13 +5,11 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-
     "test": "echo \"Error: no test specified\" && exit 1",
     "eslint": "node ./node_modules/eslint/bin/eslint src/**/*.js",
     "karma": "node ./node_modules/karma/bin/karma start .config/karma.conf.js",
     "stylelint": "node ./node_modules/stylelint/dist/cli.js \"src/**/*.css\"",
     "dev": "node_modules/.bin/webpack-dev-server --config .config/webpack.config.js",
-
     "precommit": "npm run eslint stylelint"
   },
   "repository": {
@@ -33,6 +31,7 @@
     "babel-preset-react": "^6.24.1",
     "chai": "^3.5.0",
     "css-loader": "^0.26.4",
+    "eslint": "^4.2.0",
     "extract-text-webpack-plugin": "^2.1.0",
     "file-loader": "^0.9.0",
     "husky": "^0.11.9",
@@ -45,6 +44,8 @@
     "less": "^2.7.2",
     "less-loader": "^4.0.3",
     "mocha": "^3.2.0",
+    "react-router": "^4.1.1",
+    "react-router-dom": "^4.1.1",
     "sinon": "^2.2.0",
     "webpack": "^2.4.1",
     "webpack-dev-server": "^2.4.5"

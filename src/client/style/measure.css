@@ -17,10 +17,6 @@ body {
     width: 100%;
 }
 
-div.view {
-    display: none;
-}
-
 div#counter {
     position: relative;
     text-align: center;
@@ -160,7 +156,7 @@ div.menuBar {
     top: 0;
 }
 
-div.menuBar span {
+div.menuBar a {
     color: #fff;
     display: inline-block;
     font-family: TimeasrIcons, sans-serif;
@@ -168,6 +164,7 @@ div.menuBar span {
     height: 2em;
     padding-top: .5em;
     text-align: center;
+    text-decoration: none;
     width: 1.5em;
 }
 
