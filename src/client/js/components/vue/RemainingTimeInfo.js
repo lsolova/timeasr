@@ -19,7 +19,7 @@ function tick(updateViewCallback) {
 }
 
 export default Vue.component('timeinfo', {
-    template: '<div id="leaveValue" v-bind:class="defClass">{{timeValue}}</div>',
+    template: '<div id="leaveValue" :class="defClass">{{timeValue}}</div>',
     props: {
         isHidden: {
             type: Boolean,

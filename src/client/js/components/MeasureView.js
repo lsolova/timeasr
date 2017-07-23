@@ -2,16 +2,9 @@ import * as domUtils from '../utils/dom';
 import View from './View';
 import { showNotification } from './notification';
 
-import Vue from 'vue';
 import './vue/RemainingTimeInfo.js';
 
 let viewInstance;
-const viewData = {
-    timeInfo: {
-        isHidden: true,
-        timeValues: {}
-    }
-}
 
 var monthE,
     statTimeE,
@@ -21,6 +14,8 @@ var monthE,
     nextDayE,
     counterE
     ;
+
+let viewData;
 
 var bindViewElements = function () {
     monthE = document.getElementById('month');
@@ -43,13 +38,7 @@ var bindViewElements = function () {
     document.addEventListener('visibilitychange', () => {
         this.controller.changeVisibility(document.hidden);
     });
-
-    new Vue({
-        el: '#leaveValueC',
-        data: viewData
-    })
 };
-
 var changeLeave = function (isHidden, leaveData) {
     const values = leaveData.reduce((acc, leaveDataItem) => {
         acc[leaveDataItem.type] = leaveDataItem.value;
