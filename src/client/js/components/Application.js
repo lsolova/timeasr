@@ -7,11 +7,11 @@ import SettingsController from './SettingsController';
 import SettingsView from './SettingsView';
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import './vue/MeasureView';
-import './vue/SettingsView';
+import mView from './vue/MeasureView';
+import sView from './vue/SettingsView';
 
 const viewData = {
-    measureViewData: {
+    viewData: {
         timeInfo: {
             isHidden: true,
             timeValues: {}
@@ -21,8 +21,6 @@ const viewData = {
 
 const views = {};
 const controllers = {};
-const mView = { template: '<measure-view :view-data:"measureViewData"></measure-view>' };
-const sView = { template: '<settings-view></settings-view>' };
 Vue.use(VueRouter);
 const router = new VueRouter({
     routes: [
