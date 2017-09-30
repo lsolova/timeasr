@@ -12,6 +12,10 @@ module.exports = {
     start: function() {
         var rootDir = __dirname + '/../public';
         app.use('/', express.static(rootDir));
-        app.listen(port, ipaddress);
+        if (process.env.SLVENV && process.env.SLVENV === 'heroku') {
+            app.listen(port);
+        } else {
+            app.listen(port, ipaddress);
+        }
     }
 };
