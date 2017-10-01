@@ -5,7 +5,7 @@ const commonConfig = require('./webpack.common.config');
 const serverConfig = merge(commonConfig, {
     target: 'node',
     entry: {
-        server: './src/server/server.js'
+        server: './src/scripts/server.js'
     }
 });
 
