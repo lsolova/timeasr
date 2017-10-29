@@ -12,6 +12,7 @@ var monthE,
     actualDayE,
     nextDayE,
     counterE,
+    counterContainerE,
     leaveE,
     leaveChangeTimeoutId,
     currentLeaveCount = 0
@@ -25,6 +26,7 @@ var bindViewElements = function () {
     actualDayE = document.getElementById('actlDay');
     nextDayE = document.getElementById('nextDay');
     counterE = document.getElementById('counterValue');
+    counterContainerE = document.getElementById('counter');
     leaveE = document.getElementById('leaveValue');
 
     prevDayE.addEventListener('click', () => {
@@ -49,12 +51,10 @@ var changeLeave = function (isHidden, leaveData) {
     if (leaveChangeTimeoutId) {
         window.clearTimeout(leaveChangeTimeoutId);
     }
-    domUtils.removeClasses.call(leaveE, ['l-bef', 't-bef', 'hidden']);
+    domUtils.removeClasses.call(leaveE, ['l-bef', 't-bef']);
     cLeave = leaveData[currentLeaveCount];
     leaveE.classList.add(cLeave.type + '-bef');
-    if (isHidden) {
-        leaveE.classList.add('hidden');
-    } else {
+    if (!isHidden) {
         if (typeof cLeave.value === 'number') {
             domUtils.clearAndFill.call(leaveE, asHoursAndMinutes(cLeave.value));
         } else {
@@ -91,10 +91,10 @@ function update(data) {
     domUtils.clearAndFill.call(actualDayE, data.days.today);
     domUtils.clearAndFill.call(nextDayE, data.days.tomorrow);
 
-    changeLeave(!data.nowStarted, data.leave);
+    changeLeave(!data.isInProgress, data.leave);
 
     domUtils.clearAndFill.call(counterE, data.actualMinutes);
-    counterE.setAttribute('class', data.nowStarted ? 'running' : 'paused');
+    counterContainerE.setAttribute('class', data.isInProgress ? 'running' : 'paused');
 
     showNotification(notificationText);
 }

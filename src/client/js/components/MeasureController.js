@@ -48,7 +48,7 @@ var modelHandler = new ModelHandler(),
             fullActualDay = actualDay.getFullDay()
             ;
 
-        return {
+        const viewModel = {
             measureTime: actualDay,
             days: {
                 yesterday: timeConversionUtils.siblingDay(fullActualDay, -1).substring(6),
@@ -72,8 +72,10 @@ var modelHandler = new ModelHandler(),
             measuringMinutes: currentMeasuringMinutes,
             actualMinutes: timeConversionUtils.asHoursAndMinutes(actualDay.getMinutes() + currentMeasuringMinutes),
             avgTime: timeConversionUtils.asHoursAndMinutes(actualDiff.statValue),
-            dayCount: actualDiff.statCount
+            dayCount: actualDiff.statCount,
+            isInProgress: measureInProgress
         };
+        return viewModel;
     }
 
     MeasureController = function () {
@@ -137,7 +139,7 @@ var modelHandler = new ModelHandler(),
             setUpdateInterval(false);
         }
         viewModel = createViewModel();
-        viewModel.nowStarted = measureInProgress;
+        viewModel.nowStarted = viewModel.isInProgress;
         controllerInstance.updateView(viewModel);
     }
 

@@ -27,11 +27,11 @@ div#counter {
     top: 40vh;
 }
 
-div#counter .running {
+div#counter.running #counterValue {
     color: #586BA5;
 }
 
-div#counter .paused {
+div#counter.paused #counterValue {
     color: #929CB6;
 }
 
@@ -64,7 +64,7 @@ div#counter div#leaveValue.t-bef:before {
     content: 't';
 }
 
-div#counter div#leaveValue.hidden {
+div#counter.paused div#leaveValue {
     opacity: 0;
     transition: none;
 }
