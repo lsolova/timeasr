@@ -1,5 +1,6 @@
 const webpack = require('webpack');
 const merge = require('webpack-merge');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const GitRevisionPlugin = require('git-revision-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -25,7 +26,10 @@ const clientConfig = merge(commonConfig, {
             filename: './index.html',
             template: './src/client/index.ejs',
             version: gitInfo.version()
-        })
+        }),
+        new CopyWebpackPlugin([
+            { from: './src/client/assets', to: '.' }
+        ])
     ]
 });
 
