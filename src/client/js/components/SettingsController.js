@@ -25,12 +25,13 @@ let controllerInstance,
             currentMonth = actualMonth;
             loadData(currentMonth);
         }
-        return {
+        const modelView = {
             month: currentMonth.substr(0,4)+'/'+currentMonth.substr(4),
             dailyWorkload: dailyWorkload,
             monthlyAdjustment: monthlyAdjustment,
             monthlyAdjustmentDetails: monthlyAdjustmentDetails
-        }
+        };
+        return modelView;
     }
 
     export default function SettingsController(modelH) {
@@ -52,9 +53,10 @@ let controllerInstance,
         controllerInstance.updateView(createViewModel());
     }
 
-    function setMonthlyAdjustment(monthlyAdjustmentDetails) {
-        monthlyAdjustment = calculateMonthlyAdjustmentFromDetails(monthlyAdjustmentDetails);
-        modelHandler.setMonthlyAdjustment(currentMonth, monthlyAdjustmentDetails);
+    function setMonthlyAdjustment(updatedMonthlyAdjustmentDetails) {
+        monthlyAdjustmentDetails = updatedMonthlyAdjustmentDetails;
+        monthlyAdjustment = calculateMonthlyAdjustmentFromDetails(updatedMonthlyAdjustmentDetails);
+        modelHandler.setMonthlyAdjustment(currentMonth, updatedMonthlyAdjustmentDetails);
         controllerInstance.updateView(createViewModel());
     }
 
