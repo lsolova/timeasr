@@ -22,7 +22,7 @@ export function asTimeInMillis(dayString) {
     var year = dayString.substring(0, 4),
         month = removeLeadingZero(dayString.substring(4, 6)) - 1,
         day = removeLeadingZero(dayString.substring(6, 8));
-    return new Date(year, month, day, 0, 0, 0, 0).getTime();
+    return Date.UTC(year, month, day, 0, 0, 0, 0);
 }
 
 export function asMinutes(hoursAndMinutes) {
