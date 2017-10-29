@@ -10,6 +10,7 @@ module.exports = {
         'max-len': ['error', {'code': 120, 'ignoreUrls': true}]
     },
     'env': {
+        'browser': true,
         'es6': true,
         'mocha': true,
         'node': true
