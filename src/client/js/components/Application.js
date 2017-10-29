@@ -2,7 +2,7 @@
 
 import MeasureController from './MeasureController';
 import ModelHandler from './ModelHandler';
-import MeasureView from './MeasureView.jsx';
+import MeasureView from './MeasureView';
 import SettingsController from './SettingsController';
 import SettingsView from './SettingsView';
 

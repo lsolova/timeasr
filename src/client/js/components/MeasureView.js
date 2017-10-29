@@ -1,10 +1,7 @@
 import * as domUtils from '../utils/dom';
+import { asHoursAndMinutes } from '../utils/timeConversion';
 import View from './View';
 import { showNotification } from './notification';
-
-import React from 'react';
-import ReactDOM from 'react-dom';
-import RemainingTimeInfo from './react/RemainingTimeInfo.jsx';
 
 let viewInstance;
 
@@ -14,7 +11,10 @@ var monthE,
     prevDayE,
     actualDayE,
     nextDayE,
-    counterE
+    counterE,
+    leaveE,
+    leaveChangeTimeoutId,
+    currentLeaveCount = 0
     ;
 
 var bindViewElements = function () {
@@ -25,6 +25,7 @@ var bindViewElements = function () {
     actualDayE = document.getElementById('actlDay');
     nextDayE = document.getElementById('nextDay');
     counterE = document.getElementById('counterValue');
+    leaveE = document.getElementById('leaveValue');
 
     prevDayE.addEventListener('click', () => {
         this.controller.changeToPreviousDay();
@@ -41,14 +42,29 @@ var bindViewElements = function () {
 };
 
 var changeLeave = function (isHidden, leaveData) {
-    const values = leaveData.reduce((acc, leaveDataItem) => {
-        acc[leaveDataItem.type] = leaveDataItem.value;
-        return acc;
-    }, {});
-    ReactDOM.render(
-        <RemainingTimeInfo hidden={isHidden} timeType={leaveData[0].type} timeValues={values}></RemainingTimeInfo>,
-        document.getElementById('leaveValueC')
-    );
+    var cLeave;
+    if (leaveData.length <= currentLeaveCount) {
+        currentLeaveCount = 0;
+    }
+    if (leaveChangeTimeoutId) {
+        window.clearTimeout(leaveChangeTimeoutId);
+    }
+    domUtils.removeClasses.call(leaveE, ['l-bef', 't-bef', 'hidden']);
+    cLeave = leaveData[currentLeaveCount];
+    leaveE.classList.add(cLeave.type + '-bef');
+    if (isHidden) {
+        leaveE.classList.add('hidden');
+    } else {
+        if (typeof cLeave.value === 'number') {
+            domUtils.clearAndFill.call(leaveE, asHoursAndMinutes(cLeave.value));
+        } else {
+            domUtils.clearAndFill.call(leaveE, cLeave.value);
+        }
+        currentLeaveCount++;
+        if (!document.hidden) {
+            leaveChangeTimeoutId = window.setTimeout(() => changeLeave(isHidden, leaveData), 5000);
+        }
+    }
 };
 
 var MeasureView = function (viewDomElemId, controllerObj) {

@@ -11,7 +11,7 @@ const gitInfo = new GitRevisionPlugin();
 
 const clientConfig = merge(commonConfig, {
     entry: {
-        timeasr: './src/client/js/index.jsx'
+        timeasr: './src/client/js/client.js'
     },
     module: {
         loaders: [

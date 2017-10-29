@@ -12,7 +12,7 @@ const commonConfig = {
     },
     module: {
         loaders: [
-            { test: /\.jsx?$/, loader: 'babel-loader', query: { presets: ['env', 'react']} }
+            { test: /\.jsx?$/, loader: 'babel-loader', query: { presets: ['env']} }
         ]
     },
     resolve: {
