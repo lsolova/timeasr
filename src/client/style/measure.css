@@ -45,8 +45,13 @@ div#counter div#counterValue {
     font-weight: bold;
 }
 
+div#counter div#lastChangeTime,
 div#counter div#leaveValue {
     color: lightgrey;
+}
+
+div#counter div#leaveValue {
+    margin-top: 12px;
     opacity: 1;
     transition: opacity 5s ease;
 }

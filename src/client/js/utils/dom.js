@@ -1,8 +1,10 @@
 export function clearAndFill(content) {
-    while (this.hasChildNodes()) {
-        this.removeChild(this.firstChild);
+    if (content !== undefined && content !== null) {
+        while (this.hasChildNodes()) {
+            this.removeChild(this.firstChild);
+        }
+        this.appendChild(document.createTextNode(content));
     }
-    this.appendChild(document.createTextNode(content));
 }
 
 export function removeClasses(classes) {

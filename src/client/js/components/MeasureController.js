@@ -6,8 +6,10 @@ import { calculateMonthlyAdjustmentFromDetails,
          calculateMonthlyDifference,
          estimateLeavingTime
          } from '../utils/timeCalculation';
+import { createTimeLog, getLastTimeLog } from '../../../scripts/services/timeLogService';
 
 let controllerInstance;
+let lastChangeTime;
 
 var modelHandler = new ModelHandler(),
         MeasureController,
@@ -73,7 +75,8 @@ var modelHandler = new ModelHandler(),
             actualMinutes: timeConversionUtils.asHoursAndMinutes(actualDay.getMinutes() + currentMeasuringMinutes),
             avgTime: timeConversionUtils.asHoursAndMinutes(actualDiff.statValue),
             dayCount: actualDiff.statCount,
-            isInProgress: measureInProgress
+            isInProgress: measureInProgress,
+            lastChangeTime
         };
         return viewModel;
     }
@@ -87,6 +90,10 @@ var modelHandler = new ModelHandler(),
             changeToNextDay,
             changeVisibility,
             startOrStop
+        });
+        getLastTimeLog().then((lastLogEntry) => {
+            lastChangeTime = lastLogEntry && lastLogEntry.recTime || '';
+            controllerInstance.updateView(createViewModel());
         });
         return controllerInstance;
     };
@@ -138,9 +145,13 @@ var modelHandler = new ModelHandler(),
             measureInProgress = false;
             setUpdateInterval(false);
         }
-        viewModel = createViewModel();
-        viewModel.nowStarted = viewModel.isInProgress;
-        controllerInstance.updateView(viewModel);
+
+        createTimeLog().then((createdLogEntry) => {
+            lastChangeTime = createdLogEntry.recTime;
+            viewModel = createViewModel();
+            viewModel.nowStarted = viewModel.isInProgress;
+            controllerInstance.updateView(viewModel);
+        });
     }
 
 export default MeasureController;

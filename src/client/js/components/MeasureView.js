@@ -11,9 +11,10 @@ var monthE,
     prevDayE,
     actualDayE,
     nextDayE,
-    counterE,
     counterContainerE,
+    counterE,
     leaveE,
+    lastChangeTimeE,
     leaveChangeTimeoutId,
     currentLeaveCount = 0
     ;
@@ -25,9 +26,10 @@ var bindViewElements = function () {
     prevDayE = document.getElementById('prevDay');
     actualDayE = document.getElementById('actlDay');
     nextDayE = document.getElementById('nextDay');
-    counterE = document.getElementById('counterValue');
     counterContainerE = document.getElementById('counter');
+    counterE = document.getElementById('counterValue');
     leaveE = document.getElementById('leaveValue');
+    lastChangeTimeE = document.getElementById('lastChangeTime');
 
     prevDayE.addEventListener('click', () => {
         this.controller.changeToPreviousDay();
@@ -91,10 +93,10 @@ function update(data) {
     domUtils.clearAndFill.call(actualDayE, data.days.today);
     domUtils.clearAndFill.call(nextDayE, data.days.tomorrow);
 
-    changeLeave(!data.isInProgress, data.leave);
-
-    domUtils.clearAndFill.call(counterE, data.actualMinutes);
     counterContainerE.setAttribute('class', data.isInProgress ? 'running' : 'paused');
+    domUtils.clearAndFill.call(counterE, data.actualMinutes);
+    changeLeave(!data.isInProgress, data.leave);
+    domUtils.clearAndFill.call(lastChangeTimeE, data.lastChangeTime ? `${data.lastChangeTime} UTC` : undefined);
 
     showNotification(notificationText);
 }
