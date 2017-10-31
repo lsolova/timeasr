@@ -12,3 +12,9 @@ deploy:
     app: slv-timeasr
     skip_cleanup: true
     on: releases
+  - provider: openshift
+    user: lsolova
+    password: UlDJUfImgORO1ITyjVwvVqouWH7XxmywjGptmNgRjDB3GIdU44OCK56TGcdcTCOEhuFBYYKi85Ez8Chl0hqBKjbtUaUYVNKsTvFsU8IdS27wntmcr0hHIlvOOhJfrNfeR4Q+H3LSksCcfeC5KCverzvrpleGrCFsgrL1GzlWMbZPugF1nz9/g4pmtCqRAxgyrIoEUVRUcxh4K8X6TqkttJpS/JdT05+btWPlFtt0inSqZae8VALGrAwGOTmfzUCzQjJkdHIzwdGrxW/F5oeQFMTQM9lERsux5RyFPvZC3mKLHvwzrNnXtUh340Bnq+cOqTjYQFDUpC27iP08iarzJxhLe0szAdjssohMFB6VKpbxsk79+DLwzDYi7LchQUYckeMDb/BbMFerHIWf5uhkXVHm0rSQFc0eeuUrcYffPebTzQOpTmYV3YAGWmqLBA3npl0kaxiDaesgmsSv1Uv4lREvzcDxte0KPvqjwcD7efPwnIVQoLCZFu7tBPQ6Nm7/jAqr3fiB+iuKCPk6Quju4fPzeC8Olq93ebC2GpReGG5LdXVEPVQDep4079j4gbktDkn8YuW72dPtyX7dNfK4CAVickbX9Zi4sBU9jGDzRmO2hppsI/Z+6wG4iFmWBDonnDQXZKvJzAi5O30p2hrVNGdmSCUhcyafKeheQwWi4TI=
+    domain: timeasr.solova.com
+    app: slv-timeasr
+    on: releases
