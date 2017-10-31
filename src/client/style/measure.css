@@ -25,6 +25,7 @@ div#counter {
     position: relative;
     text-align: center;
     top: 40vh;
+    user-select: none;
 }
 
 div#counter.running #counterValue {
