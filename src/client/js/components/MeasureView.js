@@ -78,7 +78,7 @@ var MeasureView = function (viewDomElemId, controllerObj) {
 
 function update(data) {
     const statTimeValue = data.avgTime,
-        isAvgTimePositive = statTimeValue > 0,
+        isAvgTimePositive = statTimeValue > '0:00',
         notificationText = data.nowStarted === true ? 'Started' : data.nowStarted === false ? 'Paused' : undefined
         ;
 
