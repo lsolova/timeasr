@@ -1,5 +1,5 @@
 import * as modelHandler from './ModelHandler';
-import { asDay } from '../utils/timeConversion';
+import { asDay } from 'scripts/utils/timeConversion';
 import * as store from './PersistentStore';
 import * as dateWrapper from '../utils/dateWrapper';
 

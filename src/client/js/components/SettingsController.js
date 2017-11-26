@@ -1,7 +1,7 @@
 'use strict';
 
 import Controller from './Controller';
-import { asMinutes, asMonth } from '../utils/timeConversion';
+import { asMinutes, asMonth } from 'scripts/utils/timeConversion';
 import { now } from '../utils/dateWrapper';
 import { calculateMonthlyAdjustmentFromDetails } from '../utils/timeCalculation';
 

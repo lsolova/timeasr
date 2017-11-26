@@ -1,4 +1,4 @@
-import * as timeUtils from '../utils/timeConversion';
+import * as timeUtils from 'scripts/utils/timeConversion';
 import { now } from '../utils/dateWrapper';
 
 var MeasureTime = function (day = timeUtils.asDay(now()), minutes = 0) {

@@ -18,6 +18,11 @@ export function removeLeadingZero(value) {
     return value.startsWith('0') ? value.substr(1) : value;
 }
 
+export function dayStart(dayTime) {
+    const actualDate = new Date(dayTime);
+    return Date.UTC(actualDate.getFullYear(), actualDate.getMonth(), actualDate.getDate(), 0, 0, 0, 0);
+}
+
 export function asTimeInMillis(dayString) {
     var year = dayString.substring(0, 4),
         month = removeLeadingZero(dayString.substring(4, 6)) - 1,

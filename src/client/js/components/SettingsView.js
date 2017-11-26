@@ -1,7 +1,7 @@
 'use strict';
 
 import * as domUtils from '../utils/dom';
-import * as TimeUtils from '../utils/timeConversion';
+import * as TimeUtils from 'scripts/utils/timeConversion';
 import View from './View';
 
 var SettingsView;

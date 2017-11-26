@@ -1,5 +1,5 @@
 import * as MeasureTime from './MeasureTime';
-import * as timeUtils from '../utils/timeConversion';
+import * as timeUtils from 'scripts/utils/timeConversion';
 import * as store from './PersistentStore';
 import { now } from '../utils/dateWrapper';
 

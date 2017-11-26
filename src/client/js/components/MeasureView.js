@@ -1,5 +1,5 @@
 import * as domUtils from '../utils/dom';
-import { asHoursAndMinutes } from '../utils/timeConversion';
+import { asHoursAndMinutes } from 'scripts/utils/timeConversion';
 import View from './View';
 import { showNotification } from './notification';
 

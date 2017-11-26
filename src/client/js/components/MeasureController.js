@@ -1,6 +1,6 @@
 import Controller from './Controller';
 import ModelHandler from './ModelHandler';
-import * as timeConversionUtils from '../utils/timeConversion';
+import * as timeConversionUtils from 'scripts/utils/timeConversion';
 import { now } from '../utils/dateWrapper';
 import { calculateMonthlyAdjustmentFromDetails,
          calculateMonthlyDifference,
