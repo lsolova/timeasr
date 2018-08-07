@@ -7,8 +7,8 @@ function openDb() {
     dbOpenPromise = dbOpenPromise || new Promise((resolve, reject) => {
         const request = indexedDB.open(dbConfig.dbname, dbConfig.dbversion);
 
-        request.onupgradeneeded = function doOnUpgrade() {
-            const db = request.result;
+        request.onupgradeneeded = function doOnUpgrade(event) {
+            const db = event.target.result;
 
             if (dbConfig.tables) {
                 dbConfig.tables.forEach((tableDescription) => {
@@ -33,28 +33,25 @@ function openDb() {
             }
         };
 
-        request.onsuccess = function () {
-            resolve(request.result);
+        request.onsuccess = function (event) {
+            resolve(event.target.result);
         };
 
-        request.onerror = function () {
-            reject(request.error);
+        request.onerror = function (event) {
+            reject(event.target.error);
         };
     });
     return dbOpenPromise;
 }
 
 function openTransaction(openedDB, objectStore, writable) {
-    const trxPromise = new Promise((resolve) => {
-        let trx;
-        if (writable) {
-            trx = openedDB.transaction(objectStore, 'readwrite');
-        } else {
-            trx = openedDB.transaction(objectStore);
-        }
-        resolve(trx);
-    });
-    return trxPromise;
+    let trx;
+    if (writable) {
+        trx = openedDB.transaction(objectStore, 'readwrite');
+    } else {
+        trx = openedDB.transaction(objectStore, 'readonly');
+    }
+    return trx;
 }
 
 export function init(conf) {
@@ -64,9 +61,7 @@ export function init(conf) {
 export function runQuery({data, objectStore, writable, queryFunction}) {
     return openDb()
         .then((openedDB) => {
-            return openTransaction(openedDB, objectStore, writable);
-        })
-        .then((trx) => {
+            const trx = openTransaction(openedDB, objectStore, writable);
             return queryFunction.call(null, trx, data);
         });
     }

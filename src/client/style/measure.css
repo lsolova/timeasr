@@ -14,6 +14,7 @@ body {
     line-height: 21px;
     margin: 0;
     padding: 0;
+    user-select: none;
     width: 100%;
 }
 
@@ -25,7 +26,6 @@ div#counter {
     position: relative;
     text-align: center;
     top: 40vh;
-    user-select: none;
 }
 
 div#counter.running #counterValue {
