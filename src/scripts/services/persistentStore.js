@@ -7,8 +7,8 @@ function openDb() {
     dbOpenPromise = dbOpenPromise || new Promise((resolve, reject) => {
         const request = indexedDB.open(dbConfig.dbname, dbConfig.dbversion);
 
-        request.onupgradeneeded = function doOnUpgrade() {
-            const db = request.result;
+        request.onupgradeneeded = function doOnUpgrade(event) {
+            const db = event.target.result;
 
             if (dbConfig.tables) {
                 dbConfig.tables.forEach((tableDescription) => {
@@ -33,12 +33,12 @@ function openDb() {
             }
         };
 
-        request.onsuccess = function () {
-            resolve(request.result);
+        request.onsuccess = function (event) {
+            resolve(event.target.result);
         };
 
-        request.onerror = function () {
-            reject(request.error);
+        request.onerror = function (event) {
+            reject(event.target.error);
         };
     });
     return dbOpenPromise;
