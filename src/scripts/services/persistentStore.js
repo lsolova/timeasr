@@ -45,16 +45,13 @@ function openDb() {
 }
 
 function openTransaction(openedDB, objectStore, writable) {
-    const trxPromise = new Promise((resolve) => {
-        let trx;
-        if (writable) {
-            trx = openedDB.transaction(objectStore, 'readwrite');
-        } else {
-            trx = openedDB.transaction(objectStore);
-        }
-        resolve(trx);
-    });
-    return trxPromise;
+    let trx;
+    if (writable) {
+        trx = openedDB.transaction(objectStore, 'readwrite');
+    } else {
+        trx = openedDB.transaction(objectStore, 'readonly');
+    }
+    return trx;
 }
 
 export function init(conf) {
@@ -64,9 +61,7 @@ export function init(conf) {
 export function runQuery({data, objectStore, writable, queryFunction}) {
     return openDb()
         .then((openedDB) => {
-            return openTransaction(openedDB, objectStore, writable);
-        })
-        .then((trx) => {
+            const trx = openTransaction(openedDB, objectStore, writable);
             return queryFunction.call(null, trx, data);
         });
     }
