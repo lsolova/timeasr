@@ -99,7 +99,7 @@ function update(data) {
     counterContainerE.setAttribute('class', data.isInProgress ? 'running' : 'paused');
     domUtils.clearAndFill.call(counterE, data.actualMinutes);
     changeLeave(!data.isInProgress, data.leave);
-    domUtils.clearAndFill.call(lastChangeTimeE, data.lastChangeTime ? `${data.lastChangeTime} UTC` : undefined);
+    domUtils.clearAndFill.call(lastChangeTimeE, data.lastChangeTime);
 
     showNotification(notificationText);
 }

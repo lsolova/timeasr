@@ -76,7 +76,7 @@ var modelHandler = new ModelHandler(),
             avgTime: timeConversionUtils.asHoursAndMinutes(actualDiff.statValue),
             dayCount: actualDiff.statCount,
             isInProgress: measureInProgress,
-            lastChangeTime: lastChangeTimeString
+            lastChangeTime: lastChangeTimeString ? new Date(lastChangeTimeString).toISOString() : ''
         };
         return viewModel;
     }

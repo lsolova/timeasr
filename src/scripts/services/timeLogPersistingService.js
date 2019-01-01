@@ -60,7 +60,7 @@ function getTimeLogsOfLastDays(trx, firstDay) {
     return lastDayTimes;
 }
 
-export function getAllTimeLogs(lastDaysCount) {
+export function getAllTimeLogs(lastDaysCount = 10) {
     if (timeLogList) {
         return Promise.resolve(timeLogList);
     }
@@ -69,7 +69,7 @@ export function getAllTimeLogs(lastDaysCount) {
         init();
         PersistentStore
             .runQuery({
-                data: convertDayCountToDay(lastDaysCount),
+                data: convertDayCountToDay(-lastDaysCount),
                 objectStore: DB_STORE_TIMELOG,
                 writable: false,
                 queryFunction: getTimeLogsOfLastDays
