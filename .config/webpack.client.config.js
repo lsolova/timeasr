@@ -28,7 +28,7 @@ const clientConfig = merge(commonConfig, {
             version: gitInfo.version()
         }),
         new CopyWebpackPlugin([
-            { from: './src/client/assets', to: '.' }
+            { from: './src/assets', to: '.' }
         ])
     ]
 });
