@@ -1,0 +1,40 @@
+@startuml "v.0.9 initial state - packaged"
+skinparam shadowing false
+
+package "Views" {
+  [ApplicationView] as aw
+  [CalendarView] as cw
+  [MeasureView] as mw
+  [SettingsView] as sw
+}
+package "Controllers" {
+  [CalendarController] as cc
+  [MeasureController] as mc
+  [SettingsController] as sc
+}
+package "Data manipulation" {
+  [CalculationUtils] as cau
+  [ModelHandler] as mh
+  [PersistentStore] as ps
+  [TimeLogPersistingService] as tlps
+}
+package "Utils" {
+  [DateUtils] as dateu
+}
+
+aw --> cw
+aw --> mw
+aw --> sw
+cc --> mh
+cw ... cc
+mc --> mh
+mw ... mc
+sc --> mh
+sw ... sc
+tlps --> dateu
+tlps --> ps
+mh --> cau
+mh --> tlps
+
+@enduml
+
