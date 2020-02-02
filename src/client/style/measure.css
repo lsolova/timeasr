@@ -1,11 +1,11 @@
 @font-face {
     font-family: TimeasrIcons;
-    src: url('../assets/TimeasrIcons.woff');
+    src: url('../../assets/TimeasrIcons.woff');
 }
 
 @font-face {
     font-family: SolovaLogo;
-    src: url('../assets/SolovaLogo.woff');
+    src: url('../../assets/SolovaLogo.woff');
 }
 
 body {
