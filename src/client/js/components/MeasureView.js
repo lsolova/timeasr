@@ -40,9 +40,6 @@ var bindViewElements = function () {
     counterE.addEventListener('click', () => {
         this.controller.startOrStop();
     });
-    counterE.addEventListener('touchstart', () => {
-        this.controller.startOrStop();
-    });
     document.addEventListener('visibilitychange', () => {
         this.controller.changeVisibility(document.hidden);
     });
