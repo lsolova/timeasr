@@ -2,7 +2,7 @@
 
 import Controller from './Controller';
 import { asMinutes, asMonth } from 'scripts/utils/timeConversion';
-import { now } from '../utils/dateWrapper';
+import { now } from 'client/js/utils/dateUtils';
 import { calculateMonthlyAdjustmentFromDetails } from '../utils/timeCalculation';
 
 var     currentMonth,
