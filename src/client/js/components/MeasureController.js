@@ -1,7 +1,7 @@
 import Controller from './Controller';
 import ModelHandler from './ModelHandler';
 import * as timeConversionUtils from 'scripts/utils/timeConversion';
-import { now } from 'client/js/utils/dateUtils';
+import { now } from 'scripts/utils/dateUtils';
 import { calculateMonthlyAdjustmentFromDetails,
          calculateMonthlyDifference,
          estimateLeavingTime

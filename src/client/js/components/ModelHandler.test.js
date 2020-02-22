@@ -1,7 +1,7 @@
 import * as modelHandler from './ModelHandler';
 import { asDay } from 'scripts/utils/timeConversion';
 import * as store from './PersistentStore';
-import * as dateUtils from 'client/js/utils/dateUtils';
+import * as dateUtils from 'scripts/utils/dateUtils';
 
 import { should } from 'chai';
 import { stub } from 'sinon';
