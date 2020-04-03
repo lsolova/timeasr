@@ -118,7 +118,7 @@ export function setActualDay(sign) {
 }
 
 export function getDailyWorkload(month) {
-    return parseInt(store.getOrSet(month + storeConfig.keys.dailyWorkload, 510), 10);
+    return parseInt(store.getOrSet(month + storeConfig.keys.dailyWorkload, 480), 10);
 }
 
 export function setDailyWorkload(month, value) {
