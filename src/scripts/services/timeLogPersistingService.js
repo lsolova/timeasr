@@ -3,6 +3,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 const DB_STORE_TIMELOG = 'timelog';
 const DB_STORE_BYTIME_INDEX = 'byTimeIndex';
+const LOGTYPE_START = 'STRT';
+const LOGTYPE_STOP = 'STOP';
 
 const dbConfig = {
     dbname: 'TimeasrDB',
@@ -106,11 +108,13 @@ export function createTimeLog({ predefinedRecEpoch, timelogComment }) {
     return new Promise((resolve) => {
         getLastTimeLog().then((lastTimeLog) => {
             const newTimeLog = {
-                type: (lastTimeLog && lastTimeLog.type === 'STRT' ? 'STOP' : 'STRT'),
+                type: (lastTimeLog && lastTimeLog.type === LOGTYPE_START ? LOGTYPE_STOP : LOGTYPE_START),
                 recTime: predefinedRecEpoch || Date.now(),
-                tlId: uuidv4(),
-                comment: timelogComment
+                tlId: uuidv4()
             };
+            if (newTimeLog.type === LOGTYPE_START && timelogComment) {
+                newTimeLog.comment = timelogComment;
+            }
             PersistentStore
                 .runQuery({
                     data: newTimeLog,
