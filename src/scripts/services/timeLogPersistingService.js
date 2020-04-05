@@ -102,13 +102,14 @@ function addTimeLogQuery(trx, timelogEntry) {
     return addingResult;
 }
 
-export function createTimeLog(predefinedRecEpoch) {
+export function createTimeLog({ predefinedRecEpoch, timelogComment }) {
     return new Promise((resolve) => {
         getLastTimeLog().then((lastTimeLog) => {
             const newTimeLog = {
                 type: (lastTimeLog && lastTimeLog.type === 'STRT' ? 'STOP' : 'STRT'),
                 recTime: predefinedRecEpoch || Date.now(),
-                tlId: uuidv4()
+                tlId: uuidv4(),
+                comment: timelogComment
             };
             PersistentStore
                 .runQuery({

@@ -9,9 +9,11 @@ export function getLastChangeTime() {
     });
 }
 
-export function createTimeLogEntry() {
+export function createTimeLogEntry(timelogComment) {
     return new Promise((resolve) => {
-        TimeLogDbAdapter.createTimeLog().then((createdTimeLog) => {
+        TimeLogDbAdapter.createTimeLog({
+            timelogComment
+        }).then((createdTimeLog) => {
             resolve(createdTimeLog.recTime);
         });
     });

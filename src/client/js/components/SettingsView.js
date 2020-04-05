@@ -6,9 +6,10 @@ import View from './View';
 
 var SettingsView;
 var dailyWlInputE,
-        monthlyWlAdjInputE,
-        monthlyWlAdjSumE,
-        monthLabelE;
+    monthlyWlAdjInputE,
+    monthlyWlAdjSumE,
+    monthLabelE,
+    taskTypesE;
 
     var adjustTextAreaHeight = function () {
         monthlyWlAdjInputE.style.height = monthlyWlAdjInputE.scrollHeight + 'px';
@@ -18,6 +19,7 @@ var dailyWlInputE,
         monthlyWlAdjInputE = document.getElementById('monthlywladj');
         monthlyWlAdjSumE = document.getElementById('monthlywladjsum');
         monthLabelE = document.getElementById('dwlForMonth');
+        taskTypesE = document.getElementById('tasktypes');
         dailyWlInputE.addEventListener('change', () => {
             this.controller.setDailyWorkload(dailyWlInputE.value);
         });
@@ -27,6 +29,9 @@ var dailyWlInputE,
         });
         monthlyWlAdjInputE.addEventListener('change', () => {
             this.controller.setMonthlyAdjustment(monthlyWlAdjInputE.value);
+        });
+        taskTypesE.addEventListener('change', () => {
+            this.controller.setTaskTypes(taskTypesE.value);
         });
     };
 
@@ -41,6 +46,7 @@ var dailyWlInputE,
         domUtils.clearAndFill.call(monthLabelE, data.month);
         dailyWlInputE.value = TimeUtils.asHoursAndMinutes(data.dailyWorkload);
         monthlyWlAdjInputE.value = data.monthlyAdjustmentDetails;
+        taskTypesE.value = data.taskTypes;
         adjustTextAreaHeight();
         domUtils.clearAndFill.call(monthlyWlAdjSumE, TimeUtils.asHoursAndMinutes(data.monthlyAdjustment));
     }

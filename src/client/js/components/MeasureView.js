@@ -4,6 +4,8 @@ import View from './View';
 import { showNotification } from './notification';
 
 let viewInstance;
+let timelogComment;
+let knownTaskTypes;
 
 var monthE,
     statTimeE,
@@ -15,6 +17,7 @@ var monthE,
     counterE,
     leaveE,
     lastChangeTimeE,
+    taskTypeListE,
     leaveChangeTimeoutId,
     currentLeaveCount = 0
     ;
@@ -30,6 +33,7 @@ var bindViewElements = function () {
     counterE = document.getElementById('counterValue');
     leaveE = document.getElementById('leaveValue');
     lastChangeTimeE = document.getElementById('lastChangeTime');
+    taskTypeListE = document.getElementById('taskTypesList');
 
     prevDayE.addEventListener('click', () => {
         this.controller.changeToPreviousDay();
@@ -38,10 +42,11 @@ var bindViewElements = function () {
         this.controller.changeToNextDay();
     });
     counterE.addEventListener('click', () => {
-        this.controller.startOrStop();
+        this.controller.startOrStop(timelogComment);
     });
-    counterE.addEventListener('touchstart', () => {
-        this.controller.startOrStop();
+    taskTypeListE.addEventListener('click', (event) => {
+        timelogComment = event.target.innerText;
+        renderTaskTypes(knownTaskTypes);
     });
     document.addEventListener('visibilitychange', () => {
         this.controller.changeVisibility(document.hidden);
@@ -84,6 +89,7 @@ function update(data) {
         isAvgTimePositive = statTimeValue > '0:00',
         notificationText = data.nowStarted === true ? 'Started' : data.nowStarted === false ? 'Paused' : undefined
         ;
+    knownTaskTypes = data.taskTypes;
 
     domUtils.clearAndFill.call(monthE, data.measureTime.getYearAndMonth('/'));
     domUtils.clearAndFill.call(statTimeE, (isAvgTimePositive ? '+' : '') + statTimeValue);
@@ -100,8 +106,23 @@ function update(data) {
     domUtils.clearAndFill.call(counterE, data.actualMinutes);
     changeLeave(!data.isInProgress, data.leave);
     domUtils.clearAndFill.call(lastChangeTimeE, data.lastChangeTime);
+    renderTaskTypes(data.taskTypes);
 
     showNotification(notificationText);
+}
+
+function renderTaskTypes(taskTypes) {
+    domUtils.clear.call(taskTypeListE);
+    taskTypes.forEach((taskType) => {
+        if (taskType) {
+            const taskTypeElement = document.createElement('span');
+            if (taskType === timelogComment) {
+                taskTypeElement.classList.add('sel');
+            }
+            taskTypeElement.appendChild(document.createTextNode(taskType));
+            taskTypeListE.appendChild(taskTypeElement);
+        }
+    });
 }
 
 export default MeasureView;

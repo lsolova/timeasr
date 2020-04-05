@@ -22,6 +22,7 @@
         </div>
         <div id="counter">
             <div id="counterValue"></div>
+            <div id="taskTypesList"></div>
             <div id="lastChangeTime"></div>
             <div id="leaveValue"></div>
         </div>
@@ -41,6 +42,10 @@
             <label for="monthlywladj">Monthly workload adjustment</label>
             <div>Summary: <span id="monthlywladjsum"></span></div>
             <textarea id="monthlywladj" name="monthlywladj"></textarea>
+        </div>
+        <div class="settingsrow">
+            <label for="tasktypes">Task types</label>
+            <textarea id="tasktypes" name="tasktypes"></textarea>
         </div>
         <div id="license" class="settingsrow">
             <span id="version"><%= htmlWebpackPlugin.options.version %></span>

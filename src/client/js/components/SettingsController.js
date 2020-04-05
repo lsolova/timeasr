@@ -8,7 +8,8 @@ import { calculateMonthlyAdjustmentFromDetails } from '../utils/timeCalculation'
 var     currentMonth,
         dailyWorkload,
         monthlyAdjustment,
-        monthlyAdjustmentDetails;
+        monthlyAdjustmentDetails,
+        taskTypes;
 
 let controllerInstance,
     modelHandler;
@@ -17,6 +18,7 @@ let controllerInstance,
         dailyWorkload = modelHandler.getDailyWorkload(actualMonth);
         monthlyAdjustmentDetails = modelHandler.getMonthlyAdjustment(actualMonth);
         monthlyAdjustment = calculateMonthlyAdjustmentFromDetails(monthlyAdjustmentDetails);
+        taskTypes = modelHandler.getTaskTypes().join('\n');
     }
 
     function createViewModel() {
@@ -27,9 +29,10 @@ let controllerInstance,
         }
         const modelView = {
             month: currentMonth.substr(0,4)+'/'+currentMonth.substr(4),
-            dailyWorkload: dailyWorkload,
-            monthlyAdjustment: monthlyAdjustment,
-            monthlyAdjustmentDetails: monthlyAdjustmentDetails
+            dailyWorkload,
+            monthlyAdjustment,
+            monthlyAdjustmentDetails,
+            taskTypes
         };
         return modelView;
     }
@@ -42,6 +45,7 @@ let controllerInstance,
         Object.assign(controllerInstance, {
             setDailyWorkload,
             setMonthlyAdjustment,
+            setTaskTypes,
             changeVisibility
         });
         return controllerInstance;
@@ -57,6 +61,12 @@ let controllerInstance,
         monthlyAdjustmentDetails = updatedMonthlyAdjustmentDetails;
         monthlyAdjustment = calculateMonthlyAdjustmentFromDetails(updatedMonthlyAdjustmentDetails);
         modelHandler.setMonthlyAdjustment(currentMonth, updatedMonthlyAdjustmentDetails);
+        controllerInstance.updateView(createViewModel());
+    }
+
+    function setTaskTypes(updatedTaskTypes) {
+        taskTypes = updatedTaskTypes;
+        modelHandler.setTaskTypes(updatedTaskTypes.split('\n'));
         controllerInstance.updateView(createViewModel());
     }
 

@@ -10,7 +10,8 @@ const storeConfig = {
         databaseVersion: 'dbversion',
         monthlyAdjustment: 'mwa',
         oldestDay: 'firstday',
-        lastStartTime: 'startOn'
+        lastStartTime: 'startOn',
+        taskTypes: 'taskTypes'
     }
 };
 
@@ -79,11 +80,13 @@ export default function ModelHandler() {
         getActualDay,
         getDailyWorkload,
         getMonthlyAdjustment,
+        getTaskTypes,
         getTimeOfDay,
         incrementActualDay,
         setActualDay,
         setDailyWorkload,
         setMonthlyAdjustment,
+        setTaskTypes,
         getMonthlyMeasuredTimes,
         lastStartTime
     }
@@ -131,6 +134,14 @@ export function getMonthlyAdjustment(month) {
 
 export function setMonthlyAdjustment(month, value) {
     store.set(month + storeConfig.keys.monthlyAdjustment, value);
+}
+
+export function getTaskTypes() {
+    return JSON.parse(store.getOrSet(storeConfig.keys.taskTypes, '[]'));
+}
+
+export function setTaskTypes(taskTypes) {
+    store.set(storeConfig.keys.taskTypes, JSON.stringify(taskTypes));
 }
 
 export function getTimeOfDay(day) {

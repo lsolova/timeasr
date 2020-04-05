@@ -76,7 +76,8 @@ var modelHandler = new ModelHandler(),
             avgTime: timeConversionUtils.asHoursAndMinutes(actualDiff.statValue),
             dayCount: actualDiff.statCount,
             isInProgress: measureInProgress,
-            lastChangeTime: lastChangeTimeString ? new Date(lastChangeTimeString).toISOString() : ''
+            lastChangeTime: lastChangeTimeString ? new Date(lastChangeTimeString).toISOString() : '',
+            taskTypes: modelHandler.getTaskTypes()
         };
         return viewModel;
     }
@@ -126,7 +127,7 @@ var modelHandler = new ModelHandler(),
         setUpdateInterval(!hidden);
     }
 
-    function startOrStop() {
+    function startOrStop(timelogComment) {
         var startedOn,
             viewModel;
         if (!measureInProgress && timeConversionUtils.asDay(now()) !== modelHandler.getActualDay().getFullDay()) {
@@ -146,7 +147,7 @@ var modelHandler = new ModelHandler(),
             setUpdateInterval(false);
         }
 
-        createTimeLogEntry().then((createdLogTime) => {
+        createTimeLogEntry(timelogComment || '').then((createdLogTime) => {
             lastChangeTimeString = createdLogTime;
             viewModel = createViewModel();
             viewModel.nowStarted = viewModel.isInProgress;
