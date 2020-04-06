@@ -54,6 +54,13 @@ export function asHoursAndMinutes(minutes) {
     return prefix + Math.floor(absMinutes / 60) + ":" + addLeadingZeros(absMinutes % 60);
 }
 
+export function asDecimalHours(timeInMillis) {
+    const v =  timeInMillis
+        ? timeInMillis / (1000 * 60 * 60)
+        : 0;
+    return Math.round((v + Number.EPSILON) * 100) / 100;
+}
+
 export function asMonth(timeInMillis) {
     var expDate;
     if (!Number.isInteger(timeInMillis)) {

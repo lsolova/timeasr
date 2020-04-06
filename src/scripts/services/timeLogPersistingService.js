@@ -38,28 +38,42 @@ function init() {
     }
 }
 
-function getTimeLogsOfLastDays(trx, firstDay) {
+function getTimeLogs(trx, { fromEpoch = 0, toEpoch = 0 }) {
     const lastDayTimes = new Promise((resolve, reject) => {
         const trxStore = trx.objectStore(DB_STORE_TIMELOG);
         const byTimeIndex = trxStore.index(DB_STORE_BYTIME_INDEX);
-        const range = IDBKeyRange.lowerBound(firstDay || '0');
+        const range = (toEpoch > fromEpoch)
+            ? IDBKeyRange.bound(fromEpoch, toEpoch)
+            : IDBKeyRange.lowerBound(fromEpoch);
         const cursorRequest = byTimeIndex.openCursor(range, 'prev');
 
-        const timeLogList = [];
+        const receivedTimeLogList = [];
         cursorRequest.onerror = (error) => {
             reject(error);
         };
         cursorRequest.onsuccess = (evt) => {
             const cursor = evt.target.result;
             if (cursor) {
-                timeLogList.push(cursor.value);
+                receivedTimeLogList.push(cursor.value);
                 cursor.continue();
             } else {
-                resolve(timeLogList);
+                resolve(receivedTimeLogList);
             }
         };
     });
     return lastDayTimes;
+
+}
+
+export function getTimeLogsOfPeriod(fromEpoch, toEpoch) {
+    init();
+    return PersistentStore
+        .runQuery({
+            data: { fromEpoch: fromEpoch, toEpoch },
+            objectStore: DB_STORE_TIMELOG,
+            writable: false,
+            queryFunction: getTimeLogs
+        });
 }
 
 export function getAllTimeLogs(lastDaysCount = 10) {
@@ -67,20 +81,11 @@ export function getAllTimeLogs(lastDaysCount = 10) {
         return Promise.resolve(timeLogList);
     }
 
-    return new Promise((resolve) => {
-        init();
-        PersistentStore
-            .runQuery({
-                data: convertDayCountToDay(-lastDaysCount),
-                objectStore: DB_STORE_TIMELOG,
-                writable: false,
-                queryFunction: getTimeLogsOfLastDays
-            })
-            .then((logList) => {
-                timeLogList = logList;
-                resolve(timeLogList);
-            });
-    });
+    return getTimeLogsOfPeriod(convertDayCountToDay(-lastDaysCount))
+        .then((logList) => {
+            timeLogList = logList;
+            return timeLogList;
+        });
 }
 
 export function getLastTimeLog() {

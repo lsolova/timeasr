@@ -75,19 +75,23 @@ div#counter.paused div#leaveValue {
     transition: none;
 }
 
-#taskTypesList span {
+#taskTypesList div {
     display: inline-block;
-    padding: 30px;
+    padding: 20px;
     background: cornflowerblue;
     margin: 15px;
-    min-width: 150px;
+    min-width: 100px;
     color: white;
     font-weight: bold;
     cursor: pointer;
 }
 
-#taskTypesList span.sel {
+#taskTypesList div.sel {
     background-color: coral;
+}
+
+#taskTypesList span {
+    display: block;
 }
 
 div#summaryToolbar,

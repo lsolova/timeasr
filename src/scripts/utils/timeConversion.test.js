@@ -1,5 +1,5 @@
 import * as timeUtils from './timeConversion';
-import { now } from './dateWrapper';
+import { now } from '../../client/js/utils/dateWrapper';
 
 import { expect, should } from 'chai';
 should();
@@ -134,6 +134,20 @@ describe('Time conversion utils', function () {
 
         it('with a negative number', function () {
             timeUtils.asHoursAndMinutes(-69).should.equal('-1:09');
+        });
+    });
+
+    describe.only('#asDecimalHours', function () {
+        it('few seconds', function () {
+            timeUtils.asDecimalHours(8282).should.equal(0);
+        });
+
+        it('few minutes', function () {
+            timeUtils.asDecimalHours(360000).should.equal(0.1);
+        });
+
+        it('few hours', function () {
+            timeUtils.asDecimalHours(19800000).should.equal(5.5);
         });
     });
 

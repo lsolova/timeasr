@@ -6,10 +6,11 @@ import { calculateMonthlyAdjustmentFromDetails,
          calculateMonthlyDifference,
          estimateLeavingTime
          } from '../utils/timeCalculation';
-import { createTimeLogEntry, getLastChangeTime } from 'scripts/services/timeLogService';
+import { createTimeLogEntry, getTodayDetails, getLastChangeTime } from 'scripts/services/timeLogService';
 
 let controllerInstance;
 let lastChangeTimeString;
+let dayDetails;
 
 var modelHandler = new ModelHandler(),
         MeasureController,
@@ -77,7 +78,7 @@ var modelHandler = new ModelHandler(),
             dayCount: actualDiff.statCount,
             isInProgress: measureInProgress,
             lastChangeTime: lastChangeTimeString ? new Date(lastChangeTimeString).toISOString() : '',
-            taskTypes: modelHandler.getTaskTypes()
+            taskTypes: dayDetails || modelHandler.getTaskTypes()
         };
         return viewModel;
     }
@@ -94,6 +95,16 @@ var modelHandler = new ModelHandler(),
         });
         getLastChangeTime().then((lastChangeTime) => {
             lastChangeTimeString = lastChangeTime || '';
+            controllerInstance.updateView(createViewModel());
+        });
+        getTodayDetails().then((dayDetailsResult) => {
+            const taskTypes = modelHandler.getTaskTypes();
+            dayDetails = taskTypes.map((taskType) => {
+                return {
+                    name: taskType,
+                    time: dayDetailsResult[taskType] || 0
+                }
+            });
             controllerInstance.updateView(createViewModel());
         });
         return controllerInstance;

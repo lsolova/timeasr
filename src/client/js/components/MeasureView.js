@@ -2,6 +2,7 @@ import * as domUtils from '../utils/dom';
 import { asHoursAndMinutes } from 'scripts/utils/timeConversion';
 import View from './View';
 import { showNotification } from './notification';
+import { asDecimalHours } from '../../../scripts/utils/timeConversion';
 
 let viewInstance;
 let timelogComment;
@@ -45,7 +46,7 @@ var bindViewElements = function () {
         this.controller.startOrStop(timelogComment);
     });
     taskTypeListE.addEventListener('click', (event) => {
-        timelogComment = event.target.innerText;
+        timelogComment = event.target.getAttribute('data-name') || 'default';
         renderTaskTypes(knownTaskTypes);
     });
     document.addEventListener('visibilitychange', () => {
@@ -114,12 +115,20 @@ function update(data) {
 function renderTaskTypes(taskTypes) {
     domUtils.clear.call(taskTypeListE);
     taskTypes.forEach((taskType) => {
-        if (taskType) {
-            const taskTypeElement = document.createElement('span');
-            if (taskType === timelogComment) {
+        if (taskType.name) {
+            const taskTypeElement = document.createElement('div');
+            taskTypeElement.setAttribute('data-name', taskType.name);
+            if (taskType.name === timelogComment) {
                 taskTypeElement.classList.add('sel');
             }
-            taskTypeElement.appendChild(document.createTextNode(taskType));
+            const taskTypeNameElement = document.createElement('span');
+            taskTypeNameElement.setAttribute('data-name', taskType.name);
+            taskTypeNameElement.appendChild(document.createTextNode(taskType.name));
+            taskTypeElement.appendChild(taskTypeNameElement);
+            const taskTypeTimeElement = document.createElement('span');
+            taskTypeTimeElement.setAttribute('data-name', taskType.name);
+            taskTypeTimeElement.appendChild(document.createTextNode(asDecimalHours(taskType.time)));
+            taskTypeElement.appendChild(taskTypeTimeElement);
             taskTypeListE.appendChild(taskTypeElement);
         }
     });
