@@ -12,7 +12,7 @@
     "eslint": "node ./node_modules/eslint/bin/eslint src/**/*.js",
     "karma": "node ./node_modules/karma/bin/karma start .config/karma.conf.js",
     "stylelint": "node ./node_modules/stylelint/dist/cli.js \"src/**/*.css\"",
-    "dev": "node_modules/.bin/webpack-dev-server --config .config/webpack.client.config.js",
+    "dev": "node_modules/.bin/webpack-dev-server --port 8081 --config .config/webpack.client.config.js",
     "precommit": "npm run eslint stylelint"
   },
   "repository": {
