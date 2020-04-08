@@ -97,6 +97,11 @@ var modelHandler = new ModelHandler(),
             lastChangeTimeString = lastChangeTime || '';
             controllerInstance.updateView(createViewModel());
         });
+        updateDayDetails();
+        return controllerInstance;
+    };
+
+    function updateDayDetails() {
         getTodayDetails().then((dayDetailsResult) => {
             const taskTypes = modelHandler.getTaskTypes();
             dayDetails = taskTypes.map((taskType) => {
@@ -107,8 +112,7 @@ var modelHandler = new ModelHandler(),
             });
             controllerInstance.updateView(createViewModel());
         });
-        return controllerInstance;
-    };
+    }
 
     function changeActualDay(sign) {
         if (measureInProgress) {
@@ -140,12 +144,13 @@ var modelHandler = new ModelHandler(),
 
     function startOrStop(timelogComment) {
         var startedOn,
-            viewModel;
-        if (!measureInProgress && timeConversionUtils.asDay(now()) !== modelHandler.getActualDay().getFullDay()) {
+            viewModel,
+            isStarting = !measureInProgress;
+        if (isStarting && timeConversionUtils.asDay(now()) !== modelHandler.getActualDay().getFullDay()) {
             return; // Do nothing
         }
         startedOn = modelHandler.lastStartTime();
-        if (!measureInProgress) {
+        if (isStarting) {
             startedOn = now();
             modelHandler.lastStartTime(startedOn);
             measureInProgress = true;
@@ -162,7 +167,11 @@ var modelHandler = new ModelHandler(),
             lastChangeTimeString = createdLogTime;
             viewModel = createViewModel();
             viewModel.nowStarted = viewModel.isInProgress;
-            controllerInstance.updateView(viewModel);
+            if (!isStarting) {
+                updateDayDetails();
+            } else {
+                controllerInstance.updateView(viewModel);
+            }
         });
     }
 
