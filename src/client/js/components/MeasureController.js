@@ -1,5 +1,6 @@
 import { calculateMonthlyAdjustmentFromDetails, calculateMonthlyDifference, estimateLeavingTime } from '../utils/timeCalculation';
 import { createTimeLogEntry, getLastChangeTime, getTodayDetails } from 'scripts/services/timeLogService';
+import { LOGTYPE_START, LOGTYPE_STOP } from '../../../scripts/services/timeLogDefinitions';
 import { now } from '../utils/dateWrapper';
 import * as timeConversionUtils from 'scripts/utils/timeConversion';
 import Controller from './Controller';
@@ -30,7 +31,7 @@ var modelHandler = new ModelHandler(),
         }
     }
 
-    function createViewModel(nowStarted) {
+    function createViewModel(logType) {
         var actualDay = modelHandler.getActualDay(),
             actualDiff = calculateMonthlyDifference(
                 modelHandler.getMonthlyMeasuredTimes(actualDay), monthlyAdjustment, expectedDayTime
@@ -67,7 +68,14 @@ var modelHandler = new ModelHandler(),
             isInProgress: measureInProgress,
             lastChangeTime: lastChangeTimeString ? new Date(lastChangeTimeString).toISOString() : '',
             taskTypes: dayDetails || modelHandler.getTaskTypes(),
-            nowStarted: nowStarted
+            notificationContent: ((logTypeValue) => {
+                switch (logTypeValue) {
+                    case LOGTYPE_START:
+                        return 'started';
+                    case LOGTYPE_STOP:
+                        return 'paused';
+                }
+            })(logType)
         };
         return viewModel;
     }
@@ -144,7 +152,7 @@ var modelHandler = new ModelHandler(),
         setLogRecord({
             timeLogComment: timeLogComment || ''
         }).then(() => {
-            controllerInstance.updateView(createViewModel(true));
+            controllerInstance.updateView(createViewModel(LOGTYPE_START));
         });
     }
 
@@ -157,7 +165,7 @@ var modelHandler = new ModelHandler(),
                 return updateDayDetails();
             })
             .then(() => {
-                controllerInstance.updateView(createViewModel(false));
+                controllerInstance.updateView(createViewModel(LOGTYPE_STOP));
             });
     }
 

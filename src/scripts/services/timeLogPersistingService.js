@@ -1,10 +1,10 @@
-import * as PersistentStore from './persistentStore';
 import { v4 as uuidv4 } from 'uuid';
+
+import { LOGTYPE_START, LOGTYPE_STOP } from './timeLogDefinitions';
+import * as PersistentStore from './persistentStore';
 
 const DB_STORE_TIMELOG = 'timelog';
 const DB_STORE_BYTIME_INDEX = 'byTimeIndex';
-const LOGTYPE_START = 'STRT';
-const LOGTYPE_STOP = 'STOP';
 
 const dbConfig = {
     dbname: 'TimeasrDB',
