@@ -91,7 +91,8 @@ var modelHandler = new ModelHandler(),
             changeToPreviousDay,
             changeToNextDay,
             changeVisibility,
-            startOrStop
+            startOrStop,
+            changeToTaskType
         });
         getLastChangeTime().then((lastChangeTime) => {
             lastChangeTimeString = lastChangeTime || '';
@@ -173,6 +174,10 @@ var modelHandler = new ModelHandler(),
                 controllerInstance.updateView(viewModel);
             }
         });
+    }
+
+    function changeToTaskType(timelogComment) {
+        controllerInstance.updateView(createViewModel());
     }
 
 export default MeasureController;

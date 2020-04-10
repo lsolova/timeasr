@@ -47,7 +47,7 @@ var bindViewElements = function () {
     });
     taskTypeListE.addEventListener('click', (event) => {
         timelogComment = event.target.getAttribute('data-name') || 'default';
-        renderTaskTypes(knownTaskTypes);
+        this.controller.changeToTaskType(timelogComment);
     });
     document.addEventListener('visibilitychange', () => {
         this.controller.changeVisibility(document.hidden);
