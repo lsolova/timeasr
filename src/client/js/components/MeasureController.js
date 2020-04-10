@@ -1,12 +1,9 @@
+import { calculateMonthlyAdjustmentFromDetails, calculateMonthlyDifference, estimateLeavingTime } from '../utils/timeCalculation';
+import { createTimeLogEntry, getLastChangeTime, getTodayDetails } from 'scripts/services/timeLogService';
+import { now } from '../utils/dateWrapper';
+import * as timeConversionUtils from 'scripts/utils/timeConversion';
 import Controller from './Controller';
 import ModelHandler from './ModelHandler';
-import * as timeConversionUtils from 'scripts/utils/timeConversion';
-import { now } from '../utils/dateWrapper';
-import { calculateMonthlyAdjustmentFromDetails,
-         calculateMonthlyDifference,
-         estimateLeavingTime
-         } from '../utils/timeCalculation';
-import { createTimeLogEntry, getTodayDetails, getLastChangeTime } from 'scripts/services/timeLogService';
 
 let controllerInstance;
 let lastChangeTimeString;
@@ -33,21 +30,12 @@ var modelHandler = new ModelHandler(),
         }
     }
 
-    function getCurrentMeasuringMinutes(startedOn, finishedOn) {
-        var measuringMinutes = 0;
-        finishedOn = finishedOn || now();
-        if (startedOn && startedOn < finishedOn) {
-            measuringMinutes = Math.round((finishedOn - startedOn) / 60000);
-        }
-        return  measuringMinutes;
-    }
-
     function createViewModel() {
         var actualDay = modelHandler.getActualDay(),
             actualDiff = calculateMonthlyDifference(
                 modelHandler.getMonthlyMeasuredTimes(actualDay), monthlyAdjustment, expectedDayTime
             ),
-            currentMeasuringMinutes = getCurrentMeasuringMinutes(modelHandler.lastStartTime()),
+            currentMeasuringMinutes = modelHandler.getCurrentMeasuringMinutes(),
             fullActualDay = actualDay.getFullDay()
             ;
 
@@ -144,29 +132,24 @@ var modelHandler = new ModelHandler(),
     }
 
     function startOrStop(timelogComment) {
-        var startedOn,
-            viewModel,
-            isStarting = !measureInProgress;
+        const isStarting = !measureInProgress;
         if (isStarting && timeConversionUtils.asDay(now()) !== modelHandler.getActualDay().getFullDay()) {
             return; // Do nothing
         }
-        startedOn = modelHandler.lastStartTime();
+
         if (isStarting) {
-            startedOn = now();
-            modelHandler.lastStartTime(startedOn);
-            measureInProgress = true;
-            setUpdateInterval(true);
-        }
-        else {
-            modelHandler.incrementActualDay(getCurrentMeasuringMinutes(startedOn));
-            modelHandler.lastStartTime(null);
-            measureInProgress = false;
-            setUpdateInterval(false);
+            modelHandler.startMeasurement(now());
+        measureInProgress = true;
+        setUpdateInterval(true);
+        } else {
+            modelHandler.stopMeasurement();
+        measureInProgress = false;
+        setUpdateInterval(false);
         }
 
         createTimeLogEntry(timelogComment || '').then((createdLogTime) => {
             lastChangeTimeString = createdLogTime;
-            viewModel = createViewModel();
+            const viewModel = createViewModel();
             viewModel.nowStarted = viewModel.isInProgress;
             if (!isStarting) {
                 updateDayDetails();

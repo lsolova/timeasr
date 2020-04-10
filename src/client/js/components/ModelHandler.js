@@ -1,7 +1,7 @@
-import * as MeasureTime from './MeasureTime';
-import * as timeUtils from 'scripts/utils/timeConversion';
-import * as store from './PersistentStore';
 import { now } from '../utils/dateWrapper';
+import * as MeasureTime from './MeasureTime';
+import * as store from './PersistentStore';
+import * as timeUtils from 'scripts/utils/timeConversion';
 
 const storeConfig = {
     requiredDbVersion: 2,
@@ -88,7 +88,10 @@ export default function ModelHandler() {
         setMonthlyAdjustment,
         setTaskTypes,
         getMonthlyMeasuredTimes,
-        lastStartTime
+        lastStartTime,
+        startMeasurement,
+        stopMeasurement,
+        getCurrentMeasuringMinutes
     }
 }
 
@@ -170,4 +173,24 @@ export function lastStartTime(value) {
             value = store.get(storeConfig.keys.lastStartTime, value)
         }
     return value;
+}
+
+export function getCurrentMeasuringMinutes(startTime, stopTime) {
+    var measuringMinutes = 0;
+    startTime = startTime || lastStartTime();
+    stopTime = stopTime || now();
+    if (startTime && startTime < stopTime) {
+        measuringMinutes = Math.round((stopTime - startTime) / 60000);
+    }
+    return  measuringMinutes;
+}
+
+export function startMeasurement(startTime) {
+    lastStartTime(startTime);
+}
+
+export function stopMeasurement(stopTime) {
+    const lastStartTimeValue = lastStartTime();
+    incrementActualDay(getCurrentMeasuringMinutes(lastStartTimeValue));
+    lastStartTime(null);
 }
