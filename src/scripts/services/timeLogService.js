@@ -1,5 +1,5 @@
-import * as TimeLogDbAdapter from './timeLogPersistingService';
 import * as TimeConversion from 'scripts/utils/timeConversion';
+import * as TimeLogDbAdapter from './timeLogPersistingService';
 
 export function getLastChangeTime() {
     return new Promise((resolve) => {
@@ -9,8 +9,8 @@ export function getLastChangeTime() {
     });
 }
 
-export function createTimeLogEntry(timelogComment) {
-    return TimeLogDbAdapter.createTimeLog({timelogComment})
+export function createTimeLogEntry(timeLogContent) {
+    return TimeLogDbAdapter.createTimeLog(timeLogContent)
         .then((createdTimeLog) => {
             return createdTimeLog.recTime;
         });

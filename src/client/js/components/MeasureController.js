@@ -139,15 +139,17 @@ var modelHandler = new ModelHandler(),
 
         if (isStarting) {
             modelHandler.startMeasurement(now());
-        measureInProgress = true;
-        setUpdateInterval(true);
+            measureInProgress = true;
+            setUpdateInterval(true);
         } else {
             modelHandler.stopMeasurement();
-        measureInProgress = false;
-        setUpdateInterval(false);
+            measureInProgress = false;
+            setUpdateInterval(false);
         }
 
-        createTimeLogEntry(timelogComment || '').then((createdLogTime) => {
+        createTimeLogEntry({
+            timelogComment: timelogComment || ''
+        }).then((createdLogTime) => {
             lastChangeTimeString = createdLogTime;
             const viewModel = createViewModel();
             viewModel.nowStarted = viewModel.isInProgress;
