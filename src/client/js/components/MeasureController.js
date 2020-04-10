@@ -144,9 +144,9 @@ var modelHandler = new ModelHandler(),
 
     function start(startTime, timeLogComment) {
         if (timeConversionUtils.asDay(now()) !== modelHandler.getActualDay().getFullDay()) {
-            return; // Do nothing
+            return Promise.resolve(); // Do nothing
         }
-        modelHandler.startMeasurement(startTime, timeLogComment)
+        return modelHandler.startMeasurement(startTime, timeLogComment)
             .then((createdLogTime) => {
                 isMeasureRunning = true;
                 setUpdateInterval(true);
@@ -156,7 +156,7 @@ var modelHandler = new ModelHandler(),
     }
 
     function stop(stopTime) {
-        modelHandler.stopMeasurement(stopTime)
+        return modelHandler.stopMeasurement(stopTime)
             .then((createdLogTime) => {
                 isMeasureRunning = false;
                 setUpdateInterval(false);
@@ -177,7 +177,15 @@ var modelHandler = new ModelHandler(),
     }
 
     function changeToTaskType(timeLogComment) {
-        controllerInstance.updateView(createViewModel());
+        Promise.resolve()
+            .then(() => {
+                if (isMeasureRunning) {
+                    return stop();
+                }
+            })
+            .then(() => {
+                start(now(), timeLogComment);
+            });
     }
 
 export default MeasureController;
