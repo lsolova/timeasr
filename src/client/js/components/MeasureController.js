@@ -146,33 +146,23 @@ var modelHandler = new ModelHandler(),
         if (timeConversionUtils.asDay(now()) !== modelHandler.getActualDay().getFullDay()) {
             return; // Do nothing
         }
-        modelHandler.startMeasurement(startTime, timeLogComment);
-        isMeasureRunning = true;
-        setUpdateInterval(true);
-        setLogRecord({
-            timeLogComment: timeLogComment || ''
-        }).then(() => {
-            controllerInstance.updateView(createViewModel(LOGTYPE_START));
-        });
+        modelHandler.startMeasurement(startTime, timeLogComment)
+            .then(() => {
+                isMeasureRunning = true;
+                setUpdateInterval(true);
+                controllerInstance.updateView(createViewModel(LOGTYPE_START));
+            });
     }
 
     function stop(stopTime) {
-        modelHandler.stopMeasurement(stopTime);
-        isMeasureRunning = false;
-        setUpdateInterval(false);
-        setLogRecord({})
+        modelHandler.stopMeasurement(stopTime)
             .then(() => {
+                isMeasureRunning = false;
+                setUpdateInterval(false);
                 return updateDayDetails();
             })
             .then(() => {
                 controllerInstance.updateView(createViewModel(LOGTYPE_STOP));
-            });
-    }
-
-    function setLogRecord(timeLogContent) {
-        return createTimeLogEntry(timeLogContent)
-            .then((createdLogTime) => {
-                lastChangeTimeString = createdLogTime;
             });
     }
 

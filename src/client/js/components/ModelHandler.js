@@ -187,10 +187,21 @@ export function getCurrentMeasuringMinutes(startTime, stopTime) {
 
 export function startMeasurement(startTime) {
     lastStartTime(startTime);
+    return setLogRecord({
+        timeLogComment: timeLogComment || ''
+    });
 }
 
 export function stopMeasurement(stopTime) {
     const lastStartTimeValue = lastStartTime();
     incrementActualDay(getCurrentMeasuringMinutes(lastStartTimeValue));
     lastStartTime(null);
+    return setLogRecord({});
+}
+
+function setLogRecord(timeLogContent) {
+    return createTimeLogEntry(timeLogContent)
+        .then((createdLogTime) => {
+            lastChangeTimeString = createdLogTime;
+        });
 }
