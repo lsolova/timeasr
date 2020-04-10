@@ -1,7 +1,7 @@
 import { now } from '../utils/dateWrapper';
 import * as MeasureTime from './MeasureTime';
 import * as store from './PersistentStore';
-import * as timeUtils from 'scripts/utils/timeConversion';
+import { now } from 'scripts/utils/dateUtils';
 
 const storeConfig = {
     requiredDbVersion: 2,
@@ -124,7 +124,7 @@ export function setActualDay(sign) {
 }
 
 export function getDailyWorkload(month) {
-    return parseInt(store.getOrSet(month + storeConfig.keys.dailyWorkload, 510), 10);
+    return parseInt(store.getOrSet(month + storeConfig.keys.dailyWorkload, 480), 10);
 }
 
 export function setDailyWorkload(month, value) {

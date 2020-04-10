@@ -1,5 +1,5 @@
 import * as timeUtils from './timeConversion';
-import { now } from '../../client/js/utils/dateWrapper';
+import { now } from 'scripts/utils/dateUtils';
 
 import { expect, should } from 'chai';
 should();

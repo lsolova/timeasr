@@ -1,0 +1,41 @@
+@startuml "v.0.9 initial state"
+skinparam shadowing false
+
+[Application] as app
+[MeasureController] as mc
+[MeasureView] as mw
+[MeasureTime] as mt
+[ModelHandler] as mh
+[PersistentStore] as ps
+[SettingsController] as sc
+[SettingsView] as sw
+[TimeLogService] as tls
+[TimeLogPersistingService] as tlps
+[TimeCalcUtils] as tcau
+[TimeConversionUtils] as tcou
+
+app ..> mc
+app ..> mw
+app ..> sc
+app ..> sw
+mc ..> mh
+mc ..> tcau
+mc ..> tcou
+mc ..> tls
+mh ..> ps
+mh ..> tcou
+mt ..> tcou
+mw ..> mc
+mw ..> tcou
+sc ..> mh
+sc ..> tcau
+sc ..> tcou
+sc ..> tls
+sw ..> sc
+sw ..> tcou
+tcau ..> tcou
+tlps ..> ps
+tls ..> tcou
+tls ..> tlps
+
+@enduml
