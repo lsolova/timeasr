@@ -70,15 +70,6 @@ export function asDecimalHours(timeInMillis) {
     return Math.round((v + Number.EPSILON) * 100) / 100;
 }
 
-export function asMonth(timeInMillis) {
-    var expDate;
-    if (!Number.isInteger(timeInMillis)) {
-        return undefined;
-    }
-    expDate = new Date(timeInMillis);
-    return expDate.getFullYear() + addLeadingZeros(expDate.getMonth() + 1);
-}
-
 export function siblingDay(day, direction) {
     var mSign = !direction ? 0 : direction < 0 ? -1 : 1;
     if (!day) {

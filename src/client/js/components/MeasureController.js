@@ -1,7 +1,7 @@
 import { calculateMonthlyAdjustmentFromDetails, calculateMonthlyDifference, estimateLeavingTime } from '../utils/timeCalculation';
-import { createTimeLogEntry, getLastChangeTime, getTodayDetails } from 'scripts/services/timeLogService';
+import { getLastChangeTime, getTodayDetails } from 'scripts/services/timeLogService';
 import { LOGTYPE_START, LOGTYPE_STOP } from '../../../scripts/services/timeLogDefinitions';
-import { now } from '../utils/dateWrapper';
+import { now } from 'scripts/utils/dateUtils';
 import * as timeConversionUtils from 'scripts/utils/timeConversion';
 import Controller from './Controller';
 import ModelHandler from './ModelHandler';

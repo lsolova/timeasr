@@ -1,7 +1,7 @@
-import { now } from '../utils/dateWrapper';
+import { now } from 'scripts/utils/dateUtils';
 import * as MeasureTime from './MeasureTime';
 import * as store from './PersistentStore';
-import { now } from 'scripts/utils/dateUtils';
+import * as timeUtils from '../../../scripts/utils/timeConversion';
 
 const storeConfig = {
     requiredDbVersion: 2,
