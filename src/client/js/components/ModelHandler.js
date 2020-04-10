@@ -1,3 +1,5 @@
+import { createTimeLogEntry } from 'scripts/services/timeLogService';
+import { LOGTYPE_STOP, LOGTYPE_START } from '../../../scripts/services/timeLogDefinitions';
 import { now } from 'scripts/utils/dateUtils';
 import * as MeasureTime from './MeasureTime';
 import * as store from './PersistentStore';
@@ -185,10 +187,11 @@ export function getCurrentMeasuringMinutes(startTime, stopTime) {
     return  measuringMinutes;
 }
 
-export function startMeasurement(startTime) {
+export function startMeasurement(startTime, timeLogComment) {
     lastStartTime(startTime);
     return setLogRecord({
-        timeLogComment: timeLogComment || ''
+        timeLogComment: timeLogComment || '',
+        type: LOGTYPE_START
     });
 }
 
@@ -196,12 +199,11 @@ export function stopMeasurement(stopTime) {
     const lastStartTimeValue = lastStartTime();
     incrementActualDay(getCurrentMeasuringMinutes(lastStartTimeValue));
     lastStartTime(null);
-    return setLogRecord({});
+    return setLogRecord({
+        type: LOGTYPE_STOP
+    });
 }
 
 function setLogRecord(timeLogContent) {
-    return createTimeLogEntry(timeLogContent)
-        .then((createdLogTime) => {
-            lastChangeTimeString = createdLogTime;
-        });
+    return createTimeLogEntry(timeLogContent);
 }

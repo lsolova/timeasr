@@ -147,18 +147,20 @@ var modelHandler = new ModelHandler(),
             return; // Do nothing
         }
         modelHandler.startMeasurement(startTime, timeLogComment)
-            .then(() => {
+            .then((createdLogTime) => {
                 isMeasureRunning = true;
                 setUpdateInterval(true);
+                lastChangeTimeString = createdLogTime;
                 controllerInstance.updateView(createViewModel(LOGTYPE_START));
             });
     }
 
     function stop(stopTime) {
         modelHandler.stopMeasurement(stopTime)
-            .then(() => {
+            .then((createdLogTime) => {
                 isMeasureRunning = false;
                 setUpdateInterval(false);
+                lastChangeTimeString = createdLogTime;
                 return updateDayDetails();
             })
             .then(() => {
@@ -174,7 +176,7 @@ var modelHandler = new ModelHandler(),
         }
     }
 
-    function changeToTaskType(timelogComment) {
+    function changeToTaskType(timeLogComment) {
         controllerInstance.updateView(createViewModel());
     }
 

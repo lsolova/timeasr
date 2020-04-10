@@ -109,30 +109,26 @@ function addTimeLogQuery(trx, timelogEntry) {
     return addingResult;
 }
 
-export function createTimeLog({ predefinedRecEpoch, timeLogComment }) {
-    return new Promise((resolve) => {
-        getLastTimeLog().then((lastTimeLog) => {
-            const newTimeLog = {
-                type: (lastTimeLog && lastTimeLog.type === LOGTYPE_START ? LOGTYPE_STOP : LOGTYPE_START),
-                recTime: predefinedRecEpoch || Date.now(),
-                tlId: uuidv4()
-            };
-            if (newTimeLog.type === LOGTYPE_START && timeLogComment) {
-                newTimeLog.comment = timeLogComment;
+export function createTimeLog({ predefinedRecEpoch, timeLogComment, type }) {
+    const newTimeLog = {
+        type,
+        recTime: predefinedRecEpoch || Date.now(),
+        tlId: uuidv4()
+    };
+    if (timeLogComment) {
+        newTimeLog.comment = timeLogComment;
+    }
+    return PersistentStore
+        .runQuery({
+            data: newTimeLog,
+            objectStore: DB_STORE_TIMELOG,
+            writable: true,
+            queryFunction: addTimeLogQuery
+        })
+        .then(() => {
+            if (timeLogList) {
+                timeLogList = [newTimeLog].concat(timeLogList);
             }
-            PersistentStore
-                .runQuery({
-                    data: newTimeLog,
-                    objectStore: DB_STORE_TIMELOG,
-                    writable: true,
-                    queryFunction: addTimeLogQuery
-                })
-                .then(() => {
-                    if (timeLogList) {
-                        timeLogList = [newTimeLog].concat(timeLogList);
-                    }
-                    resolve(newTimeLog);
-                });
-        });
+            return newTimeLog;
     });
 }
