@@ -25,7 +25,7 @@ div.view {
 div#counter {
     position: relative;
     text-align: center;
-    top: 40vh;
+    top: 5em;
 }
 
 div#counter.running #counterValue {
@@ -144,6 +144,7 @@ div#topNavBar {
     top:0;
     left:0;
     width:100%;
+    z-index: 1;
 }
 
 div#daySelector {
@@ -183,6 +184,7 @@ div.menuBar {
     position: fixed;
     right: 0;
     top: 0;
+    z-index: 2;
 }
 
 div.menuBar a,
@@ -237,6 +239,8 @@ div#notification {
     font-weight: bold;
     color: white;
     line-height: 2.75em;
+
+    z-index: 3;
 }
 
 div#notification.show {
