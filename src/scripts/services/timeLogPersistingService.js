@@ -109,7 +109,7 @@ function addTimeLogQuery(trx, timelogEntry) {
     return addingResult;
 }
 
-export function createTimeLog({ predefinedRecEpoch, timelogComment }) {
+export function createTimeLog({ predefinedRecEpoch, timeLogComment }) {
     return new Promise((resolve) => {
         getLastTimeLog().then((lastTimeLog) => {
             const newTimeLog = {
@@ -117,8 +117,8 @@ export function createTimeLog({ predefinedRecEpoch, timelogComment }) {
                 recTime: predefinedRecEpoch || Date.now(),
                 tlId: uuidv4()
             };
-            if (newTimeLog.type === LOGTYPE_START && timelogComment) {
-                newTimeLog.comment = timelogComment;
+            if (newTimeLog.type === LOGTYPE_START && timeLogComment) {
+                newTimeLog.comment = timeLogComment;
             }
             PersistentStore
                 .runQuery({

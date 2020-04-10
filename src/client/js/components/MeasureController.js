@@ -30,7 +30,7 @@ var modelHandler = new ModelHandler(),
         }
     }
 
-    function createViewModel() {
+    function createViewModel(nowStarted) {
         var actualDay = modelHandler.getActualDay(),
             actualDiff = calculateMonthlyDifference(
                 modelHandler.getMonthlyMeasuredTimes(actualDay), monthlyAdjustment, expectedDayTime
@@ -66,7 +66,8 @@ var modelHandler = new ModelHandler(),
             dayCount: actualDiff.statCount,
             isInProgress: measureInProgress,
             lastChangeTime: lastChangeTimeString ? new Date(lastChangeTimeString).toISOString() : '',
-            taskTypes: dayDetails || modelHandler.getTaskTypes()
+            taskTypes: dayDetails || modelHandler.getTaskTypes(),
+            nowStarted: nowStarted
         };
         return viewModel;
     }
@@ -86,12 +87,15 @@ var modelHandler = new ModelHandler(),
             lastChangeTimeString = lastChangeTime || '';
             controllerInstance.updateView(createViewModel());
         });
-        updateDayDetails();
+        updateDayDetails()
+            .then(() => {
+                controllerInstance.updateView(createViewModel());
+            });
         return controllerInstance;
     };
 
     function updateDayDetails() {
-        getTodayDetails().then((dayDetailsResult) => {
+        return getTodayDetails().then((dayDetailsResult) => {
             const taskTypes = modelHandler.getTaskTypes();
             dayDetails = taskTypes.map((taskType) => {
                 return {
@@ -99,7 +103,6 @@ var modelHandler = new ModelHandler(),
                     time: dayDetailsResult[taskType] || 0
                 }
             });
-            controllerInstance.updateView(createViewModel());
         });
     }
 
@@ -131,34 +134,46 @@ var modelHandler = new ModelHandler(),
         setUpdateInterval(!hidden);
     }
 
-    function startOrStop(timelogComment) {
-        const isStarting = !measureInProgress;
-        if (isStarting && timeConversionUtils.asDay(now()) !== modelHandler.getActualDay().getFullDay()) {
+    function start(startTime, timeLogComment) {
+        if (timeConversionUtils.asDay(now()) !== modelHandler.getActualDay().getFullDay()) {
             return; // Do nothing
         }
-
-        if (isStarting) {
-            modelHandler.startMeasurement(now());
-            measureInProgress = true;
-            setUpdateInterval(true);
-        } else {
-            modelHandler.stopMeasurement();
-            measureInProgress = false;
-            setUpdateInterval(false);
-        }
-
-        createTimeLogEntry({
-            timelogComment: timelogComment || ''
-        }).then((createdLogTime) => {
-            lastChangeTimeString = createdLogTime;
-            const viewModel = createViewModel();
-            viewModel.nowStarted = viewModel.isInProgress;
-            if (!isStarting) {
-                updateDayDetails();
-            } else {
-                controllerInstance.updateView(viewModel);
-            }
+        modelHandler.startMeasurement(startTime, timeLogComment);
+        measureInProgress = true;
+        setUpdateInterval(true);
+        setLogRecord({
+            timeLogComment: timeLogComment || ''
+        }).then(() => {
+            controllerInstance.updateView(createViewModel(true));
         });
+    }
+
+    function stop(stopTime) {
+        modelHandler.stopMeasurement(stopTime);
+        measureInProgress = false;
+        setUpdateInterval(false);
+        setLogRecord({})
+            .then(() => {
+                return updateDayDetails();
+            })
+            .then(() => {
+                controllerInstance.updateView(createViewModel(false));
+            });
+    }
+
+    function setLogRecord(timeLogContent) {
+        return createTimeLogEntry(timeLogContent)
+            .then((createdLogTime) => {
+                lastChangeTimeString = createdLogTime;
+            });
+    }
+
+    function startOrStop(timeLogComment) {
+        if (!measureInProgress) {
+            start(now(), timeLogComment);
+        } else {
+            stop();
+        }
     }
 
     function changeToTaskType(timelogComment) {
