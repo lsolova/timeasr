@@ -54,7 +54,7 @@ var bindViewElements = function () {
     });
 };
 
-var changeLeave = function (isHidden, leaveData) {
+var rotateTimeInfo = function (isHidden, leaveData) {
     var cLeave;
     if (leaveData.length <= currentLeaveCount) {
         currentLeaveCount = 0;
@@ -73,7 +73,7 @@ var changeLeave = function (isHidden, leaveData) {
         }
         currentLeaveCount++;
         if (!document.hidden) {
-            leaveChangeTimeoutId = window.setTimeout(() => changeLeave(isHidden, leaveData), 5000);
+            leaveChangeTimeoutId = window.setTimeout(() => rotateTimeInfo(isHidden, leaveData), 5000);
         }
     }
 };
@@ -103,9 +103,9 @@ function update(data) {
     domUtils.clearAndFill.call(actualDayE, data.days.today);
     domUtils.clearAndFill.call(nextDayE, data.days.tomorrow);
 
-    counterContainerE.setAttribute('class', data.isInProgress ? 'running' : 'paused');
+    counterContainerE.setAttribute('class', data.isMeasureRunning ? 'running' : 'paused');
     domUtils.clearAndFill.call(counterE, data.actualMinutes);
-    changeLeave(!data.isInProgress, data.leave);
+    rotateTimeInfo(!data.isMeasureRunning, data.leave);
     domUtils.clearAndFill.call(lastChangeTimeE, data.lastChangeTime);
     renderTaskTypes(data.taskTypes);
 

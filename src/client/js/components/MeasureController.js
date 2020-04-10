@@ -13,21 +13,21 @@ let dayDetails;
 var modelHandler = new ModelHandler(),
         MeasureController,
         nowInMillis = now(),
-        measureInProgress = false,
-        updateOnMeasureIntervalId,
+        isMeasureRunning = false,
+        measureUpdateIntervalId,
         expectedDayTime = modelHandler.getDailyWorkload(timeConversionUtils.asMonth(nowInMillis)),
         monthlyAdjustment = calculateMonthlyAdjustmentFromDetails(
-                modelHandler.getMonthlyAdjustment(timeConversionUtils.asMonth(nowInMillis)
-            ));
+            modelHandler.getMonthlyAdjustment(timeConversionUtils.asMonth(nowInMillis))
+        );
 
     function setUpdateInterval(allow) {
         if (allow) {
-            updateOnMeasureIntervalId = setInterval(function(){
+            measureUpdateIntervalId = setInterval(() => {
                 createViewModel();
             },60000);
         }else
-        if (updateOnMeasureIntervalId) {
-            clearInterval(updateOnMeasureIntervalId);
+        if (measureUpdateIntervalId) {
+            clearInterval(measureUpdateIntervalId);
         }
     }
 
@@ -65,7 +65,7 @@ var modelHandler = new ModelHandler(),
             actualMinutes: timeConversionUtils.asHoursAndMinutes(actualDay.getMinutes() + currentMeasuringMinutes),
             avgTime: timeConversionUtils.asHoursAndMinutes(actualDiff.statValue),
             dayCount: actualDiff.statCount,
-            isInProgress: measureInProgress,
+            isMeasureRunning,
             lastChangeTime: lastChangeTimeString ? new Date(lastChangeTimeString).toISOString() : '',
             taskTypes: dayDetails || modelHandler.getTaskTypes(),
             notificationContent: ((logTypeValue) => {
@@ -81,9 +81,9 @@ var modelHandler = new ModelHandler(),
     }
 
     MeasureController = function () {
-        var startedOn = modelHandler.lastStartTime();
+        var lastStartTimeValue = modelHandler.lastStartTime();
         controllerInstance = new Controller();
-        measureInProgress = !(startedOn === null || startedOn === undefined);
+        isMeasureRunning = !(lastStartTimeValue === null || lastStartTimeValue === undefined);
         Object.assign(controllerInstance, {
             changeToPreviousDay,
             changeToNextDay,
@@ -115,7 +115,7 @@ var modelHandler = new ModelHandler(),
     }
 
     function changeActualDay(sign) {
-        if (measureInProgress) {
+        if (isMeasureRunning) {
             return;
         }
         modelHandler.setActualDay(sign);
@@ -147,7 +147,7 @@ var modelHandler = new ModelHandler(),
             return; // Do nothing
         }
         modelHandler.startMeasurement(startTime, timeLogComment);
-        measureInProgress = true;
+        isMeasureRunning = true;
         setUpdateInterval(true);
         setLogRecord({
             timeLogComment: timeLogComment || ''
@@ -158,7 +158,7 @@ var modelHandler = new ModelHandler(),
 
     function stop(stopTime) {
         modelHandler.stopMeasurement(stopTime);
-        measureInProgress = false;
+        isMeasureRunning = false;
         setUpdateInterval(false);
         setLogRecord({})
             .then(() => {
@@ -177,10 +177,10 @@ var modelHandler = new ModelHandler(),
     }
 
     function startOrStop(timeLogComment) {
-        if (!measureInProgress) {
-            start(now(), timeLogComment);
-        } else {
+        if (isMeasureRunning) {
             stop();
+        } else {
+            start(now(), timeLogComment);
         }
     }
 
