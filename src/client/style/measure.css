@@ -217,7 +217,7 @@ div.settingsrow #monthlywladj {
 }
 
 div.settingsrow label,
-div#license span {
+div.license span {
     display: block;
     margin-top: 15px;
 }
