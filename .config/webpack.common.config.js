@@ -16,6 +16,9 @@ const commonConfig = {
         ]
     },
     resolve: {
+        alias: {
+            'vue$': 'vue/dist/vue.esm.js'
+        },
         extensions: ['.js', '.jsx', '.json'],
         modules: ['src', 'node_modules']
     },
