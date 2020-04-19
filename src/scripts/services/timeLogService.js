@@ -1,5 +1,6 @@
-import * as TimeLogDbAdapter from './timeLogPersistingService';
+import { LOGTYPE_START } from './timeLogDefinitions';
 import * as TimeConversion from 'scripts/utils/timeConversion';
+import * as TimeLogDbAdapter from './timeLogPersistingService';
 
 export function getLastChangeTime() {
     return new Promise((resolve) => {
@@ -9,21 +10,35 @@ export function getLastChangeTime() {
     });
 }
 
-export function createTimeLogEntry() {
-    return new Promise((resolve) => {
-        TimeLogDbAdapter.createTimeLog().then((createdTimeLog) => {
-            resolve(createdTimeLog.recTime);
+export function createTimeLogEntry(timeLogContent) {
+    return TimeLogDbAdapter.createTimeLog(timeLogContent)
+        .then((createdTimeLog) => {
+            return createdTimeLog.recTime;
         });
-    });
 }
 
 function getDayDetails(dayTime) {
-    return new Promise((resolve) => {
-        const dayStartTime = TimeConversion.dayStart(dayTime);
-        resolve({
-            //TimeLogDbAdapter.getTimeLogsOfPeriod(dayStartTime, dayStartTime + 86400000);
+    const dayStartTime = TimeConversion.dayStart(dayTime);
+    return TimeLogDbAdapter.getTimeLogsOfPeriod(dayStartTime, dayStartTime + 86400000)
+        .then((timeLogs) => {
+            timeLogs.sort((tlogA, tlogB) => {
+                return tlogA.recTime - tlogB.recTime;
+            });
+            return timeLogs.reduce((timeLogSumArray, timeLogItem) => {
+                if(timeLogItem.type === LOGTYPE_START) {
+                    timeLogSumArray.lastStartTime = timeLogItem.recTime;
+                    timeLogSumArray.lastTaskType = timeLogItem.comment;
+                } else {
+                    const knownLastTaskType = timeLogSumArray.lastTaskType || 'default';
+                    if ( !timeLogSumArray.result.hasOwnProperty(knownLastTaskType)) {
+                        timeLogSumArray.result[knownLastTaskType] = 0;
+                    }
+                    timeLogSumArray.result[knownLastTaskType] += timeLogItem.recTime - timeLogSumArray.lastStartTime;
+                }
+                return timeLogSumArray;
+            }, { result: {}}).result;
+
         });
-    });
 }
 
 export function getTodayDetails() {

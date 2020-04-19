@@ -22,6 +22,7 @@
         </div>
         <div id="counter">
             <div id="counterValue"></div>
+            <div id="taskTypesList"></div>
             <div id="lastChangeTime"></div>
             <div id="leaveValue"></div>
         </div>
@@ -42,7 +43,11 @@
             <div>Summary: <span id="monthlywladjsum"></span></div>
             <textarea id="monthlywladj" name="monthlywladj"></textarea>
         </div>
-        <div id="license" class="settingsrow">
+        <div class="settingsrow">
+            <label for="tasktypes">Task types</label>
+            <textarea id="tasktypes" name="tasktypes"></textarea>
+        </div>
+        <div class="settingsrow license">
             <span id="version"><%= htmlWebpackPlugin.options.version %></span>
             <span>Software licensed under LGP-3.0<br><a href="https://bitbucket.org/lsolova/timeasr">https://bitbucket.org/lsolova/timeasr</a></span>
             <span>Design licensed under CC BY-NC 4.0</span>

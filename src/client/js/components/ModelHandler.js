@@ -1,7 +1,9 @@
+import { createTimeLogEntry } from 'scripts/services/timeLogService';
+import { LOGTYPE_STOP, LOGTYPE_START } from '../../../scripts/services/timeLogDefinitions';
+import { now } from 'scripts/utils/dateUtils';
 import * as MeasureTime from './MeasureTime';
-import * as timeUtils from 'scripts/utils/timeConversion';
 import * as store from './PersistentStore';
-import { now } from '../utils/dateWrapper';
+import * as timeUtils from '../../../scripts/utils/timeConversion';
 
 const storeConfig = {
     requiredDbVersion: 2,
@@ -10,7 +12,8 @@ const storeConfig = {
         databaseVersion: 'dbversion',
         monthlyAdjustment: 'mwa',
         oldestDay: 'firstday',
-        lastStartTime: 'startOn'
+        lastStartTime: 'startOn',
+        taskTypes: 'taskTypes'
     }
 };
 
@@ -79,13 +82,18 @@ export default function ModelHandler() {
         getActualDay,
         getDailyWorkload,
         getMonthlyAdjustment,
+        getTaskTypes,
         getTimeOfDay,
         incrementActualDay,
         setActualDay,
         setDailyWorkload,
         setMonthlyAdjustment,
+        setTaskTypes,
         getMonthlyMeasuredTimes,
-        lastStartTime
+        lastStartTime,
+        startMeasurement,
+        stopMeasurement,
+        getCurrentMeasuringMinutes
     }
 }
 
@@ -118,7 +126,7 @@ export function setActualDay(sign) {
 }
 
 export function getDailyWorkload(month) {
-    return parseInt(store.getOrSet(month + storeConfig.keys.dailyWorkload, 510), 10);
+    return parseInt(store.getOrSet(month + storeConfig.keys.dailyWorkload, 480), 10);
 }
 
 export function setDailyWorkload(month, value) {
@@ -131,6 +139,14 @@ export function getMonthlyAdjustment(month) {
 
 export function setMonthlyAdjustment(month, value) {
     store.set(month + storeConfig.keys.monthlyAdjustment, value);
+}
+
+export function getTaskTypes() {
+    return JSON.parse(store.getOrSet(storeConfig.keys.taskTypes, '[]'));
+}
+
+export function setTaskTypes(taskTypes) {
+    store.set(storeConfig.keys.taskTypes, JSON.stringify(taskTypes));
 }
 
 export function getTimeOfDay(day) {
@@ -159,4 +175,35 @@ export function lastStartTime(value) {
             value = store.get(storeConfig.keys.lastStartTime, value)
         }
     return value;
+}
+
+export function getCurrentMeasuringMinutes(startTime, stopTime) {
+    var measuringMinutes = 0;
+    startTime = startTime || lastStartTime();
+    stopTime = stopTime || now();
+    if (startTime && startTime < stopTime) {
+        measuringMinutes = Math.round((stopTime - startTime) / 60000);
+    }
+    return  measuringMinutes;
+}
+
+export function startMeasurement(startTime, timeLogComment) {
+    lastStartTime(startTime);
+    return setLogRecord({
+        timeLogComment: timeLogComment || '',
+        type: LOGTYPE_START
+    });
+}
+
+export function stopMeasurement(stopTime) {
+    const lastStartTimeValue = lastStartTime();
+    incrementActualDay(getCurrentMeasuringMinutes(lastStartTimeValue));
+    lastStartTime(null);
+    return setLogRecord({
+        type: LOGTYPE_STOP
+    });
+}
+
+function setLogRecord(timeLogContent) {
+    return createTimeLogEntry(timeLogContent);
 }

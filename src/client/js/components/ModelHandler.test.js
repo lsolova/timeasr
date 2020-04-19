@@ -1,7 +1,7 @@
 import * as modelHandler from './ModelHandler';
 import { asDay } from 'scripts/utils/timeConversion';
 import * as store from './PersistentStore';
-import * as dateWrapper from '../utils/dateWrapper';
+import * as dateUtils from 'scripts/utils/dateUtils';
 
 import { should } from 'chai';
 import { stub } from 'sinon';
@@ -10,7 +10,7 @@ should();
 function applyFakeTime(callable) {
     // return function () {
         const fakeTime = 1496733252000, // GMT 6 June 2017 07:14:12
-            dateStub = stub(dateWrapper, 'now');
+            dateStub = stub(dateUtils, 'now');
         dateStub.callsFake(function () {
             return fakeTime;
         });

@@ -6,6 +6,10 @@ export function addLeadingZeros(value) {
     return resultValue;
 }
 
+export function removeLeadingZero(value) {
+    return value.startsWith('0') ? value.substr(1) : value;
+}
+
 export function asDay(timeInMillis) {
     var expDate = timeInMillis !== undefined ? new Date(timeInMillis) : new Date();
     return ''
@@ -14,8 +18,13 @@ export function asDay(timeInMillis) {
         + addLeadingZeros(expDate.getDate());
 }
 
-export function removeLeadingZero(value) {
-    return value.startsWith('0') ? value.substr(1) : value;
+export function asMonth(timeInMillis) {
+    var expDate;
+    if (!Number.isInteger(timeInMillis)) {
+        return undefined;
+    }
+    expDate = new Date(timeInMillis);
+    return expDate.getFullYear() + addLeadingZeros(expDate.getMonth() + 1);
 }
 
 export function dayStart(dayTime) {
@@ -54,13 +63,11 @@ export function asHoursAndMinutes(minutes) {
     return prefix + Math.floor(absMinutes / 60) + ":" + addLeadingZeros(absMinutes % 60);
 }
 
-export function asMonth(timeInMillis) {
-    var expDate;
-    if (!Number.isInteger(timeInMillis)) {
-        return undefined;
-    }
-    expDate = new Date(timeInMillis);
-    return expDate.getFullYear() + addLeadingZeros(expDate.getMonth() + 1);
+export function asDecimalHours(timeInMillis) {
+    const v =  timeInMillis
+        ? timeInMillis / (1000 * 60 * 60)
+        : 0;
+    return Math.round((v + Number.EPSILON) * 100) / 100;
 }
 
 export function siblingDay(day, direction) {

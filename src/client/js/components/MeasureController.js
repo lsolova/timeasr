@@ -1,52 +1,42 @@
+import { calculateMonthlyAdjustmentFromDetails, calculateMonthlyDifference, estimateLeavingTime } from '../utils/timeCalculation';
+import { getLastChangeTime, getTodayDetails } from 'scripts/services/timeLogService';
+import { LOGTYPE_START, LOGTYPE_STOP } from '../../../scripts/services/timeLogDefinitions';
+import { now } from 'scripts/utils/dateUtils';
+import * as timeConversionUtils from 'scripts/utils/timeConversion';
 import Controller from './Controller';
 import ModelHandler from './ModelHandler';
-import * as timeConversionUtils from 'scripts/utils/timeConversion';
-import { now } from '../utils/dateWrapper';
-import { calculateMonthlyAdjustmentFromDetails,
-         calculateMonthlyDifference,
-         estimateLeavingTime
-         } from '../utils/timeCalculation';
-import { createTimeLogEntry, getLastChangeTime } from 'scripts/services/timeLogService';
 
 let controllerInstance;
 let lastChangeTimeString;
+let dayDetails;
 
 var modelHandler = new ModelHandler(),
         MeasureController,
         nowInMillis = now(),
-        measureInProgress = false,
-        updateOnMeasureIntervalId,
+        isMeasureRunning = false,
+        measureUpdateIntervalId,
         expectedDayTime = modelHandler.getDailyWorkload(timeConversionUtils.asMonth(nowInMillis)),
         monthlyAdjustment = calculateMonthlyAdjustmentFromDetails(
-                modelHandler.getMonthlyAdjustment(timeConversionUtils.asMonth(nowInMillis)
-            ));
+            modelHandler.getMonthlyAdjustment(timeConversionUtils.asMonth(nowInMillis))
+        );
 
     function setUpdateInterval(allow) {
         if (allow) {
-            updateOnMeasureIntervalId = setInterval(function(){
+            measureUpdateIntervalId = setInterval(() => {
                 createViewModel();
             },60000);
         }else
-        if (updateOnMeasureIntervalId) {
-            clearInterval(updateOnMeasureIntervalId);
+        if (measureUpdateIntervalId) {
+            clearInterval(measureUpdateIntervalId);
         }
     }
 
-    function getCurrentMeasuringMinutes(startedOn, finishedOn) {
-        var measuringMinutes = 0;
-        finishedOn = finishedOn || now();
-        if (startedOn && startedOn < finishedOn) {
-            measuringMinutes = Math.round((finishedOn - startedOn) / 60000);
-        }
-        return  measuringMinutes;
-    }
-
-    function createViewModel() {
+    function createViewModel(logType) {
         var actualDay = modelHandler.getActualDay(),
             actualDiff = calculateMonthlyDifference(
                 modelHandler.getMonthlyMeasuredTimes(actualDay), monthlyAdjustment, expectedDayTime
             ),
-            currentMeasuringMinutes = getCurrentMeasuringMinutes(modelHandler.lastStartTime()),
+            currentMeasuringMinutes = modelHandler.getCurrentMeasuringMinutes(),
             fullActualDay = actualDay.getFullDay()
             ;
 
@@ -75,31 +65,57 @@ var modelHandler = new ModelHandler(),
             actualMinutes: timeConversionUtils.asHoursAndMinutes(actualDay.getMinutes() + currentMeasuringMinutes),
             avgTime: timeConversionUtils.asHoursAndMinutes(actualDiff.statValue),
             dayCount: actualDiff.statCount,
-            isInProgress: measureInProgress,
-            lastChangeTime: lastChangeTimeString ? new Date(lastChangeTimeString).toISOString() : ''
+            isMeasureRunning,
+            lastChangeTime: lastChangeTimeString ? new Date(lastChangeTimeString).toISOString() : '',
+            taskTypes: dayDetails || modelHandler.getTaskTypes(),
+            notificationContent: ((logTypeValue) => {
+                switch (logTypeValue) {
+                    case LOGTYPE_START:
+                        return 'started';
+                    case LOGTYPE_STOP:
+                        return 'paused';
+                }
+            })(logType)
         };
         return viewModel;
     }
 
     MeasureController = function () {
-        var startedOn = modelHandler.lastStartTime();
+        var lastStartTimeValue = modelHandler.lastStartTime();
         controllerInstance = new Controller();
-        measureInProgress = !(startedOn === null || startedOn === undefined);
+        isMeasureRunning = !(lastStartTimeValue === null || lastStartTimeValue === undefined);
         Object.assign(controllerInstance, {
             changeToPreviousDay,
             changeToNextDay,
             changeVisibility,
-            startOrStop
+            startOrStop,
+            changeToTaskType
         });
         getLastChangeTime().then((lastChangeTime) => {
             lastChangeTimeString = lastChangeTime || '';
             controllerInstance.updateView(createViewModel());
         });
+        updateDayDetails()
+            .then(() => {
+                controllerInstance.updateView(createViewModel());
+            });
         return controllerInstance;
     };
 
+    function updateDayDetails() {
+        return getTodayDetails().then((dayDetailsResult) => {
+            const taskTypes = modelHandler.getTaskTypes();
+            dayDetails = taskTypes.map((taskType) => {
+                return {
+                    name: taskType,
+                    time: dayDetailsResult[taskType] || 0
+                }
+            });
+        });
+    }
+
     function changeActualDay(sign) {
-        if (measureInProgress) {
+        if (isMeasureRunning) {
             return;
         }
         modelHandler.setActualDay(sign);
@@ -126,32 +142,50 @@ var modelHandler = new ModelHandler(),
         setUpdateInterval(!hidden);
     }
 
-    function startOrStop() {
-        var startedOn,
-            viewModel;
-        if (!measureInProgress && timeConversionUtils.asDay(now()) !== modelHandler.getActualDay().getFullDay()) {
-            return; // Do nothing
+    function start(startTime, timeLogComment) {
+        if (timeConversionUtils.asDay(now()) !== modelHandler.getActualDay().getFullDay()) {
+            return Promise.resolve(); // Do nothing
         }
-        startedOn = modelHandler.lastStartTime();
-        if (!measureInProgress) {
-            startedOn = now();
-            modelHandler.lastStartTime(startedOn);
-            measureInProgress = true;
-            setUpdateInterval(true);
-        }
-        else {
-            modelHandler.incrementActualDay(getCurrentMeasuringMinutes(startedOn));
-            modelHandler.lastStartTime(null);
-            measureInProgress = false;
-            setUpdateInterval(false);
-        }
+        return modelHandler.startMeasurement(startTime, timeLogComment)
+            .then((createdLogTime) => {
+                isMeasureRunning = true;
+                setUpdateInterval(true);
+                lastChangeTimeString = createdLogTime;
+                controllerInstance.updateView(createViewModel(LOGTYPE_START));
+            });
+    }
 
-        createTimeLogEntry().then((createdLogTime) => {
-            lastChangeTimeString = createdLogTime;
-            viewModel = createViewModel();
-            viewModel.nowStarted = viewModel.isInProgress;
-            controllerInstance.updateView(viewModel);
-        });
+    function stop(stopTime) {
+        return modelHandler.stopMeasurement(stopTime)
+            .then((createdLogTime) => {
+                isMeasureRunning = false;
+                setUpdateInterval(false);
+                lastChangeTimeString = createdLogTime;
+                return updateDayDetails();
+            })
+            .then(() => {
+                controllerInstance.updateView(createViewModel(LOGTYPE_STOP));
+            });
+    }
+
+    function startOrStop(timeLogComment) {
+        if (isMeasureRunning) {
+            stop();
+        } else {
+            start(now(), timeLogComment);
+        }
+    }
+
+    function changeToTaskType(timeLogComment) {
+        Promise.resolve()
+            .then(() => {
+                if (isMeasureRunning) {
+                    return stop();
+                }
+            })
+            .then(() => {
+                start(now(), timeLogComment);
+            });
     }
 
 export default MeasureController;

@@ -2,8 +2,11 @@ import * as domUtils from '../utils/dom';
 import { asHoursAndMinutes } from 'scripts/utils/timeConversion';
 import View from './View';
 import { showNotification } from './notification';
+import { asDecimalHours } from '../../../scripts/utils/timeConversion';
 
 let viewInstance;
+let timelogComment;
+let knownTaskTypes;
 
 var monthE,
     statTimeE,
@@ -15,6 +18,7 @@ var monthE,
     counterE,
     leaveE,
     lastChangeTimeE,
+    taskTypeListE,
     leaveChangeTimeoutId,
     currentLeaveCount = 0
     ;
@@ -30,6 +34,7 @@ var bindViewElements = function () {
     counterE = document.getElementById('counterValue');
     leaveE = document.getElementById('leaveValue');
     lastChangeTimeE = document.getElementById('lastChangeTime');
+    taskTypeListE = document.getElementById('taskTypesList');
 
     prevDayE.addEventListener('click', () => {
         this.controller.changeToPreviousDay();
@@ -38,17 +43,18 @@ var bindViewElements = function () {
         this.controller.changeToNextDay();
     });
     counterE.addEventListener('click', () => {
-        this.controller.startOrStop();
+        this.controller.startOrStop(timelogComment);
     });
-    counterE.addEventListener('touchstart', () => {
-        this.controller.startOrStop();
+    taskTypeListE.addEventListener('click', (event) => {
+        timelogComment = event.target.getAttribute('data-name') || 'default';
+        this.controller.changeToTaskType(timelogComment);
     });
     document.addEventListener('visibilitychange', () => {
         this.controller.changeVisibility(document.hidden);
     });
 };
 
-var changeLeave = function (isHidden, leaveData) {
+var rotateTimeInfo = function (isHidden, leaveData) {
     var cLeave;
     if (leaveData.length <= currentLeaveCount) {
         currentLeaveCount = 0;
@@ -67,7 +73,7 @@ var changeLeave = function (isHidden, leaveData) {
         }
         currentLeaveCount++;
         if (!document.hidden) {
-            leaveChangeTimeoutId = window.setTimeout(() => changeLeave(isHidden, leaveData), 5000);
+            leaveChangeTimeoutId = window.setTimeout(() => rotateTimeInfo(isHidden, leaveData), 5000);
         }
     }
 };
@@ -82,8 +88,9 @@ var MeasureView = function (viewDomElemId, controllerObj) {
 function update(data) {
     const statTimeValue = data.avgTime,
         isAvgTimePositive = statTimeValue > '0:00',
-        notificationText = data.nowStarted === true ? 'Started' : data.nowStarted === false ? 'Paused' : undefined
+        notificationText = data.notificationContent
         ;
+    knownTaskTypes = data.taskTypes;
 
     domUtils.clearAndFill.call(monthE, data.measureTime.getYearAndMonth('/'));
     domUtils.clearAndFill.call(statTimeE, (isAvgTimePositive ? '+' : '') + statTimeValue);
@@ -96,12 +103,35 @@ function update(data) {
     domUtils.clearAndFill.call(actualDayE, data.days.today);
     domUtils.clearAndFill.call(nextDayE, data.days.tomorrow);
 
-    counterContainerE.setAttribute('class', data.isInProgress ? 'running' : 'paused');
+    counterContainerE.setAttribute('class', data.isMeasureRunning ? 'running' : 'paused');
     domUtils.clearAndFill.call(counterE, data.actualMinutes);
-    changeLeave(!data.isInProgress, data.leave);
+    rotateTimeInfo(!data.isMeasureRunning, data.leave);
     domUtils.clearAndFill.call(lastChangeTimeE, data.lastChangeTime);
+    renderTaskTypes(data.taskTypes);
 
     showNotification(notificationText);
+}
+
+function renderTaskTypes(taskTypes) {
+    domUtils.clear.call(taskTypeListE);
+    taskTypes.forEach((taskType) => {
+        if (taskType.name) {
+            const taskTypeElement = document.createElement('div');
+            taskTypeElement.setAttribute('data-name', taskType.name);
+            if (taskType.name === timelogComment) {
+                taskTypeElement.classList.add('sel');
+            }
+            const taskTypeNameElement = document.createElement('span');
+            taskTypeNameElement.setAttribute('data-name', taskType.name);
+            taskTypeNameElement.appendChild(document.createTextNode(taskType.name));
+            taskTypeElement.appendChild(taskTypeNameElement);
+            const taskTypeTimeElement = document.createElement('span');
+            taskTypeTimeElement.setAttribute('data-name', taskType.name);
+            taskTypeTimeElement.appendChild(document.createTextNode(asDecimalHours(taskType.time)));
+            taskTypeElement.appendChild(taskTypeTimeElement);
+            taskTypeListE.appendChild(taskTypeElement);
+        }
+    });
 }
 
 export default MeasureView;
