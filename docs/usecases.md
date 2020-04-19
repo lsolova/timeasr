@@ -1,25 +1,46 @@
 # Timeasr use cases
 
-## 1. Measure
+## Measure start
 
-- Start time period
-- Stop time period
+1. Click on task type button (starts this and stops previous active task type)
 
-## 2. Set a workday
+## Measure stop
 
-- Select a day clicking on that item in a simple calendar table
+1. Click on summary hour to stop measurement
 
-## 3. Get/collect statistics
+## Set task type
 
-- Calculate actual rolling balance (no monthly limit or boundary)
-- Calculate earliest daily leaving time (with balance)
-- Calculate regular daily leaving time (without balance based on workload setting)
-- Get last 24h changes (readable timestamps)
+1. Click on add button
+1. Enter task type name
+1. Press ENTER (starts this and stops previous active task type)
 
-## 4. Add balance changers
+## Set day as workday
 
-Add additional hours or remove official overtime from the balance.
+1. Go to calendar view
+1. Click on a non-working day in the calendar table
 
-## 5. Cleanup/database maintenance
+## Unset day as workday
 
-See [Storage](./storage.md) for more details
+1. Go to calendar view
+1. Click on a workin day in the calendar table
+
+## Add balance item
+
+1. Go to settings view
+1. Enter signed hours and minutes into balance time field
+1. Press ENTER or blur field
+1. Enter comment into balance comment field
+1. Press ENTER or blur field
+
+## Set daily workload
+
+1. Go to settings view
+1. Enter hours and minutes into workload field
+1. Press ENTER or blur field
+
+## See statistics
+
+1. Check actual rolling balance (no monthly limit or boundary)
+1. Check earliest daily leaving time (with balance)
+1. Wait until change
+1. Check regular daily leaving time (without balance)
