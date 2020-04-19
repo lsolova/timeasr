@@ -1,4 +1,4 @@
-'use strict';
+import Vue from 'vue';
 
 import MeasureController from './MeasureController';
 import ModelHandler from './ModelHandler';
@@ -23,11 +23,22 @@ function bindEvents() {
 }
 
 function init() {
+    const vm = new Vue({
+        el: '#app-root',
+        data: {
+            currentView: 'measure',
+            taskTypes: []
+        },
+        methods: {
+            start: () => {} // Implemented in MeasureView temporary
+        }
+    });
+
     var modelHandler = ModelHandler();
     controllers.measure =new MeasureController(modelHandler);
     controllers.settings = new SettingsController(modelHandler);
-    views.measure = new MeasureView('measure', controllers.measure);
-    views.settings = new SettingsView('settings', controllers.settings);
+    views.measure = new MeasureView('measure', controllers.measure, vm);
+    views.settings = new SettingsView('settings', controllers.settings, vm);
     showView('measure');
 }
 
