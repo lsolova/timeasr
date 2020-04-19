@@ -1,44 +1,54 @@
 # Timeasr data management
 
-Timeasr data is stored locally in the browser.
+Timeasr data is stored locally in the browser. Log data stored in event logs and calculated based on this log information.
 
-## Log format (database)
+## Log data (IndexedDB database)
 
-Timestamp is a minute level epoch (minutes since 1 January 1970.)
+**Table**: timelog
+| name | type |
+|------|------|
+| tlId | string/uuid |
+| type | enum:['STRT', 'STOP'] |
+| recTime | number/epoch |
+| taskType | string |
 
-| Timestamp    | Type  | Value regex       | Example        | Notes         |
-|--------------|-------|-------------------|----------------|---------------|
-| 201911231515 | TIMER | (start\|stop)     | start          |               |
-| 201911231515 | BLNC  | (+-)?\d{3,4}( .+) | +200 Overtime  |               |
-| 201911231515 | SET   | \w*(:[\w\d]*)?    | workload:800   | user settings |
-| 201911231515 | WDY   |                   |                | workday entry |
+**Table**: workdays
+| name | type | notes |
+|------|------|-------|
+| wdId | number/{yyyyMMdd} |
+| workload | number | daily workload time length in milliseconds |
 
-### Settings
+*Daily workload* stored in `workdays` table. Every workday's workload is set by default copied from the previous workday. Non-workday workloads are 0. Expected workload of a period is calculated based on summary of these workloads.
 
-User can set up behavior and calculation base.
-
-| Name     | Value regex   | Note              |
-|----------|---------------|-------------------|
-| workload | \d*           | Stored in minutes |
+**Table**: balance
+| name | type | notes |
+|------|------|-------|
+| bId  | string/uuid |
+| amount | number | deviation in milliseconds |
+| comment | string |
 
 ## Calculations
 
 ### Actual balance
 
-Collect start-stop pairs and calculate summary of pair time difference.
-Add signed summary of BLNC (balance) values.
+Outcomes:
+- summary per taskType
+- full summary
+
+Order log entries by recTime, then summarize on a taskType basis. All start stops the previous (active) start. Stop closes the summary.
+Add signed summary of balance values to the full summary.
 
 ### Number of workdays
 
-Count WDY (workday) entries with value.
+Count workday entries.
 
 ## Cleanup
 
 On first measure change of a day a cleanup task has been started.
 
-1. This should calculate summary of balance older than 90 days. This summary will be saved to BLNC as rollingBalance.
-1. Older WDY entries are removed.
-1. Older SET entries are moved to the beginning of the calculation period.
-1. Calculation is called.
+1. This should calculate summary of balance older than 90 days. This summary will be saved to balance as rollingBalance.
+1. Older balances are deleted.
+1. Older workday entries are deleted.
+1. Calculation is re-called.
 
 
