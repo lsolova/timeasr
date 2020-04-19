@@ -24,7 +24,7 @@
                 <div id="counterValue"></div>
                     <div id="app-root">
                         <div id="taskTypesList">
-                            <div v-for="tType in taskTypes" @click="start(tType.name)">
+                            <div v-for="tType in taskTypes" @click="start(tType.name)" :class="{'sel':tType.selected}">
                                 <span>{{tType.name}}</span>
                                 <span>{{tType.time}}</span>
                             </div>

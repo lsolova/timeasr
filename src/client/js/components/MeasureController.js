@@ -106,10 +106,14 @@ var modelHandler = new ModelHandler(),
         return getTodayDetails().then((dayDetailsResult) => {
             const taskTypes = modelHandler.getTaskTypes();
             dayDetails = taskTypes.map((taskType) => {
-                return {
+                const mappedDayDetails = {
                     name: taskType,
-                    time: dayDetailsResult[taskType] || 0
+                    time: dayDetailsResult.result[taskType] || 0
+                };
+                if (taskType === dayDetailsResult.lastTaskType) {
+                    mappedDayDetails.selected = true;
                 }
+                return mappedDayDetails;
             });
         });
     }
@@ -151,6 +155,8 @@ var modelHandler = new ModelHandler(),
                 isMeasureRunning = true;
                 setUpdateInterval(true);
                 lastChangeTimeString = createdLogTime;
+                return updateDayDetails();
+            }).then(() => {
                 controllerInstance.updateView(createViewModel(LOGTYPE_START));
             });
     }

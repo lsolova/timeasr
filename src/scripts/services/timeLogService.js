@@ -34,9 +34,10 @@ function getDayDetails(dayTime) {
                         timeLogSumArray.result[knownLastTaskType] = 0;
                     }
                     timeLogSumArray.result[knownLastTaskType] += timeLogItem.recTime - timeLogSumArray.lastStartTime;
+                    timeLogSumArray.lastTaskType = null;
                 }
                 return timeLogSumArray;
-            }, { result: {}}).result;
+            }, { result: {} });
 
         });
 }
