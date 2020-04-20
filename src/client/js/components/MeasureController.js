@@ -141,7 +141,10 @@ var modelHandler = new ModelHandler(),
             monthlyAdjustment = calculateMonthlyAdjustmentFromDetails(
                 modelHandler.getMonthlyAdjustment(timeConversionUtils.asMonth(nowInMillis))
             );
-            controllerInstance.updateView(createViewModel());
+            updateDayDetails()
+                .then(() => {
+                    controllerInstance.updateView(createViewModel());
+                });
         }
         setUpdateInterval(!hidden);
     }
