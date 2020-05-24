@@ -6,6 +6,8 @@ import * as timeConversionUtils from 'scripts/utils/timeConversion';
 import Controller from './Controller';
 import ModelHandler from './ModelHandler';
 
+const SHADOW_CLICK_DELAY = 2000; // 2 seconds
+
 let controllerInstance;
 let lastChangeTimeString;
 let dayDetails;
@@ -14,6 +16,7 @@ var modelHandler = new ModelHandler(),
         MeasureController,
         nowInMillis = now(),
         isMeasureRunning = false,
+        isChangeCalled = false,
         measureUpdateIntervalId,
         expectedDayTime = modelHandler.getDailyWorkload(timeConversionUtils.asMonth(nowInMillis)),
         monthlyAdjustment = calculateMonthlyAdjustmentFromDetails(
@@ -178,6 +181,13 @@ var modelHandler = new ModelHandler(),
     }
 
     function startOrStop(timeLogComment) {
+        if(isChangeCalled) {
+            return;
+        }
+        isChangeCalled = true;
+        setTimeout(() => {
+            isChangeCalled = false;
+        }, SHADOW_CLICK_DELAY);
         if (isMeasureRunning) {
             stop();
         } else {
