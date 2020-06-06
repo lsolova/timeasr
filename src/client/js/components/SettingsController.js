@@ -37,9 +37,10 @@ let controllerInstance,
         return modelView;
     }
 
-    export default function SettingsController(modelH) {
+    export default function SettingsController(initialModelHandler) {
         controllerInstance = new Controller();
-        modelHandler = modelH;
+        modelHandler = initialModelHandler;
+
         currentMonth = asMonth(now());
         loadData(currentMonth);
         Object.assign(controllerInstance, {

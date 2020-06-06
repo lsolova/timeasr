@@ -9,19 +9,17 @@ import ModelHandler from './ModelHandler';
 const SHADOW_CLICK_DELAY = 2000; // 2 seconds
 
 let controllerInstance;
-let lastChangeTimeString;
 let dayDetails;
+let lastChangeTimeString;
+let modelHandler;
 
-var modelHandler = new ModelHandler(),
-        MeasureController,
+var     MeasureController,
         nowInMillis = now(),
         isMeasureRunning = false,
         isChangeCalled = false,
         measureUpdateIntervalId,
-        expectedDayTime = modelHandler.getDailyWorkload(timeConversionUtils.asMonth(nowInMillis)),
-        monthlyAdjustment = calculateMonthlyAdjustmentFromDetails(
-            modelHandler.getMonthlyAdjustment(timeConversionUtils.asMonth(nowInMillis))
-        );
+        expectedDayTime,
+        monthlyAdjustment;
 
     function setUpdateInterval(allow) {
         if (allow) {
@@ -83,9 +81,15 @@ var modelHandler = new ModelHandler(),
         return viewModel;
     }
 
-    MeasureController = function () {
-        var lastStartTimeValue = modelHandler.lastStartTime();
+    MeasureController = function (initialModelHandler) {
         controllerInstance = new Controller();
+        modelHandler = initialModelHandler;
+
+        var lastStartTimeValue = modelHandler.lastStartTime();
+        expectedDayTime = modelHandler.getDailyWorkload(timeConversionUtils.asMonth(nowInMillis));
+        monthlyAdjustment = calculateMonthlyAdjustmentFromDetails(
+            modelHandler.getMonthlyAdjustment(timeConversionUtils.asMonth(nowInMillis))
+        );
         isMeasureRunning = !(lastStartTimeValue === null || lastStartTimeValue === undefined);
         Object.assign(controllerInstance, {
             changeToPreviousDay,
