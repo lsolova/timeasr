@@ -1,14 +1,35 @@
-const dbStores = [];
+interface IndexConfiguration {
+    indexName: string;
+    indexPath: string;
+    unique: boolean;
+}
 
-let dbConfig;
-let dbOpenPromise;
+interface TableConfiguration {
+    tableName: string;
+    keyPath: string;
+    autoIncrement: boolean;
+    indexes: IndexConfiguration[];
+}
 
-function openDb() {
+export interface DatabaseConfiguration {
+    dbName: string;
+    dbVersion: number;
+    tables: TableConfiguration[];
+}
+
+interface DatabaseQueryFn<Data, Result> {
+    (trx: IDBTransaction, data: Data): Promise<Result>;
+}
+
+let dbConfig: DatabaseConfiguration;
+let dbOpenPromise: Promise<IDBDatabase>;
+
+function openDb(): Promise<IDBDatabase> {
     dbOpenPromise = dbOpenPromise || new Promise((resolve, reject) => {
-        const request = indexedDB.open(dbConfig.dbname, dbConfig.dbversion);
+        const request = indexedDB.open(dbConfig.dbName, dbConfig.dbVersion);
 
-        request.onupgradeneeded = function doOnUpgrade(event) {
-            const db = event.target.result;
+        request.onupgradeneeded = function doOnUpgrade(event: IDBVersionChangeEvent) {
+            const db = request.result;
 
             if (dbConfig.tables) {
                 dbConfig.tables.forEach((tableDescription) => {
@@ -28,47 +49,36 @@ function openDb() {
                             )
                         );
                     }
-                    dbStores[tableDescription.tableName, currentStore];
                 });
             }
         };
 
-        request.onsuccess = function (event) {
-            resolve(event.target.result);
+        request.onsuccess = function () {
+            resolve(request.result);
         };
 
-        request.onerror = function (event) {
-            reject(event.target.error);
+        request.onerror = function () {
+            reject(request.error);
         };
     });
     return dbOpenPromise;
 }
 
-function openTransaction(openedDB, objectStore, writable) {
-    let trx;
-    if (writable) {
-        trx = openedDB.transaction(objectStore, 'readwrite');
-    } else {
-        trx = openedDB.transaction(objectStore, 'readonly');
-    }
-    return trx;
-}
-
-export function init(conf) {
+export function init(conf: DatabaseConfiguration) {
     dbConfig = Object.assign({}, conf);
 }
 
-export function runQuery({data, objectStore, writable, queryFunction}) {
+export function runQuery<Data, Result>({data, objectStore, writable, queryFunction}: {data: Data, objectStore: string, writable: boolean, queryFunction: DatabaseQueryFn<Data, Result>}): Promise<Result> {
     return openDb()
         .then((openedDB) => {
-            const trx = openTransaction(openedDB, objectStore, writable);
+            const trx = openedDB.transaction(objectStore, writable ? 'readwrite' : 'readonly');
             return queryFunction.call(null, trx, data);
         });
     }
 
-export function deleteDb() {
-    const deletePromise = new Promise((resolve, reject) => {
-        const deleteResult = indexedDB.deleteDatabase(dbConfig.dbname);
+export function deleteDb(): Promise<boolean> {
+    const deletePromise = new Promise<boolean>((resolve, reject) => {
+        const deleteResult = indexedDB.deleteDatabase(dbConfig.dbName);
         deleteResult.onsuccess = () => {
             resolve(true);
         };
