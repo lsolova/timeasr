@@ -55,10 +55,6 @@ input, textarea {
     color: var(--text-color);
 }
 
-div.view {
-    display: none;
-}
-
 div#counter {
     position: relative;
     text-align: center;

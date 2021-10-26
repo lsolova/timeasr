@@ -1,3 +1,5 @@
+import { Day } from "../interfaces";
+
 export function addLeadingZeros(value) {
     var resultValue = value.toString();
     while (resultValue.length < 2) {
@@ -27,15 +29,28 @@ export function asMonth(timeInMillis) {
     return expDate.getFullYear() + addLeadingZeros(expDate.getMonth() + 1);
 }
 
-export function dayStart(dayTime) {
+export function asFirstDayOfMonth(timeInMillis: number): Day {
+    if (!Number.isInteger(timeInMillis)) {
+        return undefined;
+    }
+    const providedDate = new Date(timeInMillis);
+    return providedDate.getFullYear() + addLeadingZeros(providedDate.getMonth() + 1) + '01';
+}
+
+export function dayStart(dayTime: number): number {
     const actualDate = new Date(dayTime);
     return Date.UTC(actualDate.getFullYear(), actualDate.getMonth(), actualDate.getDate(), 0, 0, 0, 0);
 }
 
-export function asTimeInMillis(dayString) {
-    var year = dayString.substring(0, 4),
-        month = removeLeadingZero(dayString.substring(4, 6)) - 1,
-        day = removeLeadingZero(dayString.substring(6, 8));
+export function dayEnd(dayTime: number): number {
+    const actualDate = new Date(dayTime);
+    return Date.UTC(actualDate.getFullYear(), actualDate.getMonth(), actualDate.getDate(), 23,59, 59, 999);
+}
+
+export function asTimeInMillis(dayValue: Day): number {
+    const year = +(dayValue.substring(0, 4)),
+        month = removeLeadingZero(dayValue.substring(4, 6)) - 1,
+        day = +(removeLeadingZero(dayValue.substring(6, 8)));
     return Date.UTC(year, month, day, 0, 0, 0, 0);
 }
 

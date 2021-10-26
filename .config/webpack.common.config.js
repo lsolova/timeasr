@@ -1,8 +1,4 @@
 const path = require('path');
-const webpack = require('webpack');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const GitRevisionPlugin = require('git-revision-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const commonConfig = {
     context: path.resolve(__dirname, '..'),
@@ -11,19 +7,19 @@ const commonConfig = {
         filename: '[name].js'
     },
     module: {
-        loaders: [
-            { test: /\.jsx?$/, loader: 'babel-loader', query: { presets: ['env']} }
+        rules: [
+            { test: /\.[jt]sx?$/, loader: 'babel-loader', options: { presets: ["@babel/env", "@babel/react", "@babel/typescript"]} }
         ]
     },
     resolve: {
         alias: {
             'vue$': 'vue/dist/vue.esm.js'
         },
-        extensions: ['.js', '.jsx', '.json'],
+        extensions: ['.js', '.json', '.jsx', '.ts', '.tsx'],
         modules: ['src', 'node_modules']
     },
     devServer: {
-        contentBase: path.join(__dirname, '../build')
+        static: path.join(__dirname, '../build')
     },
     devtool: 'source-map'
 }

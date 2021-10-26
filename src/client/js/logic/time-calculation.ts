@@ -1,4 +1,4 @@
-import { asMinutes } from 'scripts/utils/timeConversion';
+import { asMinutes } from "./time-conversion";
 
 const timeregex = /^[+]?([-]?\d{1,2}:\d{2}) ?.*$/;
 
