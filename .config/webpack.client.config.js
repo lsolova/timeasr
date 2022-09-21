@@ -16,7 +16,8 @@ const clientConfig = merge(commonConfig, {
     module: {
         rules: [
             { test: /\.css$/, use: [MiniCssExtractPlugin.loader, 'css-loader'] },
-            { test: /\.woff|\.png|\.ico|\.html$/, loader: 'file-loader', options: {name: '[name].[ext]'} }
+            { test: /\.woff|\.png|\.ico|\.html$/, loader: 'file-loader', options: {name: '[name].[ext]'} },
+            { test: /\.svg/, use: ['@svgr/webpack', 'url-loader']}
         ]
     },
     plugins: [

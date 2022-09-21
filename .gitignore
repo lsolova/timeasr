@@ -4,10 +4,10 @@
 .openshift/cron
 .openshift/markers
 .openshift/README.md
-.vscode
 dist
 gitid.txt
 node_modules
 npm-debug.log
 package-lock.json
 tmp
+yarn.lock
