@@ -7,7 +7,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const commonConfig = {
     context: path.resolve(__dirname, '..'),
     output: {
-        path: path.join(__dirname, '../dist'),
+        path: path.join(__dirname, '../build'),
         filename: '[name].js'
     },
     module: {
@@ -23,7 +23,7 @@ const commonConfig = {
         modules: ['src', 'node_modules']
     },
     devServer: {
-        contentBase: path.join(__dirname, '../dist')
+        contentBase: path.join(__dirname, '../build')
     },
     devtool: 'source-map'
 }
