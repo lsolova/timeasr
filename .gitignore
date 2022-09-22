@@ -4,7 +4,7 @@
 .openshift/cron
 .openshift/markers
 .openshift/README.md
-dist
+build
 gitid.txt
 node_modules
 npm-debug.log

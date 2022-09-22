@@ -8,7 +8,7 @@ const commonConfig = {
     },
     module: {
         rules: [
-            { test: /\.[jt]sx?$/, loader: 'babel-loader', options: { presets: ["@babel/env", "@babel/react", "@babel/typescript"]} }
+            { test: /\.[jt]sx?$/, loader: 'babel-loader' }
         ]
     },
     resolve: {
