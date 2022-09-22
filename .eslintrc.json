@@ -1,17 +1,28 @@
 {
-    "extends": "eslint:recommended",
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+        "@typescript-eslint",
+        "jsx-a11y"
+    ],
     "rules": {
+        "@typescript-eslint/no-unused-vars": "error",
         "curly": "error",
-        "radix": "error",
-        "vars-on-top": "error",
-        "wrap-iife": "error",
+        "jsx-a11y/alt-text": "error",
         "max-len": [
             "error",
             {
                 "code": 120,
                 "ignoreUrls": true
             }
-        ]
+        ],
+        "no-console": "error",
+        "radix": "error",
+        "vars-on-top": "error",
+        "wrap-iife": "error"
     },
     "env": {
         "browser": true,
