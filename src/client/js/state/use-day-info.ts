@@ -1,10 +1,10 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-
 import { asTimeInMillis } from "../logic/time-conversion";
-import { closeTimelogEntry, createTimelogEntry, getDayDetails } from "../logic/timelog-repository";
-import { Day, DayInfo, TimelogEntry } from "../interfaces";
-import { MeasurementsActionTypes, StoreState } from "./interfaces";
+import { getDayDetails } from "../logic/timelog-repository";
+import { Timelog } from "../../../types";
+import { Day, DayInfo, MeasurementsActionTypes, StoreState } from "./interfaces";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { TimeasrStore } from "../../../logic/timeasr-store";
 
 export function useDayInfo(day: Day) {
     const dispatch = useDispatch();
@@ -18,8 +18,8 @@ export function useDayInfo(day: Day) {
         });
     }, [day]);
 
-    const start = (taskType: string): Promise<TimelogEntry> => {
-        return createTimelogEntry(taskType)
+    const start = (taskType: string): Promise<Timelog> => {
+        return TimeasrStore.startTimelog(taskType)
             .then((newItem) => {
                 dispatch({
                     type: MeasurementsActionTypes.START_MEASUREMENT,
@@ -28,8 +28,8 @@ export function useDayInfo(day: Day) {
                 return newItem;
             });
     }
-    const stop = (timelogEntry: TimelogEntry): Promise<TimelogEntry> => {
-        return closeTimelogEntry(timelogEntry)
+    const stop = (): Promise<Timelog> => {
+        return TimeasrStore.closeTimelog()
             .then((timelog) => {
                 dispatch({
                     type: MeasurementsActionTypes.STOP_MEASUREMENT,

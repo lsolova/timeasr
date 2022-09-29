@@ -63,9 +63,9 @@ export function calculateMonthlyDifference(measuredTimes, monthlyAdjustment = 0,
 export function estimateLeavingTime(dailyTime = 0, differenceTime = 0, expectedDayTime) {
     let leavingTime = 0;
     if (dailyTime >= 0) {
-        let calcTime = expectedDayTime - (dailyTime + differenceTime);
+        const calcTime = expectedDayTime - (dailyTime + differenceTime);
         if (calcTime > 0) {
-            let todayDate = new Date();
+            const todayDate = new Date();
             leavingTime = todayDate.getHours() * 60 + todayDate.getMinutes() + calcTime;
         }
     }

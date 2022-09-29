@@ -1,13 +1,19 @@
 html {
+    /* Base RGB 462E74 https://paletton.com/ */
+    --main-background-color: #8c7aae;
+    --first-side-background-color: #665091;
+    --second-side-background-color: #462e74;
+
+    /* <-- new values */
     --background-color: white;
     --counter-info-color: lightgrey;
-    --dark-primary-color: #586BA5;
+    --dark-primary-color: #586ba5;
     --inverse-text-color: white;
-    --header-color: #1C3A92;
-    --light-primary-color: #929CB6;
-    --negative-sum-color: rgba(182, 73, 73, 1);
+    --header-color: #1c3a92;
+    --light-primary-color: #929cb6;
+    --negative-sum-color: rgba(182 73 73 100%);
     --notification-color: yellowgreen;
-    --positive-sum-color: rgba(89, 166, 108, 1);
+    --positive-sum-color: rgba(89 166 108 100%);
     --selected-task-item-color: coral;
     --task-item-color: cornflowerblue;
     --text-color: black;
@@ -15,31 +21,111 @@ html {
 
 @media (prefers-color-scheme: dark) {
     html {
+        /* Base RGB 462E74 https://paletton.com/ */
+        --main-background-color: #18063a;
+        --first-side-background-color: #2c1657;
+        --second-side-background-color: #462e74;
+
+        /* <-- new values */
         --background-color: black;
-        --counter-info-color: rgba(80, 80, 80, 1);
-        --dark-primary-color: #525C76;
+        --counter-info-color: rgba(80 80 80 100%);
+        --dark-primary-color: #525c76;
         --inverse-text-color: black;
-        --header-color: #0C2A82;
+        --header-color: #0c2a82;
         --negative-sum-color: darkred;
-        --light-primary-color: #384B85;
+        --light-primary-color: #384b85;
         --notification-color: darkgreen;
         --positive-sum-color: darkgreen;
         --text-color: darkgrey;
     }
 }
 
-@font-face {
-    font-family: TimeasrIcons;
-    src: url('../../assets/TimeasrIcons.woff');
+body {
+    margin: 0;
+    padding: 0;
 }
 
-@font-face {
-    font-family: SolovaLogo;
-    src: url('../../assets/SolovaLogo.woff');
+.App {
+    align-items: stretch;
+    box-sizing: border-box;
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    font-family: Verdana, Arial, sans-serif;
+    font-size: 2vh;
+    height: 100vh;
+    justify-content: space-between;
+    line-height: 2vh;
+    width: 100vw;
+
+    aside {
+        flex-grow: 0;
+        height: 10%;
+
+        &.Stats {
+            background-color: var(--first-side-background-color);
+            display: grid;
+            grid-template-areas: "cumulative daily" "avg copyright";
+
+            & > div {
+                align-items: center;
+                display: flex;
+            }
+        }
+    }
+
+    svg {
+        height: 5vh;
+        width: 5vh;
+    }
+
+    .MeasureList {
+        align-content: flex-start;
+        background-color: var(--main-background-color);
+        column-gap: 10%;
+        display: flex;
+        flex-grow: 1;
+        flex-wrap: wrap;
+        padding: 5%;
+        position: relative;
+        row-gap: 5%;
+    }
+
+    .MeasureList__Item {
+        align-items: center;
+        background-color: var(--first-side-background-color);
+        display: flex;
+        flex-direction: column;
+        height: 15%;
+        justify-content: center;
+        width: 45%;
+
+        input {
+            background-color: var(--first-side-background-color);
+            border: 0;
+            border-bottom: 1px solid var(--text-color);
+            color: var(--text-color);
+            font-size: inherit;
+            text-align: center;
+            width: 90%;
+        }
+
+        &--active {
+            background-color: var(--second-side-background-color);
+        }
+    }
+
+    .Copyright {
+        bottom: 0;
+        position: absolute;
+        right: 0;
+    }
 }
+
+/* <-- New version finished here
 
 body {
-    background-color: var(--background-color);
+    background-color: var(--main-background-color);
     color: var(--text-color);
     font-family: Verdana, Arial, sans-serif;
     height: 100vh;
@@ -47,7 +133,7 @@ body {
     margin: 0;
     padding: 0;
     user-select: none;
-    width: 100%;
+    width: 100vw;
 }
 
 input, textarea {
@@ -93,14 +179,6 @@ div#counter div#leaveValue {
 div#counter div#leaveValue:before {
     font-family: TimeasrIcons, sans-serif;
     padding-right: .5em;
-}
-
-div#counter div#leaveValue.l-bef:before {
-    content: 'l';
-}
-
-div#counter div#leaveValue.t-bef:before {
-    content: 't';
 }
 
 div#counter.paused div#leaveValue {
@@ -199,12 +277,6 @@ div#daySelector .actl {
     cursor: auto;
 }
 
-div#copyright:after {
-    content: 's';
-    font-family: SolovaLogo, sans-serif;
-    padding: 0 5px;
-}
-
 div#copyright {
     bottom: 0;
     font-size: .75em;
@@ -218,6 +290,8 @@ div.menuBar {
     right: 0;
     top: 0;
     z-index: 2;
+    --svg-height: 30px;
+    --svg-width: 30px;
 }
 
 div.menuBar a,
@@ -281,3 +355,4 @@ div#notification.show {
     opacity: 1;
     transition: opacity 250ms, top 500ms ease;
 }
+*/

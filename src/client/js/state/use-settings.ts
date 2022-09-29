@@ -2,31 +2,36 @@ import { useDispatch, useSelector } from "react-redux";
 import { calculateMonthlyAdjustmentFromDetails } from "../logic/time-calculation";
 import { SettingsActionTypes, StoreState } from "./interfaces";
 import getSettingsRepository from "../logic/settings-repository";
+import { useSelectedDay } from "./use-selected-day";
 
-export function useSettings() {
+export const useSettings = () => {
     const dispatch = useDispatch();
-    const settings = useSelector((state: StoreState) => ({
-        dailyWorkload: state.settings.expectedDailyWorkload,
+    const { selectedDay } = useSelectedDay();
+    const settings = useSelector(({ settings }: StoreState) => ({
+        dailyWorkload: settings.expectedDailyWorkload,
         monthlyAdjustment: {
-            summary: state.settings.monthlyAdjustment.summary,
-            details: state.settings.monthlyAdjustment.details,
+            summary: settings.monthlyAdjustment.summary,
+            details: settings.monthlyAdjustment.details,
         },
-        taskTypes: state.settings.taskTypes,
+        taskTypes: settings.taskTypes,
     }));
-    const selectedDay = useSelector((state: StoreState) => state.selectedDay);
     const setDailyWorkload = (workload: number): void => {
         getSettingsRepository().setDailyWorkload(selectedDay, workload);
         dispatch({
             type: SettingsActionTypes.UPDATE_DAILY_WORKLOAD,
             value: workload,
         });
-    }
+    };
     const setMonthlyAdjustment = (monthlyAdjustment: string): void => {
-        getSettingsRepository().setMonthlyAdjustmentDetails(selectedDay, monthlyAdjustment);
+        getSettingsRepository().setMonthlyAdjustmentDetails(
+            selectedDay,
+            monthlyAdjustment
+        );
         dispatch({
             type: SettingsActionTypes.UPDATE_MONTHLY_ADJUSTMENT,
             value: {
-                summary: calculateMonthlyAdjustmentFromDetails(monthlyAdjustment),
+                summary:
+                    calculateMonthlyAdjustmentFromDetails(monthlyAdjustment),
                 details: monthlyAdjustment,
             },
         });

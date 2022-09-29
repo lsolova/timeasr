@@ -1,42 +1,15 @@
-import { asDay, asMonth, asTimeInMillis, dayEnd, dayStart, siblingDay } from './time-conversion';
-import { Day, DayInfo, MonthInfo, ONE_MINUTE_MILLISECS, TimelogEntry } from '../interfaces';
-import { getLastTimelog, getTimelogsOfPeriod, saveTimelog } from './timeasr-store';
-import { now } from './browser-wrapper';
-import { v4 as uuidv4 } from 'uuid';
+import { asTimeInMillis, siblingDay } from './time-conversion';
+import { isTimelogFinished, Timelog } from '../../../types';
+import { TimeasrStore } from '../../../logic/timeasr-store';
+import { now } from '../../../logic/browser-wrapper';
+import { asDay, asMonth, dayEnd, dayStart } from '../../../logic/time-conversions';
+import { Day, DayInfo, MonthInfo } from '../state/interfaces';
 
-const addTimelogEntryToDayInfo = (dayInfo: DayInfo, timelogEntry: TimelogEntry): void => {
-    dayInfo.timelog.push(timelogEntry);
-    if (timelogEntry.endTime) {
-        dayInfo.loggedMinutes += (timelogEntry.endTime - timelogEntry.startTime) / ONE_MINUTE_MILLISECS;
+const addTimelogEntryToDayInfo = (dayInfo: DayInfo, timelog: Timelog): void => {
+    dayInfo.timelog.push(timelog);
+    if (isTimelogFinished(timelog)) {
+        dayInfo.loggedMinutes += (timelog.endTime - timelog.startTime) / (60 * 1000);
     }
-}
-
-export function getLastChangeTime(): Promise<number> {
-    return new Promise((resolve) => {
-        getLastTimelog().then((lastTimeLog) => {
-            resolve(lastTimeLog && lastTimeLog.endTime || lastTimeLog.startTime);
-        });
-    });
-}
-
-export function createTimelogEntry(task: string, startTime?: number): Promise<TimelogEntry> {
-    const newTimeLog: TimelogEntry = {
-        tlid: uuidv4(),
-        startTime: startTime || now(),
-        endTime: null,
-    };
-    if (task) {
-        newTimeLog.task = task;
-    }
-    return saveTimelog(newTimeLog);
-}
-
-export function closeTimelogEntry(timelogEntry: TimelogEntry): Promise<TimelogEntry> {
-    if (!timelogEntry.endTime) {
-        timelogEntry.endTime = now();
-        return saveTimelog(timelogEntry);
-    }
-    return Promise.resolve(timelogEntry);
 }
 
 export function createDayInfo(day: Day) {
@@ -46,23 +19,22 @@ export function createDayInfo(day: Day) {
 export function getDayDetails(dayTime: number): Promise<DayInfo> {
     const fromEpoch = dayStart(dayTime);
     const toEpoch = dayEnd(dayTime);
-    return getTimelogsOfPeriod(fromEpoch, toEpoch)
-        .then((timelogs) => {
-            return timelogs.reduce((dayInfo, timelogEntry) => {
+    const timelogs = TimeasrStore.getTimelogsOfPeriod(fromEpoch, toEpoch);
+            return Promise.resolve(timelogs.reduce((dayInfo, timelogEntry) => {
                 addTimelogEntryToDayInfo(dayInfo, timelogEntry);
                 return dayInfo;
-            }, createDayInfo(asDay(fromEpoch)));
+            }, createDayInfo(asDay(fromEpoch))));
 
-        });
 }
 
 export function getMonthDetails(dayTime: number): Promise<MonthInfo> {
     const month = asMonth(dayTime);
     const fromEpoch = dayStart(asTimeInMillis(`${month}01`));
     const toEpoch = dayEnd(asTimeInMillis(siblingDay(asDay(dayTime), -1)));
-    return getTimelogsOfPeriod(fromEpoch, toEpoch)
-        .then((timelogs) => {
-            return timelogs.reduce((monthInfo, timelogEntry) => {
+    const timelogs = TimeasrStore.getTimelogsOfPeriod(fromEpoch, toEpoch);
+    return Promise.resolve(
+        timelogs.reduce(
+            (monthInfo, timelogEntry) => {
                 const entryDay = asDay(timelogEntry.startTime);
                 if (!monthInfo.days.has(entryDay)) {
                     monthInfo.days.set(entryDay, createDayInfo(entryDay));
@@ -70,11 +42,13 @@ export function getMonthDetails(dayTime: number): Promise<MonthInfo> {
                 const dayInfo = monthInfo.days.get(entryDay);
                 addTimelogEntryToDayInfo(dayInfo, timelogEntry);
                 return monthInfo;
-            }, {
+            },
+            {
                 days: new Map<Day, DayInfo>(),
-                month
-            } as MonthInfo);
-        });
+                month,
+            } as MonthInfo
+        )
+    );
 }
 
 export function getTodayDetails() {

@@ -1,4 +1,15 @@
-import { Day, DayInfo, MonthInfo, TaskType } from "../interfaces";
+import { Timelog } from "../../../types";
+
+export type Day = string; //##
+export type Month = string; //##
+export type TaskType = string;
+export type DayInfo = {
+    timelog: Timelog[];
+    loggedMinutes: number;
+}
+export type MonthInfo = {
+    days: Map<Day, DayInfo>;
+}
 
 export enum SelectedDayActionTypes {
     SET_SELECTED_DAY = 'selected-day/set',

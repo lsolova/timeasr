@@ -23,6 +23,6 @@ export const loadInitialData = () => {
     });
     store.dispatch({
         type: SettingsActionTypes.LOAD_SETTINGS,
-        value: initialState.selectedDay.substr(6),
+        value: initialState.selectedDay.substring(6),
     });
 }

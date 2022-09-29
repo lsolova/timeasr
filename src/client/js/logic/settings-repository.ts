@@ -1,8 +1,9 @@
-import { Day } from '../interfaces';
-import { now } from './browser-wrapper';
+import { now } from '../../../logic/browser-wrapper';
 import { STORE_CONFIG } from './store-config';
-import * as localStore from '../logic/persistent-store-local-storage';
-import { asDay, asTimeInMillis } from './time-conversion';
+import * as localStore from './local-storage';
+import { asTimeInMillis } from './time-conversion';
+import { asDay } from '../../../logic/time-conversions';
+import { Day } from '../state/interfaces';
 
 interface SettingsRepository {
     getDailyWorkload(currentDay: Day): number;
@@ -16,9 +17,8 @@ interface SettingsRepository {
 const yearAndMonthOf = (day: Day) => day.substr(0,6);
 
 function cleanup() {
-    var firstRemoveTime = asTimeInMillis(localStore.get(STORE_CONFIG.keys.oldestDay) || asDay(now())),
-        firstRemovableTime = now() - (65 * 86400000)
-        ;
+    let firstRemoveTime = asTimeInMillis(localStore.get(STORE_CONFIG.keys.oldestDay) || asDay(now()));
+    const firstRemovableTime = now() - (65 * 86400000);
     if (firstRemoveTime === null) {
         return;
     }
