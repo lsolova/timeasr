@@ -18,11 +18,10 @@ const clientConfig = merge(commonConfig, {
     module: {
         rules: [
             { test: /\.s?css$/, use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"] },
-            { test: /\.woff|\.png|\.ico|\.html$/, loader: 'file-loader', options: {name: '[name].[ext]'} },
             { test: /\.svelte/, loader: "svelte-loader", options: {
                 preprocess: autoPreprocess()
             } },
-            { test: /\.svg/, use: ['@svgr/webpack', 'url-loader']}
+            { test: /manifest\.json|\.svg|\.png|\.html$/, loader: 'file-loader', options: {name: '[name].[ext]'} },
         ]
     },
     plugins: [
@@ -30,7 +29,7 @@ const clientConfig = merge(commonConfig, {
         new webpack.BannerPlugin('Timeasr by Laszlo Solova'),
         new HtmlWebpackPlugin({
             filename: './index.html',
-            template: './src/client/index.ejs',
+            template: './src/index.ejs',
             version: gitInfo.version()
         }),
         new CopyWebpackPlugin({
