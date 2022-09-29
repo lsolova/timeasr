@@ -15,7 +15,7 @@ const commonConfig = {
         alias: {
             'vue$': 'vue/dist/vue.esm.js'
         },
-        extensions: ['.js', '.json', '.jsx', '.ts', '.tsx'],
+        extensions: ['.js', '.json', '.jsx', ".svelte", '.ts', '.tsx'],
         modules: ['src', 'node_modules']
     },
     devServer: {

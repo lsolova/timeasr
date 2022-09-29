@@ -4,6 +4,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { GitRevisionPlugin } = require('git-revision-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const autoPreprocess = require('svelte-preprocess');
 
 const commonConfig = require('./webpack.common.config');
 const gitInfo = new GitRevisionPlugin();
@@ -11,17 +12,20 @@ const gitInfo = new GitRevisionPlugin();
 const clientConfig = merge(commonConfig, {
     mode: 'development',
     entry: {
-        timeasr: './src/client/js/client.js'
+        timeasrapp: './src/client.tsx',
     },
     module: {
         rules: [
-            { test: /\.css$/, use: [MiniCssExtractPlugin.loader, 'css-loader'] },
+            { test: /\.s?css$/, use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"] },
             { test: /\.woff|\.png|\.ico|\.html$/, loader: 'file-loader', options: {name: '[name].[ext]'} },
+            { test: /\.svelte/, loader: "svelte-loader", options: {
+                preprocess: autoPreprocess()
+            } },
             { test: /\.svg/, use: ['@svgr/webpack', 'url-loader']}
         ]
     },
     plugins: [
-        new MiniCssExtractPlugin({ filename: 'timeasr.css' }),
+        new MiniCssExtractPlugin({ filename: 'timeasrapp.css' }),
         new webpack.BannerPlugin('Timeasr by Laszlo Solova'),
         new HtmlWebpackPlugin({
             filename: './index.html',

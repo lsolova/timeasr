@@ -1,4 +1,4 @@
-import { Action, AnyAction, Reducer } from "redux";
+import { AnyAction, Reducer } from "redux";
 import getSettingsRepository from "../../logic/settings-repository";
 import { calculateMonthlyAdjustmentFromDetails } from "../../logic/time-calculation";
 import { initialState } from "../initial-state";
@@ -8,9 +8,9 @@ const settingsReducer: Reducer = (state: SettingsState, action: AnyAction): Sett
     if (!state) {
         state = initialState.settings;
     }
+    const maDetails = getSettingsRepository().getMonthlyAdjustmentDetails(action.value);
     switch (action.type) {
         case SettingsActionTypes.LOAD_SETTINGS:
-            const maDetails = getSettingsRepository().getMonthlyAdjustmentDetails(action.value);
             return {
                 expectedDailyWorkload: getSettingsRepository().getDailyWorkload(action.value),
                 monthlyAdjustment: {

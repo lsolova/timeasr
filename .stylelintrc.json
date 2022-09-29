@@ -1,15 +1,22 @@
 {
+    "plugins": [
+        "stylelint-no-unsupported-browser-features"
+    ],
+    "extends": [
+        "stylelint-config-standard-scss"
+    ],
     "rules": {
+        "selector-class-pattern": "",
         "selector-list-comma-newline-after": "always",
         "indentation": [4],
         "max-empty-lines": 1,
         "max-line-length": 120,
-        "no-browser-hacks": true,
         "no-missing-end-of-source-newline": true,
-        "no-unsupported-browser-features": [
+        "plugin/no-unsupported-browser-features": [
             true,
             {
                 "browsers": "last 2 Chrome versions, last 2 ChromeAndroid versions, last 2 Firefox versions",
+                "ignore": ["multicolumn"],
                 "severity": "warning"
             }
         ],

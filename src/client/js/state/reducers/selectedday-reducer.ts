@@ -2,7 +2,7 @@ import { AnyAction, Reducer } from "redux";
 import { initialState } from "../initial-state";
 import { SelectedDayActionTypes } from "../interfaces";
 
-const selectedDayReducer: Reducer = <T>(state: string, action: AnyAction): string => {
+const selectedDayReducer: Reducer = (state: string, action: AnyAction): string => {
     if (!state) {
         return initialState.selectedDay;
     }

@@ -1,6 +1,6 @@
-import { Day, DayInfo } from '../interfaces';
-import { now } from '../logic/browser-wrapper';
-import { asDay, asMonth } from '../logic/time-conversion';
+import { now } from "../../../logic/browser-wrapper";
+import { asDay, asMonth } from "../../../logic/time-conversions";
+import { Day, DayInfo } from "./interfaces";
 
 export const initialState = {
     // Settings
@@ -8,7 +8,7 @@ export const initialState = {
         expectedDailyWorkload: 8 * 60, // 8 hours
         monthlyAdjustment: {
             summary: 0,
-            details: ''
+            details: "",
         },
         taskTypes: [],
     },
