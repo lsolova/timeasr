@@ -13,6 +13,7 @@ const clientConfig = merge(commonConfig, {
     mode: 'development',
     entry: {
         timeasrapp: './src/client.tsx',
+        timeasrsw: "./src/service-worker.ts",
     },
     module: {
         rules: [
