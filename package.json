@@ -6,7 +6,7 @@
     "scripts": {
         "build": "node_modules/.bin/webpack --config .config/webpack.config.js",
         "lint:all": "yarn lint:eslint && yarn lint:stylelint",
-        "lint:eslint": "node ./node_modules/eslint/bin/eslint src/**/*.ts src/**/*.tsx",
+        "lint:eslint": "node ./node_modules/eslint/bin/eslint src/**/*.ts src/**/*.svelte",
         "lint:stylelint": "node ./node_modules/stylelint/bin/stylelint \"src/**/*.scss\"",
         "start": "node_modules/.bin/webpack-dev-server --port 8081 --config .config/webpack.config.js",
         "test:karma": "node ./node_modules/karma/bin/karma start .config/karma.conf.js",
@@ -15,16 +15,12 @@
     },
     "repository": {
         "type": "git",
-        "url": "git@bitbucket.org:lsolova/timemeasure.git"
+        "url": "git@github.com:lsolova/timeasr.git"
     },
     "author": "Laszlo Solova",
     "license": "LGPL-3.0",
     "dependencies": {
         "@tsconfig/svelte": "^3.0.0",
-        "express": "^4.11.1",
-        "moment": "^2.19.1",
-        "mustache": "^2.0.0",
-        "path": "^0.12.7",
         "svelte": "^3.50.1"
     },
     "devDependencies": {
@@ -41,6 +37,8 @@
         "css-loader": "^6.4.0",
         "eslint": "^8.23.1",
         "eslint-plugin-jsx-a11y": "^6.6.1",
+        "eslint-plugin-svelte3": "^4.0.0",
+        "express": "^4.11.1",
         "file-loader": "^6.2.0",
         "git-revision-webpack-plugin": "^5.0.0",
         "html-webpack-plugin": "^5.4.0",

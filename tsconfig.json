@@ -1,13 +1,14 @@
 {
     "compilerOptions": {
         "allowSyntheticDefaultImports": true,
-        "moduleResolution": "node",
         "jsx": "react",
         "lib": [
             "dom",
             "dom.iterable",
             "es6"
         ],
+        "moduleResolution": "node",
+        "strict": true,
         "target": "es6",
     },
     "include": [

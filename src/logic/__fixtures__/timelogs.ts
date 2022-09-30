@@ -26,7 +26,7 @@ export const THIRD_FULL_TIMELOG = {
     logId: "e7dc97d6-c8fd-45d2-b9b6-c221685f6d65",
     closingLogId: "e4ec6e3a-ef35-496e-a814-a84cbed595a4",
     startTime: 1663948849344,
-    endTime: 1663950762398,
+    endTime: 1663950762397,
     task: undefined,
 };
 export const THIRD_START_TIMELOG = {

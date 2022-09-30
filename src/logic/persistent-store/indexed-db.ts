@@ -18,8 +18,8 @@ const openDb = (): Promise<IDBDatabase> => {
                             keyPath: tableDescription.keyPath,
                             autoIncrement: tableDescription.autoIncrement,
                         });
-                        if (tableDescription.indexes) {
-                            tableDescription.indexes.forEach(({ indexName, indexPath, unique = false }) =>
+                        if (tableDescription.indices) {
+                            tableDescription.indices.forEach(({ indexName, indexPath, unique = false }) =>
                                 currentStore.createIndex(indexName, indexPath, { unique: unique })
                             );
                         }

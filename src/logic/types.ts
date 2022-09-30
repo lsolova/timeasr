@@ -31,7 +31,7 @@ export const DB_CONFIG: DatabaseConfiguration = {
             tableName: DB_STORE_TIMELOG,
             keyPath: TIMELOG_ENTRY_KEY_NAME,
             autoIncrement: false,
-            indexes: [
+            indices: [
                 {
                     indexName: DB_STORE_BYTIME_INDEX,
                     indexPath: TIMELOG_ENTRY_TIME_NAME,

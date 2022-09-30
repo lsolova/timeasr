@@ -7,7 +7,7 @@ type TableConfiguration = {
     tableName: string;
     keyPath: string;
     autoIncrement: boolean;
-    indexes?: IndexConfiguration[];
+    indices?: IndexConfiguration[];
 };
 export type DatabaseConfiguration = {
     dbName: string;
