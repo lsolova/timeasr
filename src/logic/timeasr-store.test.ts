@@ -1,21 +1,7 @@
 import { IndexedDbMocker } from "./persistent-store/indexed-db.mock";
 
 import { DB_CONFIG } from "./types";
-import {
-    FIRST_END_ENTRY,
-    FIRST_FULL_TIMELOG,
-    FIRST_START_ENTRY,
-    FIRST_START_TIMELOG,
-    FOURTH_START_ENTRY,
-    FOURTH_START_TIMELOG,
-    SECOND_END_ENTRY,
-    SECOND_FULL_TIMELOG,
-    SECOND_START_ENTRY,
-    SECOND_START_TIMELOG,
-    THIRD_END_ENTRY,
-    THIRD_START_ENTRY,
-    THIRD_START_TIMELOG,
-} from "./__fixtures__/all-fixtures";
+import { FIRST_END_ENTRY, FIRST_FULL_TIMELOG, FIRST_START_ENTRY, FIRST_START_TIMELOG, FOURTH_START_ENTRY, FOURTH_START_TIMELOG, SECOND_END_ENTRY, SECOND_FULL_TIMELOG, SECOND_START_ENTRY, SECOND_START_TIMELOG, THIRD_END_ENTRY, THIRD_START_ENTRY, THIRD_START_TIMELOG } from "./__fixtures__/all-fixtures";
 import { TimeasrStore } from "./timeasr-store";
 import * as BrowserWrapper from "./browser-wrapper";
 

@@ -1,7 +1,6 @@
 import { asDay, dayEnd, dayStart } from "./time-conversions";
 import { isTimelogFinished } from "../types";
 import { Milliseconds, Stat, Task } from "../types";
-import { now } from "./browser-wrapper";
 import { TimeasrStore } from "./timeasr-store";
 
 const ONE_DAY_WORKTIME = 8 * 60 *60 * 1000; // Default 8 hours worktime
@@ -14,7 +13,7 @@ export const parseTimelogsToTasks = (timeInMillis: Milliseconds): Task[] => {
     return timelogs
         .reduce((tasks, timelog) => {
             if (timelog.task !== null) {
-                const found = tasks.findIndex((fTimelog) => fTimelog.name === timelog.task);
+                const found = tasks.findIndex((task) => task.name === timelog.task);
                 const selectedTimelog =
                     found > -1
                         ? tasks[found]
@@ -22,17 +21,17 @@ export const parseTimelogsToTasks = (timeInMillis: Milliseconds): Task[] => {
                               name: timelog.task,
                               active: false,
                               loggedTime: 0,
-                          };
+                          } as Task;
                 selectedTimelog.active = selectedTimelog.active || !isTimelogFinished(timelog);
                 selectedTimelog.loggedTime +=
-                    (isTimelogFinished(timelog) ? timelog.endTime : now()) - timelog.startTime;
+                    (isTimelogFinished(timelog) ? timelog.endTime : timeInMillis) - timelog.startTime;
                 if (found === -1) {
                     tasks.push(selectedTimelog);
                 }
             }
             return tasks;
-        }, [])
-        .sort((a: Task, b: Task) => a?.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
+        }, [] as Task[])
+        .sort((a, b) => a?.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
 };
 export const parseTimelogsToStat = (timeInMillis: Milliseconds): Stat => {
     const allTimelogs = TimeasrStore.getTimelogsOfPeriod(0);

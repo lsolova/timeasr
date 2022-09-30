@@ -6,11 +6,12 @@
     let loading = true;
 
     // EXPERIMENTAL CODE FRAGMENT -->
+    // eslint-disable-next-line no-console
     window.addEventListener("timelog:entry", (e) => console.log("TLE", e));
     // <-- EXPERIMENTAL CODE FRAGMENT
     init().then(() => {
         loading = false;
-    });    
+    });
 </script>
 
 <div class="App">
@@ -23,4 +24,3 @@
         <Stats />
     {/if}
 </div>
-        
