@@ -1,6 +1,6 @@
 {
     "name": "timeasr",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Time measurement web application",
     "main": "build/timeasrapp.js",
     "scripts": {
