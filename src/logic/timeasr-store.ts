@@ -46,11 +46,11 @@ const getTimelogsOfPeriod = (fromEpoch: number, toEpoch?: number): Timelog[] => 
      * - timelog finished within the period
      * - timelog is running within the period
      */
-    const isStartTimeWithinRequestedPeriod = (timelog) =>
+    const isStartTimeWithinRequestedPeriod = (timelog: Timelog) =>
         timelog.startTime >= fromEpoch && timelog.startTime <= usedToEpoch;
-    const isTimelogRunningWithinRequestedPeriod = (timelog) =>
+    const isTimelogRunningWithinRequestedPeriod = (timelog: Timelog) =>
         !isTimelogFinished(timelog) && now() >= fromEpoch && now() <= usedToEpoch;
-    const isEndTimeWithinRequestedPeriod = (timelog) =>
+    const isEndTimeWithinRequestedPeriod = (timelog: Timelog) =>
         isTimelogFinished(timelog) && timelog.endTime >= fromEpoch && timelog.endTime <= usedToEpoch;
     return timelogList.filter(
         (timelog) =>
@@ -62,7 +62,7 @@ const getTimelogsOfPeriod = (fromEpoch: number, toEpoch?: number): Timelog[] => 
 const getLastTimelog = (): Timelog | null => {
     return timelogList.length ? timelogList[0] : null;
 };
-const closeTimelog = async (): Promise<Timelog> => {
+const closeTimelog = async (): Promise<Timelog | null> => {
     const lastTimelog = getLastTimelog();
     if (isTimelogRunning(lastTimelog)) {
         const newTimelog = {

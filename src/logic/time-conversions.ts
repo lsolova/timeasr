@@ -11,11 +11,11 @@ export const asDay = (timeInMillis: Milliseconds) => {
     const expDate = timeInMillis !== undefined ? new Date(timeInMillis) : new Date();
     return `${asMonth(timeInMillis)}${addLeadingZero(expDate.getDate())}`;
 };
-export const dayStart = (dayTime: number): number => {
-    const actualDate = new Date(dayTime);
+export const dayStart = (timeInMillis: number): number => {
+    const actualDate = new Date(timeInMillis);
     return Date.UTC(actualDate.getFullYear(), actualDate.getMonth(), actualDate.getDate(), 0, 0, 0, 0);
 };
-export const dayEnd = (dayTime: number): number => {
-    const actualDate = new Date(dayTime);
+export const dayEnd = (timeInMillis: number): number => {
+    const actualDate = new Date(timeInMillis);
     return Date.UTC(actualDate.getFullYear(), actualDate.getMonth(), actualDate.getDate(), 23, 59, 59, 999);
 };

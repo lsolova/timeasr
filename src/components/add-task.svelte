@@ -12,5 +12,5 @@
 </script>
 
 <div class="MeasureList__Item">
-    <input placeholder="Task name" type="text" on:keyup={onKeyUp}/>
+    <input id="NewTaskInput" placeholder="Task name" type="text" on:keyup={onKeyUp}/>
 </div>

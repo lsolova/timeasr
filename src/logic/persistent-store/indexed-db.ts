@@ -39,6 +39,9 @@ const openDb = (): Promise<IDBDatabase> => {
 };
 const init = (conf: DatabaseConfiguration) => {
     dbConfig = { ...conf };
+    if (!Reflect.has(window, "indexedDB")) {
+        throw new Error("This application requires Indexed DB capabilities.");
+    }
 };
 const runQuery = <Data, Result>({
     data,

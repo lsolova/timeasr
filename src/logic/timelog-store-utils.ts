@@ -1,28 +1,28 @@
-import { FinishedTimelog, isTimelogFinished, StartedTimelog } from "../types";
+import { FinishedTimelog, isTimelogFinished, Timelog } from "../types";
 import { now, randomUUID } from "./browser-wrapper";
 import { TimelogEntry } from "./types";
 
 export const convertTimelogToTimelogEntry = (
-    timelog: StartedTimelog | FinishedTimelog,
+    timelog: Timelog,
     type: TimelogEntry["logType"]
 ): TimelogEntry => {
     const finished = isTimelogFinished(timelog);
-    const timelogEntry: TimelogEntry =
+    const timelogEntry =
         type === "start"
             ? {
                   logId: timelog.logId ?? randomUUID(),
                   logTime: timelog.startTime ?? now(),
                   logType: "start",
                   task: timelog.task
-              }
+              } as TimelogEntry
             : {
                   logId: (finished && timelog.closingLogId) ?? randomUUID(),
                   logTime: (finished && timelog.endTime) ?? now(),
                   logType: "end",
-              };
+              } as TimelogEntry;
     return timelogEntry;
 };
-export const parseTimelogEntriesToTimelogs = (timelogEntries: TimelogEntry[]): FinishedTimelog[] => {
+export const parseTimelogEntriesToTimelogs = (timelogEntries: TimelogEntry[]): Timelog[] => {
     const entries = timelogEntries.reduce((timelogs, entry, index, entries) => {
         const isEntryValid =
             entry.logType === "start" ||
@@ -52,6 +52,6 @@ export const parseTimelogEntriesToTimelogs = (timelogEntries: TimelogEntry[]): F
             timelogs.unshift(entryContent);
         }
         return timelogs;
-    }, []);
+    }, [] as Timelog[]);
     return entries.reverse();
 };
