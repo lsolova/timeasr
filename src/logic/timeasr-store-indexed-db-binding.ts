@@ -58,12 +58,12 @@ export const getTimelogsQueryFn = (
         const range = toEpoch > fromEpoch ? IDBKeyRange.bound(fromEpoch, toEpoch) : IDBKeyRange.lowerBound(fromEpoch);
         const cursorRequest = byTimeIndex.openCursor(range, "prev");
 
-        const receivedTimeLogList = [];
+        const receivedTimeLogList: TimelogEntry[] = [];
         cursorRequest.addEventListener("error", (error) => {
             reject(error);
         });
         // EXPERIMENTAL CODE FRAGMENT -->
-        const entryFeeder = timelogParserGenerator();
+        const entryFeeder: Generator<undefined, void, TimelogEntry | null> = timelogParserGenerator();
         entryFeeder.next();
         // <-- EXPERIMENTAL CODE FRAGMENT
         cursorRequest.addEventListener("success", () => {

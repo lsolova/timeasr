@@ -1,6 +1,6 @@
 {
     "name": "timeasr",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Time measurement web application",
     "main": "build/timeasrapp.js",
     "scripts": {
@@ -9,9 +9,9 @@
         "lint:eslint": "node ./node_modules/eslint/bin/eslint src/**/*.ts src/**/*.svelte",
         "lint:stylelint": "node ./node_modules/stylelint/bin/stylelint \"src/**/*.scss\"",
         "start": "node_modules/.bin/webpack-dev-server --port 8081 --config .config/webpack.config.js",
-        "test:karma": "node ./node_modules/karma/bin/karma start .config/karma.conf.js",
-        "test:watch": "jest --watch",
-        "test": "jest"
+        "test:e2e": "yarn nightwatch -e browserstack.chrome",
+        "test:unit-watch": "jest --watch",
+        "test:unit": "jest"
     },
     "repository": {
         "type": "git",
@@ -33,6 +33,7 @@
         "@typescript-eslint/parser": "^5.38.0",
         "babel-jest": "^29.0.3",
         "babel-loader": "^8.2.2",
+        "chromedriver": "^106.0.1",
         "copy-webpack-plugin": "^9.0.1",
         "css-loader": "^6.4.0",
         "eslint": "^8.23.1",
@@ -40,12 +41,14 @@
         "eslint-plugin-svelte3": "^4.0.0",
         "express": "^4.11.1",
         "file-loader": "^6.2.0",
+        "geckodriver": "^3.0.2",
         "git-revision-webpack-plugin": "^5.0.0",
         "html-webpack-plugin": "^5.4.0",
         "husky": "^0.11.9",
         "jest": "^29.0.3",
         "markdownlint": "^0.26.2",
         "mini-css-extract-plugin": "^2.4.2",
+        "nightwatch": "^2.3.9",
         "sass": "^1.55.0",
         "sass-loader": "^13.0.2",
         "stylelint": "^14.13.0",

@@ -23,8 +23,8 @@ jobs:
         run: yarn install
       - name: Lint checking
         run: yarn lint:all
-      - name: Testing
-        run: yarn test
+      - name: Unit testing
+        run: yarn test:unit
       - name: Build
         run: yarn build
       - name: Deploy
@@ -39,6 +39,30 @@ jobs:
           app_location: "build" # App source code path
           skip_app_build: true
           ###### End of Repository/Build Configurations ######
+
+  end_to_end_testing_job:
+    if: github.event_name == 'pull_request' && github.event.action != 'closed'
+    environment: "slv-timeasr"
+    runs-on: ubuntu-latest
+    name: E2E Testing Job
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: Getting packages
+        run: yarn install
+      - name: Install Browserstack Local
+        run: yarn add browserstack-local
+      - name: Run local application
+        run: yarn start &
+      - name: Run browserstack local
+        run: node browserstack-local.js &
+      - name: Running E2E tests
+        run: yarn test:e2e
+        env:
+          BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
+          BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'

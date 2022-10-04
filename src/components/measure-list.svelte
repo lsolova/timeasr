@@ -20,7 +20,7 @@
 
 <main class="MeasureList">
     {#each $tasks as task}
-        <div class={classNames(task)} on:click={() => onClick(task)}>
+        <div class={classNames(task)} on:click={() => onClick(task)} data-task-id={task.name}>
             <span>{task.name}</span>
             <span>{toHoursAndMinutes(task.loggedTime)}</span>
         </div>

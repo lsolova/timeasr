@@ -6,8 +6,10 @@
 .openshift/README.md
 build
 gitid.txt
+nightwatch
 node_modules
 npm-debug.log
 package-lock.json
+tests_output
 tmp
 yarn.lock
