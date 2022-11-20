@@ -1,6 +1,13 @@
-import { FinishedTimelog, isTimelogFinished, StartedTimelog } from "../types";
+import { FinishedTimelog, isTimelogFinished, StartedTimelog, Timelog } from "../types";
 import { now, randomUUID } from "./browser-wrapper";
 import { TimelogEntry } from "./types";
+
+export const hasStartTimeWithinRequestedPeriod = (timelog: Timelog, fromEpoch: number, toEpoch: number) =>
+    timelog.startTime >= fromEpoch && timelog.startTime <= toEpoch;
+export const hasEndTimeWithinRequestedPeriod = (timelog: Timelog, fromEpoch: number, toEpoch: number) =>
+    isTimelogFinished(timelog) && timelog.endTime >= fromEpoch && timelog.endTime <= toEpoch;
+export const isTimelogRunningWithinRequestedPeriod = (timelog: Timelog, fromEpoch: number, toEpoch: number) =>
+    !isTimelogFinished(timelog) && now() >= fromEpoch && now() <= toEpoch;
 
 export const convertTimelogToTimelogEntry = (
     timelog: StartedTimelog | FinishedTimelog,
@@ -13,11 +20,11 @@ export const convertTimelogToTimelogEntry = (
                   logId: timelog.logId ?? randomUUID(),
                   logTime: timelog.startTime ?? now(),
                   logType: "start",
-                  task: timelog.task
+                  task: timelog.task,
               }
             : {
-                  logId: (finished && timelog.closingLogId) ?? randomUUID(),
-                  logTime: (finished && timelog.endTime) ?? now(),
+                  logId: finished ? timelog.closingLogId : randomUUID(),
+                  logTime: finished ? timelog.endTime : now(),
                   logType: "end",
               };
     return timelogEntry;

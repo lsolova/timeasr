@@ -46,3 +46,17 @@ export const FOURTH_START_TIMELOG = {
     startTime: 1663950762398,
     task: undefined,
 };
+export const FIFTH_FULL_TIMELOG = {
+    logId: "e4404211-30d9-465f-8daa-e883fc1a49f5",
+    closingLogId: "a7eec6d8-ec5a-4607-b3d0-5e904896004f",
+    startTime: 1668946462050,
+    endTime: 1668946559996,
+    task: "sample task",
+};
+export const SIXTH_FULL_TIMELOG = {
+    logId: "1ba186d7-a468-4f2b-84a6-561ed4bf2039",
+    closingLogId: "a52188a0-ca73-40c7-b746-b650ed173212",
+    startTime: 1668946808744,
+    endTime: 1668947439513,
+    task: "sample2 task",
+};
