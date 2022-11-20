@@ -1,5 +1,11 @@
 import { addTimelogQueryFn, getTimelogsQueryFn } from "./timeasr-store-indexed-db-binding";
-import { convertTimelogToTimelogEntry, parseTimelogEntriesToTimelogs } from "./timelog-store-utils";
+import {
+    convertTimelogToTimelogEntry,
+    hasEndTimeWithinRequestedPeriod,
+    hasStartTimeWithinRequestedPeriod,
+    isTimelogRunningWithinRequestedPeriod,
+    parseTimelogEntriesToTimelogs,
+} from "./timelog-store-utils";
 import { DB_CONFIG, DB_STORE_TIMELOG, TimelogEntry } from "./types";
 import { IndexedDb } from "./persistent-store/indexed-db";
 import { FinishedTimelog, isTimelogFinished, StartedTimelog, Timelog, UUID } from "../types";
@@ -46,23 +52,17 @@ const getTimelogsOfPeriod = (fromEpoch: number, toEpoch?: number): Timelog[] => 
      * - timelog finished within the period
      * - timelog is running within the period
      */
-    const isStartTimeWithinRequestedPeriod = (timelog) =>
-        timelog.startTime >= fromEpoch && timelog.startTime <= usedToEpoch;
-    const isTimelogRunningWithinRequestedPeriod = (timelog) =>
-        !isTimelogFinished(timelog) && now() >= fromEpoch && now() <= usedToEpoch;
-    const isEndTimeWithinRequestedPeriod = (timelog) =>
-        isTimelogFinished(timelog) && timelog.endTime >= fromEpoch && timelog.endTime <= usedToEpoch;
     return timelogList.filter(
         (timelog) =>
-            isStartTimeWithinRequestedPeriod(timelog) ||
-            isEndTimeWithinRequestedPeriod(timelog) ||
-            isTimelogRunningWithinRequestedPeriod(timelog)
+            hasStartTimeWithinRequestedPeriod(timelog, fromEpoch, usedToEpoch) ||
+            hasEndTimeWithinRequestedPeriod(timelog, fromEpoch, usedToEpoch) ||
+            isTimelogRunningWithinRequestedPeriod(timelog, fromEpoch, usedToEpoch)
     );
 };
 const getLastTimelog = (): Timelog | null => {
     return timelogList.length ? timelogList[0] : null;
 };
-const closeTimelog = async (): Promise<Timelog> => {
+const closeTimelog = async (): Promise<Timelog | null> => {
     const lastTimelog = getLastTimelog();
     if (isTimelogRunning(lastTimelog)) {
         const newTimelog = {
