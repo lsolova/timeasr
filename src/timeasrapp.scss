@@ -8,6 +8,7 @@ html {
     --background-color: white;
     --counter-info-color: lightgrey;
     --dark-primary-color: #586ba5;
+    --icon-color: white;
     --inverse-text-color: white;
     --header-color: #1c3a92;
     --light-primary-color: #929cb6;
@@ -30,6 +31,7 @@ html {
         --background-color: black;
         --counter-info-color: rgba(80 80 80 100%);
         --dark-primary-color: #525c76;
+        --icon-color: darkgrey;
         --inverse-text-color: black;
         --header-color: #0c2a82;
         --negative-sum-color: darkred;
@@ -66,6 +68,7 @@ body {
             background-color: var(--first-side-background-color);
             display: grid;
             grid-template-areas: "cumulative daily" "avg copyright";
+            z-index: 2;
 
             & > div {
                 align-items: center;
@@ -77,6 +80,9 @@ body {
     svg {
         height: 5vh;
         width: 5vh;
+        color: var(--icon-color);
+        fill: var(--icon-color);
+        stroke: var(--icon-color);
     }
 
     .MeasureList {
@@ -86,6 +92,7 @@ body {
         display: flex;
         flex-grow: 1;
         flex-wrap: wrap;
+        overflow: auto;
         padding: 5%;
         position: relative;
         row-gap: 5%;
@@ -98,6 +105,7 @@ body {
         flex-direction: column;
         height: 15%;
         justify-content: center;
+        position: relative;
         width: 45%;
 
         input {
@@ -110,13 +118,28 @@ body {
             width: 90%;
         }
 
+        &__Close {
+            background-color: var(--second-side-background-color);
+            border: 0;
+            padding: 5px;
+            position: absolute;
+            right: 5px;
+            top: 5px;
+
+            svg {
+                fill: transparent;
+                height: 3vh;
+                width: 3vh;
+            }
+        }
+
         &--active {
             background-color: var(--second-side-background-color);
         }
     }
 
     .Copyright {
-        bottom: 0;
+        bottom: 10%;
         position: absolute;
         right: 0;
     }

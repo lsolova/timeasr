@@ -1,10 +1,8 @@
 *.appcache
 *.iml
 .idea
-.openshift/cron
-.openshift/markers
-.openshift/README.md
 build
+dist
 gitid.txt
 node_modules
 npm-debug.log

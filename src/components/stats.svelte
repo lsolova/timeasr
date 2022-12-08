@@ -4,6 +4,7 @@
     import CumulatedTimeSvg from "./svg/cumulated-time-svg.svelte";
     import DailyTimeSvg from "./svg/selected-day-time-svg.svelte";
     import MeasureClockSvg from "./svg/measure-clock-svg.svelte";
+    import SolovaLogoSvg from "./svg/solova-logo-svg.svelte";
 </script>
 
 <aside class="Stats">
@@ -18,5 +19,8 @@
     <div class="Stats__AverageTime">
         <MeasureClockSvg />
         <span>{toHoursAndMinutes($stats.averageTimePerDay)} / {$stats.dayCount}</span>
+    </div>
+    <div class="Copyright">
+        <SolovaLogoSvg />
     </div>
 </aside>
