@@ -20,12 +20,11 @@ export const tasks = writable<Task[]>([], (set: (tasks: Task[]) => void) => {
         set(tasks.filter((task) => !hiddenTasks.has(task.name)));
     });
 });
-export const stats = readable(parseTimelogsToStat([], [], now()), (set: (stat: Stat) => void) => {
+export const stats = readable(parseTimelogsToStat([], now()), (set: (stat: Stat) => void) => {
     TimeasrStore.watch(() => {
         const currentEpoch = now();
         const allTimelogs = TimeasrStore.getTimelogsOfPeriod(0);
-        const dayTimelogs = TimeasrStore.getTimelogsOfPeriod(dayStart(currentEpoch), dayEnd(currentEpoch));
-        set(parseTimelogsToStat(allTimelogs, dayTimelogs, currentEpoch));
+        set(parseTimelogsToStat(allTimelogs, currentEpoch));
     });
 });
 

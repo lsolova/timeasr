@@ -1,9 +1,9 @@
 import { asDay, dayEnd, dayStart } from "./time-conversions";
-import { hasStartTimeWithinRequestedPeriod } from "./timelog-store-utils";
+import { hasStartTimeWithinRequestedPeriod, isTimelogWithinPeriod } from "./timelog-store-utils";
 import { isTimelogFinished, Timelog } from "../types";
 import { Milliseconds, Stat, Task } from "../types";
 
-const ONE_DAY_WORKTIME = 8 * 60 * 60 * 1000; // Default 8 hours worktime
+export const ONE_DAY_WORKTIME = 8 * 60 * 60 * 1000; // Default 8 hours worktime
 
 export const parseTimelogsToTasks = (timelogs: Timelog[], currentEpoch: Milliseconds): Task[] => {
     const todayStart = dayStart(currentEpoch);
@@ -34,12 +34,10 @@ export const parseTimelogsToTasks = (timelogs: Timelog[], currentEpoch: Millisec
         }, [] as Task[])
         .sort((a, b) => a?.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
 };
-export const parseTimelogsToStat = (
-    allTimelogs: Timelog[],
-    dayTimelogs: Timelog[],
-    currentEpoch: Milliseconds
-): Stat => {
-    const allTimeInfo = allTimelogs.reduce(
+export const parseTimelogsToStat = (timelogs: Timelog[], currentEpoch: Milliseconds): Stat => {
+    const todayStart = dayStart(currentEpoch);
+    const todayEnd = dayEnd(currentEpoch);
+    const allTimeInfo = timelogs.reduce(
         (allTimeObject, timelog) => {
             allTimeObject.days.add(asDay(timelog.startTime));
             if (isTimelogFinished(timelog)) {
@@ -55,28 +53,30 @@ export const parseTimelogsToStat = (
             days: new Set(),
         }
     );
-    const dayTimeInfo = dayTimelogs.reduce(
-        (dayTimeObject, timelog) => {
-            if (isTimelogFinished(timelog)) {
-                dayTimeObject.lastChange = Math.max(dayTimeObject.lastChange, timelog.endTime);
-                dayTimeObject.dayTime += timelog.endTime - timelog.startTime;
-            } else {
-                dayTimeObject.lastChange = Math.max(dayTimeObject.lastChange, timelog.startTime);
-                dayTimeObject.dayTime += currentEpoch - timelog.startTime;
+    const dayTimeInfo = timelogs
+        .filter((timelog) => isTimelogWithinPeriod(timelog, todayStart, todayEnd))
+        .reduce(
+            (dayTimeObject, timelog) => {
+                if (isTimelogFinished(timelog)) {
+                    dayTimeObject.lastChange = Math.max(dayTimeObject.lastChange, timelog.endTime);
+                    dayTimeObject.dayTime += timelog.endTime - timelog.startTime;
+                } else {
+                    dayTimeObject.lastChange = Math.max(dayTimeObject.lastChange, timelog.startTime);
+                    dayTimeObject.dayTime += currentEpoch - timelog.startTime;
+                }
+                return dayTimeObject;
+            },
+            {
+                dayTime: 0,
+                lastChange: 0,
             }
-            return dayTimeObject;
-        },
-        {
-            dayTime: 0,
-            lastChange: 0,
-        }
-    );
+        );
     return {
         averageTimePerDay: allTimeInfo.allTime / allTimeInfo.days.size,
         dayCount: allTimeInfo.days.size,
         daily: {
-            leftTimeByDay: Math.abs(ONE_DAY_WORKTIME - dayTimeInfo.dayTime),
-            leftTimeByOverall: Math.abs(allTimeInfo.days.size * ONE_DAY_WORKTIME - allTimeInfo.allTime),
+            leftTimeByDay: ONE_DAY_WORKTIME - dayTimeInfo.dayTime,
+            leftTimeByOverall: allTimeInfo.days.size * ONE_DAY_WORKTIME - allTimeInfo.allTime,
             lastChangeTime: dayTimeInfo.lastChange,
         },
     };

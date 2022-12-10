@@ -8,6 +8,16 @@ export const hasEndTimeWithinRequestedPeriod = (timelog: Timelog, fromEpoch: num
     isTimelogFinished(timelog) && timelog.endTime >= fromEpoch && timelog.endTime <= toEpoch;
 export const isTimelogRunningWithinRequestedPeriod = (timelog: Timelog, fromEpoch: number, toEpoch: number) =>
     !isTimelogFinished(timelog) && now() >= fromEpoch && now() <= toEpoch;
+/** Returns true if timelog is (at least partially) within the period.
+ *  What should be checked? There are three cases:
+ *  - timelog started within the period
+ *  - timelog finished within the period
+ *  - timelog is running within the period
+ */
+export const isTimelogWithinPeriod = (timelog: Timelog, fromEpoch: number, toEpoch: number) =>
+    hasStartTimeWithinRequestedPeriod(timelog, fromEpoch, toEpoch) ||
+    hasEndTimeWithinRequestedPeriod(timelog, fromEpoch, toEpoch) ||
+    isTimelogRunningWithinRequestedPeriod(timelog, fromEpoch, toEpoch);
 
 export const convertTimelogToTimelogEntry = (
     timelog: StartedTimelog | FinishedTimelog,
