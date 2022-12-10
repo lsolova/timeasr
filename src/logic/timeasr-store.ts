@@ -1,9 +1,7 @@
 import { addTimelogQueryFn, getTimelogsQueryFn } from "./timeasr-store-indexed-db-binding";
 import {
     convertTimelogToTimelogEntry,
-    hasEndTimeWithinRequestedPeriod,
-    hasStartTimeWithinRequestedPeriod,
-    isTimelogRunningWithinRequestedPeriod,
+    isTimelogWithinPeriod,
     parseTimelogEntriesToTimelogs,
 } from "./timelog-store-utils";
 import { DB_CONFIG, DB_STORE_TIMELOG, TimelogEntry } from "./types";
@@ -42,22 +40,11 @@ const persistTimelogEntry = (timelogEntry: TimelogEntry) => {
         queryFunction: addTimelogQueryFn,
     });
 };
-/** Return a set of timelogs if timelog period has an overlap with the requested period.
- */
+/** Return a set of timelogs if timelog's period has an overlap with the requested period. */
 const getTimelogsOfPeriod = (fromEpoch: number, toEpoch?: number): Timelog[] => {
     // If a period until now is checked, then toEpoch should be in the near future instead of the exact now time
     const usedToEpoch = toEpoch || now() + 2500;
-    /* What should be checked? There are three cases:
-     * - timelog started within the period
-     * - timelog finished within the period
-     * - timelog is running within the period
-     */
-    return timelogList.filter(
-        (timelog) =>
-            hasStartTimeWithinRequestedPeriod(timelog, fromEpoch, usedToEpoch) ||
-            hasEndTimeWithinRequestedPeriod(timelog, fromEpoch, usedToEpoch) ||
-            isTimelogRunningWithinRequestedPeriod(timelog, fromEpoch, usedToEpoch)
-    );
+    return timelogList.filter((timelog) => isTimelogWithinPeriod(timelog, fromEpoch, usedToEpoch));
 };
 const getLastTimelog = (): Timelog | null => {
     return timelogList.length ? timelogList[0] : null;

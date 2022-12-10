@@ -60,3 +60,10 @@ export const SIXTH_FULL_TIMELOG = {
     endTime: 1668947439513,
     task: "sample2 task",
 };
+export const MORE_THAN_WORKDAY_TIMELOG = {
+    logId: "e699cb3e-11c7-4edf-b1f3-daae729bd50c",
+    closingLogId: "5123003a-8736-46c3-baff-c5031e88f3b7",
+    startTime: 1641023104000,
+    endTime: 1641057340000,
+    task: "sample giant task",
+};
