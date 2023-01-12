@@ -30,6 +30,7 @@ export const convertTimelogToTimelogEntry = (
                   logId: timelog.logId ?? randomUUID(),
                   logTime: timelog.startTime ?? now(),
                   logType: "start",
+                  namespace: timelog.namespace ?? "default",
                   task: timelog.task,
               }
             : {
@@ -47,28 +48,26 @@ export const parseTimelogEntriesToTimelogs = (timelogEntries: TimelogEntry[]): F
         if (!isEntryValid) {
             return timelogs;
         }
-        const entryContent =
-            entry.logType === "start"
-                ? timelogs.length
-                    ? timelogs[0]
-                    : {
-                          logId: entry.logId,
-                          startTime: entry.logTime,
-                          task: entry.task,
-                      }
-                : ({
-                      closingLogId: entry.logId,
-                      endTime: entry.logTime,
-                  } as FinishedTimelog);
+        if (entry.logType === "end") {
+            const entryContent = {
+                closingLogId: entry.logId,
+                endTime: entry.logTime,
+            } as FinishedTimelog;
+            timelogs.unshift(entryContent);
+        }
         if (entry.logType === "start") {
+            const entryContent = timelogs.length
+                ? timelogs[0] // Last ended item
+                : ({} as FinishedTimelog);
             entryContent.logId = entry.logId;
             entryContent.startTime = entry.logTime;
             entryContent.task = entry.task;
-        }
-        if (entry.logType === "end" || !timelogs.length) {
-            timelogs.unshift(entryContent);
+            entryContent.namespace = entry.namespace ?? "default";
+            if (!timelogs.length) {
+                timelogs.unshift(entryContent);
+            }
         }
         return timelogs;
-    }, []);
+    }, [] as FinishedTimelog[]);
     return entries.reverse();
 };

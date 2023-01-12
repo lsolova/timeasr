@@ -21,6 +21,7 @@
     "license": "LGPL-3.0",
     "dependencies": {
         "@tsconfig/svelte": "^3.0.0",
+        "dexie": "^3.2.2",
         "svelte": "^3.50.1"
     },
     "devDependencies": {

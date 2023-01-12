@@ -1,9 +1,13 @@
 export type UUID = string;
 export type Milliseconds = number;
+export const defaultNamespace = "default";
+export const defaultTask = "default";
+
 export type StartedTimelog = {
     logId: UUID;
     startTime: number;
-    task: string | undefined;
+    task: string | "default";
+    namespace: string | "default";
 };
 export type FinishedTimelog = {
     closingLogId: UUID;
@@ -14,6 +18,7 @@ export type Task = {
     active?: boolean;
     loggedTime: Milliseconds;
     name: string;
+    namespace: string | "default";
 };
 export type Stat = {
     averageTimePerDay: Milliseconds;
