@@ -1,14 +1,13 @@
-import { addTimelogQueryFn, getTimelogsQueryFn } from "./timeasr-store-indexed-db-binding";
 import {
     convertTimelogToTimelogEntry,
     isTimelogWithinPeriod,
     parseTimelogEntriesToTimelogs,
 } from "./timelog-store-utils";
-import { DB_CONFIG, DB_STORE_TIMELOG, TimelogEntry } from "./types";
-import { IndexedDb } from "./persistent-store/indexed-db";
-import { FinishedTimelog, isTimelogFinished, StartedTimelog, Timelog, UUID } from "../types";
+import { defaultNamespace, defaultTask, FinishedTimelog, isTimelogFinished, StartedTimelog, Timelog } from "../types";
 import { now, randomUUID } from "./browser-wrapper";
+import { TimeasrStoreBinding } from "./types";
 
+let binding: TimeasrStoreBinding = {} as TimeasrStoreBinding;
 let timelogList: Timelog[] = [];
 const watchers: (() => void)[] = [];
 
@@ -18,28 +17,15 @@ const watch = (watcher: () => void) => {
     watchers.push(watcher);
     watcher();
 };
-const getTimelogEntries = async () => {
-    return await IndexedDb.runQuery({
-        data: { fromEpoch: 0, toEpoch: now() },
-        objectStore: DB_STORE_TIMELOG,
-        writable: false,
-        queryFunction: getTimelogsQueryFn,
-    });
-};
-const initialize = async () => {
-    IndexedDb.init(DB_CONFIG);
-    const timelogEntries = await getTimelogEntries();
+
+const initialize = async (storeBinding: TimeasrStoreBinding) => {
+    binding = storeBinding;
+    await binding.initializeDB();
+    const timelogEntries = await binding.getTimelogEntries();
     timelogList = parseTimelogEntriesToTimelogs(timelogEntries);
     notifyWatchers();
 };
-const persistTimelogEntry = (timelogEntry: TimelogEntry) => {
-    return IndexedDb.runQuery<TimelogEntry, UUID>({
-        data: timelogEntry,
-        objectStore: DB_STORE_TIMELOG,
-        writable: true,
-        queryFunction: addTimelogQueryFn,
-    });
-};
+
 /** Return a set of timelogs if timelog's period has an overlap with the requested period. */
 const getTimelogsOfPeriod = (fromEpoch: number, toEpoch?: number): Timelog[] => {
     // If a period until now is checked, then toEpoch should be in the near future instead of the exact now time
@@ -57,14 +43,14 @@ const closeTimelog = async (): Promise<Timelog | null> => {
             closingLogId: randomUUID(),
             endTime: now() - 1, // Due to time uniqueness in the underlying DB
         } as FinishedTimelog;
-        await persistTimelogEntry(convertTimelogToTimelogEntry(newTimelog, "end"));
+        await binding.persistTimelogEntry(convertTimelogToTimelogEntry(newTimelog, "end"));
         timelogList.shift();
         timelogList.unshift(newTimelog);
         notifyWatchers();
     }
     return lastTimelog;
 };
-const startTimelog = async (task?: string): Promise<Timelog> => {
+const startTimelog = async (task?: string, namespace?: string): Promise<Timelog> => {
     const lastTimelog = getLastTimelog();
     if (isTimelogRunning(lastTimelog)) {
         closeTimelog();
@@ -72,9 +58,10 @@ const startTimelog = async (task?: string): Promise<Timelog> => {
     const newTimelog = {
         logId: randomUUID(),
         startTime: now(),
-        task,
+        task: task ?? defaultTask,
+        namespace: namespace ?? defaultNamespace,
     } as StartedTimelog;
-    await persistTimelogEntry(convertTimelogToTimelogEntry(newTimelog, "start"));
+    await binding.persistTimelogEntry(convertTimelogToTimelogEntry(newTimelog, "start"));
     timelogList.unshift(newTimelog);
     notifyWatchers();
     return newTimelog;

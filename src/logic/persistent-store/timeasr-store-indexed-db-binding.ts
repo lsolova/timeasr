@@ -1,6 +1,32 @@
-import { DB_STORE_BYTIME_INDEX, DB_STORE_TIMELOG, TimelogEntry } from "./types";
-import { FinishedTimelog, Timelog, UUID } from "../types";
+import { DatabaseConfiguration, DB_NAME, DB_STORE_BYTIME_INDEX, DB_STORE_SETTINGS, DB_STORE_TIMELOG } from "./types";
+import { FinishedTimelog, Timelog, UUID } from "../../types";
+import { IndexedDb } from "./indexed-db";
+import { now } from "../browser-wrapper";
+import { SETTING_ENTRY_KEY_NAME, TimelogEntry, TIMELOG_ENTRY_KEY_NAME, TIMELOG_ENTRY_TIME_NAME } from "../types";
 
+export const DB_CONFIG: DatabaseConfiguration = {
+    dbName: DB_NAME,
+    dbVersion: 3,
+    tables: [
+        {
+            tableName: DB_STORE_TIMELOG,
+            keyPath: TIMELOG_ENTRY_KEY_NAME,
+            autoIncrement: false,
+            indices: [
+                {
+                    indexName: DB_STORE_BYTIME_INDEX,
+                    indexPath: TIMELOG_ENTRY_TIME_NAME,
+                    unique: true,
+                },
+            ],
+        },
+        {
+            tableName: DB_STORE_SETTINGS,
+            keyPath: SETTING_ENTRY_KEY_NAME,
+            autoIncrement: false,
+        },
+    ],
+};
 type TimelogEntriesQueryFunctionParams = { fromEpoch?: number; toEpoch?: number; limit?: number };
 
 /* EXPERIMENTAL CODE FRAGMENT -->
@@ -9,7 +35,7 @@ type TimelogEntriesQueryFunctionParams = { fromEpoch?: number; toEpoch?: number;
  */
 function* timelogParserGenerator() {
     let lastEntry = null;
-    let currentEntry: TimelogEntry;
+    let currentEntry: TimelogEntry | null;
 
     do {
         currentEntry = yield;
@@ -18,6 +44,7 @@ function* timelogParserGenerator() {
                 logId: currentEntry.logId,
                 startTime: currentEntry.logTime,
                 task: currentEntry.task,
+                namespace: currentEntry.namespace ?? 'default',
             };
             if (lastEntry) {
                 (details as FinishedTimelog).endTime = lastEntry.logTime;
@@ -33,7 +60,7 @@ function* timelogParserGenerator() {
 }
 // <-- EXPERIMENTAL CODE FRAGMENT
 
-export const addTimelogQueryFn = (trx: IDBTransaction, timelogEntry: TimelogEntry): Promise<UUID> => {
+const addTimelogQueryFn = (trx: IDBTransaction, timelogEntry: TimelogEntry): Promise<UUID> => {
     const addingResult = new Promise<UUID>((resolve, reject) => {
         const timelogStore = trx.objectStore(DB_STORE_TIMELOG);
         const request = timelogStore.put(timelogEntry);
@@ -48,7 +75,7 @@ export const addTimelogQueryFn = (trx: IDBTransaction, timelogEntry: TimelogEntr
     return addingResult;
 };
 
-export const getTimelogsQueryFn = (
+const getTimelogsQueryFn = (
     trx: IDBTransaction,
     { fromEpoch = 0, toEpoch = 0, limit = Infinity }: TimelogEntriesQueryFunctionParams
 ): Promise<TimelogEntry[]> => {
@@ -58,7 +85,7 @@ export const getTimelogsQueryFn = (
         const range = toEpoch > fromEpoch ? IDBKeyRange.bound(fromEpoch, toEpoch) : IDBKeyRange.lowerBound(fromEpoch);
         const cursorRequest = byTimeIndex.openCursor(range, "prev");
 
-        const receivedTimeLogList = [];
+        const receivedTimeLogList: TimelogEntry[] = [];
         cursorRequest.addEventListener("error", (error) => {
             reject(error);
         });
@@ -74,9 +101,35 @@ export const getTimelogsQueryFn = (
                 cursor.continue();
             } else {
                 resolve(receivedTimeLogList);
-                entryFeeder.next(null);
+                entryFeeder.next(null); // EXPERIMENTAL CODE FRAGMENT
             }
         });
     });
     return timelogListPromise;
+};
+
+const initializeDB = () => {
+    IndexedDb.init(DB_CONFIG);
+};
+const getTimelogEntries = async () => {
+    return await IndexedDb.runQuery({
+        data: { fromEpoch: 0, toEpoch: now() },
+        objectStore: DB_STORE_TIMELOG,
+        writable: false,
+        queryFunction: getTimelogsQueryFn,
+    });
+};
+const persistTimelogEntry = (timelogEntry: TimelogEntry) => {
+    return IndexedDb.runQuery<TimelogEntry, UUID>({
+        data: timelogEntry,
+        objectStore: DB_STORE_TIMELOG,
+        writable: true,
+        queryFunction: addTimelogQueryFn,
+    });
+};
+
+export const IndexedDbBinding = {
+    initializeDB,
+    getTimelogEntries,
+    persistTimelogEntry,
 };
