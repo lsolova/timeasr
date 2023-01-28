@@ -23,7 +23,14 @@
 
 <main class="MeasureList">
     {#each $tasks as task}
-        <div class={classNames(task)} on:click={() => onSelectClick(task)}>
+        <div class={classNames(task)}
+            on:click={() => onSelectClick(task)}
+            on:keydown={(event) => {
+                if (event.code === 'KeyS') {
+                    onSelectClick(task);
+                }
+            }}
+        >
             {#if !task.active}
                 <button class="MeasureList__Item__Close" on:click={(event) => {
                     event.preventDefault();
