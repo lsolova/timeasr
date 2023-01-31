@@ -75,6 +75,18 @@ body {
                 display: flex;
             }
         }
+
+        .Stats__Item__EstimatedLeave {
+            margin-left: 0.5em;
+
+            &::before {
+                content: "> (";
+            }
+
+            &::after {
+                content: ")";
+            }
+        }
     }
 
     svg {

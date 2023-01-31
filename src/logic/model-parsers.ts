@@ -85,12 +85,20 @@ export const parseTimelogsToStat = (timelogs: Timelog[], currentEpoch: Milliseco
                 lastChange: 0,
             }
         );
+    const leftTimeByDayRemaining = ONE_DAY_WORKTIME - dayTimeInfo.dayTime;
+    const leftTimeByOverallRemaining = allTimeInfo.days.size * ONE_DAY_WORKTIME - allTimeInfo.allTime;
     return {
         averageTimePerDay: allTimeInfo.allTime / allTimeInfo.days.size,
         dayCount: allTimeInfo.days.size,
         daily: {
-            leftTimeByDay: ONE_DAY_WORKTIME - dayTimeInfo.dayTime,
-            leftTimeByOverall: allTimeInfo.days.size * ONE_DAY_WORKTIME - allTimeInfo.allTime,
+            leftTimeByDay: {
+                remaining: leftTimeByDayRemaining,
+                estimatedLeave: currentEpoch + leftTimeByDayRemaining,
+            },
+            leftTimeByOverall: {
+                remaining: leftTimeByOverallRemaining,
+                estimatedLeave: currentEpoch + leftTimeByOverallRemaining,
+            },
             lastChangeTime: dayTimeInfo.lastChange,
         },
     };
