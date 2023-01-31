@@ -24,8 +24,14 @@ export type Stat = {
     averageTimePerDay: Milliseconds;
     dayCount: number;
     daily: {
-        leftTimeByDay: Milliseconds;
-        leftTimeByOverall: Milliseconds;
+        leftTimeByDay: {
+            remaining: Milliseconds;
+            estimatedLeave: Milliseconds;
+        }
+        leftTimeByOverall: {
+            remaining: Milliseconds;
+            estimatedLeave: Milliseconds;
+        }
         lastChangeTime: Milliseconds;
     };
 };

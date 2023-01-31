@@ -4,7 +4,7 @@ const FIVE_MINUTES_IN_MILLIS = 300000;
 export const initializeTimeasrTick = () => {
     let tickInterval: ReturnType<typeof setInterval> | null = null;
     const sendTick = () => document.dispatchEvent(new CustomEvent(TICKER_EVENT_NAME));
-    document.addEventListener("visibilitychange", () => {
+    const eventListener = () => {
         if (document.visibilityState === "visible") {
             sendTick();
             tickInterval = setInterval(() => sendTick(), FIVE_MINUTES_IN_MILLIS);
@@ -13,7 +13,9 @@ export const initializeTimeasrTick = () => {
                 clearInterval(tickInterval);
             }
         }
-    });
+    };
+    document.addEventListener("visibilitychange", eventListener);
+    eventListener();
 };
 
 export const addTimeasrTickListener = (listener: EventListener) => {
