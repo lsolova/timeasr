@@ -14,12 +14,12 @@ type BasicTimelogEntry = {
     [TIMELOG_ENTRY_TIME_NAME]: epoch;
     logType: LogType;
 };
-type StartTimelogEntry = {
+export type StartTimelogEntry = {
     logType: "start";
     namespace: string | "default";
     task: string | "default";
 } & BasicTimelogEntry;
-type EndTimelogEntry = {
+export type EndTimelogEntry = {
     logType: "end";
 } & BasicTimelogEntry;
 

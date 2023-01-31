@@ -1,15 +1,16 @@
+import { addTimeasrTickListener } from "../logic/view-tick";
+import { dayEnd, dayStart } from "../logic/time-conversions";
+import { DexieBinding } from "../logic/persistent-store/timeasr-store-dexie-binding";
 import { now } from "../logic/browser-wrapper";
 import { parseTimelogsToStat, parseTimelogsToTasks } from "../logic/model-parsers";
 import { readable, writable } from "svelte/store";
 import { Stat, Task } from "../types";
 import { TimeasrStore } from "../logic/timeasr-store";
-import { dayEnd, dayStart } from "../logic/time-conversions";
-import { addTimeasrTickListener } from "../logic/view-tick";
 
 const hiddenTasks = new Set<string>();
 
 export const init = async () => {
-    await TimeasrStore.initialize();
+    await TimeasrStore.initialize(DexieBinding);
 };
 export const tasks = writable<Task[]>([], (set: (tasks: Task[]) => void) => {
     const updateTasks = () => {

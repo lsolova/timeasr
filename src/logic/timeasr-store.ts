@@ -3,8 +3,9 @@ import {
     isTimelogWithinPeriod,
     parseTimelogEntriesToTimelogs,
 } from "./timelog-store-utils";
-import { defaultNamespace, defaultTask, FinishedTimelog, isTimelogFinished, StartedTimelog, Timelog } from "../types";
+import { FinishedTimelog, isTimelogFinished, StartedTimelog, Timelog } from "../types";
 import { now, randomUUID } from "./browser-wrapper";
+import { parseToTaskAndNamespace } from "./model-parsers";
 import { TimeasrStoreBinding } from "./types";
 
 let binding: TimeasrStoreBinding = {} as TimeasrStoreBinding;
@@ -50,7 +51,8 @@ const closeTimelog = async (): Promise<Timelog | null> => {
     }
     return lastTimelog;
 };
-const startTimelog = async (task?: string, namespace?: string): Promise<Timelog> => {
+const startTimelog = async (task?: string): Promise<Timelog> => {
+    const { namespace, taskName } = parseToTaskAndNamespace(task);
     const lastTimelog = getLastTimelog();
     if (isTimelogRunning(lastTimelog)) {
         closeTimelog();
@@ -58,8 +60,8 @@ const startTimelog = async (task?: string, namespace?: string): Promise<Timelog>
     const newTimelog = {
         logId: randomUUID(),
         startTime: now(),
-        task: task ?? defaultTask,
-        namespace: namespace ?? defaultNamespace,
+        task: taskName,
+        namespace: namespace,
     } as StartedTimelog;
     await binding.persistTimelogEntry(convertTimelogToTimelogEntry(newTimelog, "start"));
     timelogList.unshift(newTimelog);

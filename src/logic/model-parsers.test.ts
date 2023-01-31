@@ -1,15 +1,34 @@
+import { defaultNamespace, defaultTask } from "../types";
 import { now } from "./browser-wrapper";
-import { ONE_DAY_WORKTIME, parseTimelogsToStat, parseTimelogsToTasks } from "./model-parsers";
-import { FIRST_TASK, SECOND_TASK, THIRD_TASK } from "./__fixtures__/tasks";
+import { ONE_DAY_WORKTIME, parseTimelogsToStat, parseTimelogsToTasks, parseToTaskAndNamespace } from "./model-parsers";
+import { FIFTH_TASK, FIRST_TASK, FOURTH_TASK, SECOND_TASK, THIRD_TASK } from "./__fixtures__/tasks";
 import {
     FIFTH_FULL_TIMELOG,
     FIRST_FULL_TIMELOG,
     MORE_THAN_WORKDAY_TIMELOG,
     SECOND_FULL_TIMELOG,
+    SEVENTH_FULL_TIMELOG,
     SIXTH_FULL_TIMELOG,
 } from "./__fixtures__/timelogs";
 
 describe("Model parser", () => {
+    describe("parseToTaskAndNamespace() returns", () => {
+        test("defaults if no content provided", () => {
+            expect(parseToTaskAndNamespace()).toStrictEqual({ namespace: defaultNamespace, taskName: defaultTask });
+        });
+        test("default namespace and taskname if no custom namespace provided", () => {
+            expect(parseToTaskAndNamespace("sample task")).toStrictEqual({
+                namespace: defaultNamespace,
+                taskName: "sample task",
+            });
+        });
+        test("custom namespace and taskname if no custom namespace provided", () => {
+            expect(parseToTaskAndNamespace("custom ns:sample task")).toStrictEqual({
+                namespace: "custom ns",
+                taskName: "sample task",
+            });
+        });
+    });
     describe("parseTimelogsToTasks() returns", () => {
         test("empty array, if no timelogs passed", () => {
             expect(parseTimelogsToTasks([], now())).toStrictEqual([]);
@@ -33,6 +52,11 @@ describe("Model parser", () => {
             expect(
                 parseTimelogsToTasks([FIRST_FULL_TIMELOG, SIXTH_FULL_TIMELOG], FIRST_FULL_TIMELOG.startTime + 100)
             ).toStrictEqual([FIRST_TASK, THIRD_TASK]);
+        });
+        test("multiple items, if namespaces are different", () => {
+            expect(
+                parseTimelogsToTasks([SIXTH_FULL_TIMELOG, SEVENTH_FULL_TIMELOG], SIXTH_FULL_TIMELOG.startTime + 100)
+            ).toStrictEqual([FIFTH_TASK, FOURTH_TASK]);
         });
     });
     describe("parseTimelogsToStat() returns", () => {
