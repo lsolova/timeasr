@@ -1,5 +1,5 @@
 import { defaultNamespace, defaultTask } from "../../types";
-import { TimelogEntry } from "../types";
+import { StartTimelogEntry, TimelogEntry } from "../types";
 
 export const FIRST_START_ENTRY = {
     logId: "7e2b07d2-a090-4474-aeb3-a6a3e3ba6ac1",
@@ -19,7 +19,7 @@ export const SECOND_START_ENTRY = {
     logType: "start",
     task: "sample task",
     namespace: defaultNamespace,
-} as TimelogEntry;
+} as StartTimelogEntry;
 export const SECOND_END_ENTRY = {
     logId: "e051775a-9845-4f58-adef-36f65b44f70c",
     logTime: 1663946177983,

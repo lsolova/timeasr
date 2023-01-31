@@ -72,6 +72,14 @@ export const SIXTH_FULL_TIMELOG = {
     task: "sample2 task",
     namespace: defaultNamespace,
 };
+export const SEVENTH_FULL_TIMELOG = {
+    logId: "b33db662-63da-4c25-b9ab-c5d0fb4264ba",
+    closingLogId: "9447d218-485f-47c9-a87d-f2d858064c06",
+    startTime: 1673785523195,
+    endTime: 1673786153964,
+    task: "sample2 task",
+    namespace: "custom namespace",
+};
 export const MORE_THAN_WORKDAY_TIMELOG = {
     logId: "e699cb3e-11c7-4edf-b1f3-daae729bd50c",
     closingLogId: "5123003a-8736-46c3-baff-c5031e88f3b7",

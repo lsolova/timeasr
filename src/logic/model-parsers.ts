@@ -1,34 +1,48 @@
 import { asDay, dayEnd, dayStart } from "./time-conversions";
 import { hasStartTimeWithinRequestedPeriod, isTimelogWithinPeriod } from "./timelog-store-utils";
-import { isTimelogFinished, Timelog } from "../types";
+import { defaultNamespace, defaultTask, isTimelogFinished, Timelog } from "../types";
 import { Milliseconds, Stat, Task } from "../types";
 
 export const ONE_DAY_WORKTIME = 8 * 60 * 60 * 1000; // Default 8 hours worktime
+
+const prepareTaskNameWithNamespace = (timelog: Timelog) =>
+    `${timelog.namespace === defaultNamespace ? "" : timelog.namespace + ":"}${timelog.task}`;
+export const parseToTaskAndNamespace = (taskContent?: string) => {
+    let taskName = taskContent ?? defaultTask,
+        namespace = defaultNamespace;
+    if (taskContent) {
+        const positionOfColon = taskContent.indexOf(":");
+        if (positionOfColon !== -1) {
+            namespace = taskContent.substring(0, positionOfColon);
+            taskName = taskContent.substring(positionOfColon + 1);
+        }
+    }
+    return { taskName, namespace };
+};
 
 export const parseTimelogsToTasks = (timelogs: Timelog[], currentEpoch: Milliseconds): Task[] => {
     const todayStart = dayStart(currentEpoch);
     const todayEnd = dayEnd(currentEpoch);
     return timelogs
         .reduce((tasks, timelog) => {
-            if (timelog.task !== null) {
-                const found = tasks.findIndex((task) => task.name === timelog.task);
-                const isFinishedTimelog = isTimelogFinished(timelog);
-                const timelogTime = (isFinishedTimelog ? timelog.endTime : currentEpoch) - timelog.startTime;
-                const selectedTimelog =
-                    found > -1
-                        ? tasks[found]
-                        : ({
-                              name: timelog.task,
-                              active: false,
-                              loggedTime: 0,
-                          } as Task);
-                selectedTimelog.active = selectedTimelog.active || !isFinishedTimelog;
-                if (hasStartTimeWithinRequestedPeriod(timelog, todayStart, todayEnd)) {
-                    selectedTimelog.loggedTime += timelogTime;
-                }
-                if (found === -1) {
-                    tasks.push(selectedTimelog);
-                }
+            const taskNameWithNamespace = prepareTaskNameWithNamespace(timelog);
+            const found = tasks.findIndex((task) => task.name === taskNameWithNamespace);
+            const isFinishedTimelog = isTimelogFinished(timelog);
+            const timelogTime = (isFinishedTimelog ? timelog.endTime : currentEpoch) - timelog.startTime;
+            const selectedTimelog =
+                found > -1
+                    ? tasks[found]
+                    : ({
+                          name: taskNameWithNamespace,
+                          active: false,
+                          loggedTime: 0,
+                      } as Task);
+            selectedTimelog.active = selectedTimelog.active || !isFinishedTimelog;
+            if (hasStartTimeWithinRequestedPeriod(timelog, todayStart, todayEnd)) {
+                selectedTimelog.loggedTime += timelogTime;
+            }
+            if (found === -1) {
+                tasks.push(selectedTimelog);
             }
             return tasks;
         }, [] as Task[])
