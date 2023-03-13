@@ -82,8 +82,8 @@ describe("Model parser", () => {
             });
         });
         test("active time by day, if there is an active log", () => {
-            const leftTimeByDay = parseTimelogsToStat([FIRST_START_TIMELOG], FIRST_FULL_TIMELOG.endTime)
-                .daily.leftTimeByDay;
+            const leftTimeByDay = parseTimelogsToStat([FIRST_START_TIMELOG], FIRST_FULL_TIMELOG.endTime).daily
+                .leftTimeByDay;
             expect(leftTimeByDay).toStrictEqual({
                 remaining: ONE_DAY_WORKTIME - (FIRST_FULL_TIMELOG.endTime - FIRST_FULL_TIMELOG.startTime),
                 estimatedLeave: FIRST_START_TIMELOG.startTime + ONE_DAY_WORKTIME,
@@ -97,12 +97,42 @@ describe("Model parser", () => {
                 estimatedLeave: 1641144544000,
             });
         });
-        test("negative left time by overall, if previous days were longer than a workday", () => {
-            const leftTimeByOverall = parseTimelogsToStat([MORE_THAN_WORKDAY_TIMELOG], 1641115744000).daily
-                .leftTimeByOverall;
+        test("less left time by overall, if previous days were longer than a workday", () => {
+            expect.assertions(2);
+            const { leftTimeByDay, leftTimeByOverall } = parseTimelogsToStat(
+                [
+                    MORE_THAN_WORKDAY_TIMELOG,
+                    {
+                        ...FIRST_FULL_TIMELOG,
+                        startTime: 1641115344000,
+                        endTime: 1641115743000,
+                    },
+                ],
+                1641115744000
+            ).daily;
             expect(leftTimeByOverall).toStrictEqual({
-                remaining: -5436000,
-                estimatedLeave: 1641110308000,
+                remaining: 22965000,
+                estimatedLeave: 1641138709000,
+            });
+            expect(leftTimeByDay).toStrictEqual({
+                remaining: 28401000,
+                estimatedLeave: 1641144145000,
+            });
+        });
+        // eslint-disable-next-line max-len
+        test("exactly with overtime less left time by overall, if previous days were longer than a workday and current day not started", () => {
+            expect.assertions(2);
+            const { leftTimeByDay, leftTimeByOverall } = parseTimelogsToStat(
+                [MORE_THAN_WORKDAY_TIMELOG],
+                1641115744000
+            ).daily;
+            expect(leftTimeByOverall).toStrictEqual({
+                remaining: 23364000,
+                estimatedLeave: 1641139108000,
+            });
+            expect(leftTimeByDay).toStrictEqual({
+                remaining: 28800000,
+                estimatedLeave: 1641144544000,
             });
         });
     });
