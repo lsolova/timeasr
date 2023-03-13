@@ -86,7 +86,8 @@ export const parseTimelogsToStat = (timelogs: Timelog[], currentEpoch: Milliseco
             }
         );
     const leftTimeByDayRemaining = ONE_DAY_WORKTIME - dayTimeInfo.dayTime;
-    const leftTimeByOverallRemaining = allTimeInfo.days.size * ONE_DAY_WORKTIME - allTimeInfo.allTime;
+    const allDaysWorkload = (allTimeInfo.days.size + (dayTimeInfo.dayTime === 0 ? 1 : 0)) * ONE_DAY_WORKTIME;
+    const leftTimeByOverallRemaining = allDaysWorkload - allTimeInfo.allTime;
     return {
         averageTimePerDay: allTimeInfo.allTime / allTimeInfo.days.size,
         dayCount: allTimeInfo.days.size,
