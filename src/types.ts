@@ -20,21 +20,28 @@ export type Task = {
     name: string;
     namespace: string | "default";
 };
-export type Stat = {
+export type DataStat = {
     averageTimePerDay: Milliseconds;
     dayCount: number;
     daily: {
         leftTimeByDay: {
             remaining: Milliseconds;
             estimatedLeave: Milliseconds;
-        }
+        };
         leftTimeByOverall: {
             remaining: Milliseconds;
             estimatedLeave: Milliseconds;
-        }
+        };
         lastChangeTime: Milliseconds;
     };
 };
+export type Stat = {
+    currentInfo: {
+        time: Milliseconds;
+        dayStart: Milliseconds;
+        edited: boolean;
+    };
+} & DataStat;
 
 export const isTimelogFinished = (timelog: Timelog): timelog is FinishedTimelog => {
     return Reflect.has(timelog, "endTime");

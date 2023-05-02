@@ -8,6 +8,7 @@ let storeInstance = null;
 
 export const getStore = () => {
     if (!storeInstance) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         storeInstance = createStore(reducers, initialState, (window as any)?.__REDUX_DEVTOOLS_EXTENSION__());
     }
     return storeInstance;

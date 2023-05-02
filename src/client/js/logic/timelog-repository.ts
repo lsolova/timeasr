@@ -1,30 +1,31 @@
-import { asTimeInMillis, siblingDay } from './time-conversion';
-import { isTimelogFinished, Timelog } from '../../../types';
-import { TimeasrStore } from '../../../logic/timeasr-store';
-import { now } from '../../../logic/browser-wrapper';
-import { asDay, asMonth, dayEnd, dayStart } from '../../../logic/time-conversions';
-import { Day, DayInfo, MonthInfo } from '../state/interfaces';
+import { asDay, asMonth, dayEnd, dayStart } from "../../../logic/time-conversions";
+import { asTimeInMillis, siblingDay } from "./time-conversion";
+import { CurrentTime } from "../../../logic/current-time";
+import { Day, DayInfo, MonthInfo } from "../state/interfaces";
+import { isTimelogFinished, Timelog } from "../../../types";
+import { TimeasrStore } from "../../../logic/timeasr-store";
 
 const addTimelogEntryToDayInfo = (dayInfo: DayInfo, timelog: Timelog): void => {
     dayInfo.timelog.push(timelog);
     if (isTimelogFinished(timelog)) {
         dayInfo.loggedMinutes += (timelog.endTime - timelog.startTime) / (60 * 1000);
     }
-}
+};
 
 export function createDayInfo(day: Day) {
-    return { day, timelog: [], loggedMinutes: 0};
+    return { day, timelog: [], loggedMinutes: 0 };
 }
 
 export function getDayDetails(dayTime: number): Promise<DayInfo> {
     const fromEpoch = dayStart(dayTime);
     const toEpoch = dayEnd(dayTime);
     const timelogs = TimeasrStore.getTimelogsOfPeriod(fromEpoch, toEpoch);
-            return Promise.resolve(timelogs.reduce((dayInfo, timelogEntry) => {
-                addTimelogEntryToDayInfo(dayInfo, timelogEntry);
-                return dayInfo;
-            }, createDayInfo(asDay(fromEpoch))));
-
+    return Promise.resolve(
+        timelogs.reduce((dayInfo, timelogEntry) => {
+            addTimelogEntryToDayInfo(dayInfo, timelogEntry);
+            return dayInfo;
+        }, createDayInfo(asDay(fromEpoch)))
+    );
 }
 
 export function getMonthDetails(dayTime: number): Promise<MonthInfo> {
@@ -52,5 +53,5 @@ export function getMonthDetails(dayTime: number): Promise<MonthInfo> {
 }
 
 export function getTodayDetails() {
-    return getDayDetails(now());
+    return getDayDetails(CurrentTime.get());
 }

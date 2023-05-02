@@ -1,9 +1,9 @@
-import { now } from '../../../logic/browser-wrapper';
-import { STORE_CONFIG } from './store-config';
-import * as localStore from './local-storage';
-import { asTimeInMillis } from './time-conversion';
-import { asDay } from '../../../logic/time-conversions';
-import { Day } from '../state/interfaces';
+import { asDay } from "../../../logic/time-conversions";
+import { asTimeInMillis } from "./time-conversion";
+import { Day } from "../state/interfaces";
+import { now } from "../../../logic/browser-wrapper";
+import { STORE_CONFIG } from "./store-config";
+import * as localStore from "./local-storage";
 
 interface SettingsRepository {
     getDailyWorkload(currentDay: Day): number;
@@ -14,11 +14,12 @@ interface SettingsRepository {
     setTaskTypes: (taskTypes: string[]) => void;
 }
 
-const yearAndMonthOf = (day: Day) => day.substr(0,6);
+const yearAndMonthOf = (day: Day) => day.substr(0, 6);
 
 function cleanup() {
-    let firstRemoveTime = asTimeInMillis(localStore.get(STORE_CONFIG.keys.oldestDay) || asDay(now()));
-    const firstRemovableTime = now() - (65 * 86400000);
+    const nowTime = now();
+    let firstRemoveTime = asTimeInMillis(localStore.get(STORE_CONFIG.keys.oldestDay) || asDay(nowTime));
+    const firstRemovableTime = nowTime - 65 * 86400000;
     if (firstRemoveTime === null) {
         return;
     }
@@ -39,7 +40,7 @@ function setDailyWorkload(currentDay: Day, value: number) {
 }
 
 export function getMonthlyAdjustmentDetails(currentDay: Day) {
-    return localStore.getOrSet(yearAndMonthOf(currentDay) + STORE_CONFIG.keys.monthlyAdjustment, '');
+    return localStore.getOrSet(yearAndMonthOf(currentDay) + STORE_CONFIG.keys.monthlyAdjustment, "");
 }
 
 export function setMonthlyAdjustmentDetails(currentDay: Day, value: string): void {

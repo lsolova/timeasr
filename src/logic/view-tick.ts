@@ -1,5 +1,6 @@
+import { FIVE_MINUTES_IN_MILLIS } from "../constants";
+
 const TICKER_EVENT_NAME = "timeasrTick";
-const FIVE_MINUTES_IN_MILLIS = 300000;
 
 export const initializeTimeasrTick = () => {
     let tickInterval: ReturnType<typeof setInterval> | null = null;

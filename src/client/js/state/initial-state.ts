@@ -1,5 +1,5 @@
-import { now } from "../../../logic/browser-wrapper";
 import { asDay, asMonth } from "../../../logic/time-conversions";
+import { CurrentTime } from "../../../logic/current-time";
 import { Day, DayInfo } from "./interfaces";
 
 export const initialState = {
@@ -13,12 +13,12 @@ export const initialState = {
         taskTypes: [],
     },
     // General information about the selected day
-    selectedDay: asDay(now()),
+    selectedDay: asDay(CurrentTime.get()),
     // DayInfos - null by default and will be an empty array when loaded
     measurementInfo: {
         dayInfo: null,
         monthInfo: {
-            month: asMonth(now()),
+            month: asMonth(CurrentTime.get()),
             days: new Map<Day, DayInfo>(),
         }
     }

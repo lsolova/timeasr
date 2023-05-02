@@ -1,5 +1,5 @@
+import { CurrentTime } from "./current-time";
 import { defaultNamespace, defaultTask } from "../types";
-import { now } from "./browser-wrapper";
 import { ONE_DAY_WORKTIME, parseTimelogsToStat, parseTimelogsToTasks, parseToTaskAndNamespace } from "./model-parsers";
 import { FIFTH_TASK, FIRST_TASK, FOURTH_TASK, SECOND_TASK, THIRD_TASK } from "./__fixtures__/tasks";
 import {
@@ -32,7 +32,7 @@ describe("Model parser", () => {
     });
     describe("parseTimelogsToTasks() returns", () => {
         test("empty array, if no timelogs passed", () => {
-            expect(parseTimelogsToTasks([], now())).toStrictEqual([]);
+            expect(parseTimelogsToTasks([], CurrentTime.get())).toStrictEqual([]);
         });
         test("a single item, if a timelog is passed", () => {
             expect(parseTimelogsToTasks([FIRST_FULL_TIMELOG], FIRST_FULL_TIMELOG.startTime + 100)).toStrictEqual([

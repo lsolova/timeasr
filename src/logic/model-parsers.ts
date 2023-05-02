@@ -1,7 +1,6 @@
 import { asDay, dayEnd, dayStart } from "./time-conversions";
 import { hasStartTimeWithinRequestedPeriod, isTimelogWithinPeriod } from "./timelog-store-utils";
-import { defaultNamespace, defaultTask, isTimelogFinished, Timelog } from "../types";
-import { Milliseconds, Stat, Task } from "../types";
+import { DataStat, defaultNamespace, defaultTask, isTimelogFinished, Timelog, Milliseconds, Task } from "../types";
 
 export const ONE_DAY_WORKTIME = 8 * 60 * 60 * 1000; // Default 8 hours worktime
 
@@ -48,7 +47,7 @@ export const parseTimelogsToTasks = (timelogs: Timelog[], currentEpoch: Millisec
         }, [] as Task[])
         .sort((a, b) => a?.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
 };
-export const parseTimelogsToStat = (timelogs: Timelog[], currentEpoch: Milliseconds): Stat => {
+export const parseTimelogsToStat = (timelogs: Timelog[], currentEpoch: Milliseconds): DataStat => {
     const todayStart = dayStart(currentEpoch);
     const todayEnd = dayEnd(currentEpoch);
     const allTimeInfo = timelogs.reduce(
@@ -88,8 +87,9 @@ export const parseTimelogsToStat = (timelogs: Timelog[], currentEpoch: Milliseco
     const leftTimeByDayRemaining = ONE_DAY_WORKTIME - dayTimeInfo.dayTime;
     const allDaysWorkload = (allTimeInfo.days.size + (dayTimeInfo.dayTime === 0 ? 1 : 0)) * ONE_DAY_WORKTIME;
     const leftTimeByOverallRemaining = allDaysWorkload - allTimeInfo.allTime;
+    const averageTimePerDay = allTimeInfo.days.size ? allTimeInfo.allTime / allTimeInfo.days.size : 0;
     return {
-        averageTimePerDay: allTimeInfo.allTime / allTimeInfo.days.size,
+        averageTimePerDay,
         dayCount: allTimeInfo.days.size,
         daily: {
             leftTimeByDay: {
