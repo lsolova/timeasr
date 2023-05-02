@@ -3,6 +3,7 @@ html {
     --main-background-color: #8c7aae;
     --first-side-background-color: #665091;
     --second-side-background-color: #462e74;
+    --warning-color: #d4c669;
 
     /* <-- new values */
     --background-color: white;
@@ -26,6 +27,7 @@ html {
         --main-background-color: #18063a;
         --first-side-background-color: #2c1657;
         --second-side-background-color: #462e74;
+        --warning-color: #d4c669;
 
         /* <-- new values */
         --background-color: black;
@@ -45,6 +47,16 @@ html {
 body {
     margin: 0;
     padding: 0;
+}
+
+input {
+    background-color: var(--first-side-background-color);
+    border: 0;
+    border-bottom: 1px solid var(--text-color);
+    color: var(--text-color);
+    font-size: inherit;
+    text-align: center;
+    width: 90%;
 }
 
 .App {
@@ -87,6 +99,31 @@ body {
                 content: ")";
             }
         }
+
+        .Stats__CurrentTime {
+            span {
+                display: inline-block;
+            }
+
+            input {
+                display: none;
+                max-width: 150px;
+            }
+
+            &--edited {
+                color: var(--warning-color);
+            }
+
+            &--editable {
+                input {
+                    display: inline-block;
+                }
+
+                span {
+                    display: none;
+                }
+            }
+        }
     }
 
     svg {
@@ -119,16 +156,6 @@ body {
         justify-content: center;
         position: relative;
         width: 45%;
-
-        input {
-            background-color: var(--first-side-background-color);
-            border: 0;
-            border-bottom: 1px solid var(--text-color);
-            color: var(--text-color);
-            font-size: inherit;
-            text-align: center;
-            width: 90%;
-        }
 
         &__Close {
             background-color: var(--second-side-background-color);

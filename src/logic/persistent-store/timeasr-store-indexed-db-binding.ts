@@ -1,7 +1,7 @@
+import { CurrentTime } from "../current-time";
 import { DatabaseConfiguration, DB_NAME, DB_STORE_BYTIME_INDEX, DB_STORE_SETTINGS, DB_STORE_TIMELOG } from "./types";
 import { FinishedTimelog, Timelog, UUID } from "../../types";
 import { IndexedDb } from "./indexed-db";
-import { now } from "../browser-wrapper";
 import { SETTING_ENTRY_KEY_NAME, TimelogEntry, TIMELOG_ENTRY_KEY_NAME, TIMELOG_ENTRY_TIME_NAME } from "../types";
 
 export const DB_CONFIG: DatabaseConfiguration = {
@@ -113,7 +113,7 @@ const initializeDB = () => {
 };
 const getTimelogEntries = async () => {
     return await IndexedDb.runQuery({
-        data: { fromEpoch: 0, toEpoch: now() },
+        data: { fromEpoch: 0, toEpoch: CurrentTime.get() },
         objectStore: DB_STORE_TIMELOG,
         writable: false,
         queryFunction: getTimelogsQueryFn,

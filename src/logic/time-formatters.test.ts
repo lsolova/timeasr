@@ -14,7 +14,7 @@ describe("Time formatters", () => {
         { result: "2:11", timeInMillis: 1675044660000 },
         { result: "23:59", timeInMillis: 1675123140000 },
     ])("toDayTime() returns $result if input is $timeInMillis", ({ result, timeInMillis }) => {
-        const offset = new Date().getTimezoneOffset();
+        const offset = new Date(timeInMillis).getTimezoneOffset();
         expect(toDayTime(timeInMillis + offset * 60000)).toStrictEqual(result);
     });
 });

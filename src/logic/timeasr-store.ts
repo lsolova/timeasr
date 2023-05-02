@@ -3,9 +3,10 @@ import {
     isTimelogWithinPeriod,
     parseTimelogEntriesToTimelogs,
 } from "./timelog-store-utils";
+import { CurrentTime } from "./current-time";
 import { FinishedTimelog, isTimelogFinished, StartedTimelog, Timelog } from "../types";
-import { now, randomUUID } from "./browser-wrapper";
 import { parseToTaskAndNamespace } from "./model-parsers";
+import { randomUUID } from "./browser-wrapper";
 import { TimeasrStoreBinding } from "./types";
 
 let binding: TimeasrStoreBinding = {} as TimeasrStoreBinding;
@@ -30,7 +31,7 @@ const initialize = async (storeBinding: TimeasrStoreBinding) => {
 /** Return a set of timelogs if timelog's period has an overlap with the requested period. */
 const getTimelogsOfPeriod = (fromEpoch: number, toEpoch?: number): Timelog[] => {
     // If a period until now is checked, then toEpoch should be in the near future instead of the exact now time
-    const usedToEpoch = toEpoch || now() + 2500;
+    const usedToEpoch = toEpoch || CurrentTime.get() + 2500;
     return timelogList.filter((timelog) => isTimelogWithinPeriod(timelog, fromEpoch, usedToEpoch));
 };
 const getLastTimelog = (): Timelog | null => {
@@ -42,7 +43,7 @@ const closeTimelog = async (): Promise<Timelog | null> => {
         const newTimelog = {
             ...lastTimelog,
             closingLogId: randomUUID(),
-            endTime: now() - 1, // Due to time uniqueness in the underlying DB
+            endTime: CurrentTime.get() - 1, // Due to time uniqueness in the underlying DB
         } as FinishedTimelog;
         await binding.persistTimelogEntry(convertTimelogToTimelogEntry(newTimelog, "end"));
         timelogList.shift();
@@ -59,7 +60,7 @@ const startTimelog = async (task?: string): Promise<Timelog> => {
     }
     const newTimelog = {
         logId: randomUUID(),
-        startTime: now(),
+        startTime: CurrentTime.get(),
         task: taskName,
         namespace: namespace,
     } as StartedTimelog;

@@ -5,7 +5,7 @@
         "lib": [
             "dom",
             "dom.iterable",
-            "es6"
+            "ES2022"
         ],
         "moduleResolution": "node",
         "strict": true,

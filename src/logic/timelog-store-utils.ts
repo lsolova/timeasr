@@ -1,13 +1,18 @@
+import { CurrentTime } from "./current-time";
 import { FinishedTimelog, isTimelogFinished, StartedTimelog, Timelog } from "../types";
-import { now, randomUUID } from "./browser-wrapper";
+import { randomUUID } from "./browser-wrapper";
 import { TimelogEntry } from "./types";
 
 export const hasStartTimeWithinRequestedPeriod = (timelog: Timelog, fromEpoch: number, toEpoch: number) =>
     timelog.startTime >= fromEpoch && timelog.startTime <= toEpoch;
 export const hasEndTimeWithinRequestedPeriod = (timelog: Timelog, fromEpoch: number, toEpoch: number) =>
     isTimelogFinished(timelog) && timelog.endTime >= fromEpoch && timelog.endTime <= toEpoch;
-export const isTimelogRunningWithinRequestedPeriod = (timelog: Timelog, fromEpoch: number, toEpoch: number) =>
-    !isTimelogFinished(timelog) && now() >= fromEpoch && now() <= toEpoch;
+export const isTimelogRunningWithinRequestedPeriod = (
+    timelog: Timelog,
+    fromEpoch: number,
+    toEpoch: number,
+    currentEpoch: number
+) => !isTimelogFinished(timelog) && currentEpoch >= fromEpoch && currentEpoch <= toEpoch;
 /** Returns true if timelog is (at least partially) within the period.
  *  What should be checked? There are three cases:
  *  - timelog started within the period
@@ -17,7 +22,7 @@ export const isTimelogRunningWithinRequestedPeriod = (timelog: Timelog, fromEpoc
 export const isTimelogWithinPeriod = (timelog: Timelog, fromEpoch: number, toEpoch: number) =>
     hasStartTimeWithinRequestedPeriod(timelog, fromEpoch, toEpoch) ||
     hasEndTimeWithinRequestedPeriod(timelog, fromEpoch, toEpoch) ||
-    isTimelogRunningWithinRequestedPeriod(timelog, fromEpoch, toEpoch);
+    isTimelogRunningWithinRequestedPeriod(timelog, fromEpoch, toEpoch, CurrentTime.get());
 
 export const convertTimelogToTimelogEntry = (
     timelog: StartedTimelog | FinishedTimelog,
@@ -28,14 +33,14 @@ export const convertTimelogToTimelogEntry = (
         type === "start"
             ? {
                   logId: timelog.logId ?? randomUUID(),
-                  logTime: timelog.startTime ?? now(),
+                  logTime: timelog.startTime ?? CurrentTime.get(),
                   logType: "start",
                   namespace: timelog.namespace ?? "default",
                   task: timelog.task,
               }
             : {
                   logId: finished ? timelog.closingLogId : randomUUID(),
-                  logTime: finished ? timelog.endTime : now(),
+                  logTime: finished ? timelog.endTime : CurrentTime.get(),
                   logType: "end",
               };
     return timelogEntry;
