@@ -1,3 +1,4 @@
+import { ERROR_CODE_TIME_CONFLICT } from "../constants";
 import {
     FIRST_END_ENTRY,
     FIRST_FULL_TIMELOG,
@@ -136,6 +137,21 @@ describe("Timeasr Store", () => {
             expect(persistTimelogEntryMock).toHaveBeenLastCalledWith(SECOND_START_ENTRY);
             expect(TimeasrStore.getLastTimelog()).toStrictEqual(SECOND_START_TIMELOG);
         });
+        test("throws error if last timelog end time is later then current time", async () => {
+            expect.assertions(2);
+            const persistTimelogEntryMock = jest.spyOn(MockBinding, "persistTimelogEntry");
+            jest.spyOn(MockBinding, "getTimelogEntries").mockResolvedValue([SECOND_END_ENTRY, SECOND_START_ENTRY]);
+            jest.spyOn(BrowserWrapper, "now").mockImplementation(() => SECOND_END_ENTRY.logTime - 20);
+            jest.spyOn(BrowserWrapper, "randomUUID").mockImplementation(() => THIRD_START_ENTRY.logId);
+
+            await TimeasrStore.initialize(MockBinding);
+            try {
+                await TimeasrStore.startTimelog(SECOND_START_ENTRY.task);
+            } catch (error) {
+                expect((error as Error).message).toStrictEqual(ERROR_CODE_TIME_CONFLICT);
+                expect(persistTimelogEntryMock).toHaveBeenCalledTimes(0);
+            }
+        });
         test("creates a close and start Timelog - if there is a running task", async () => {
             let randomUUIDCallCount = 0;
             const persistTimelogEntryMock = jest.spyOn(MockBinding, "persistTimelogEntry");
@@ -154,6 +170,8 @@ describe("Timeasr Store", () => {
             expect(persistTimelogEntryMock).toHaveBeenNthCalledWith(2, FOURTH_START_ENTRY);
             expect(TimeasrStore.getLastTimelog()).toStrictEqual(FOURTH_START_TIMELOG);
         });
+    });
+    describe("closeTimelog()", () => {
         test("creates an end Timelog", async () => {
             const persistTimelogEntryMock = jest.spyOn(MockBinding, "persistTimelogEntry");
             jest.spyOn(MockBinding, "getTimelogEntries").mockResolvedValue([SECOND_START_ENTRY]);
@@ -164,6 +182,21 @@ describe("Timeasr Store", () => {
             await TimeasrStore.closeTimelog();
             expect(persistTimelogEntryMock).toHaveBeenLastCalledWith(SECOND_END_ENTRY);
             expect(TimeasrStore.getLastTimelog()).toStrictEqual(SECOND_FULL_TIMELOG);
+        });
+        test("throws error if timelog start time is later then current time", async () => {
+            expect.assertions(2);
+            const persistTimelogEntryMock = jest.spyOn(MockBinding, "persistTimelogEntry");
+            jest.spyOn(MockBinding, "getTimelogEntries").mockResolvedValue([SECOND_START_ENTRY]);
+            jest.spyOn(BrowserWrapper, "now").mockImplementation(() => SECOND_START_ENTRY.logTime - 20);
+            jest.spyOn(BrowserWrapper, "randomUUID").mockImplementation(() => SECOND_END_ENTRY.logId);
+
+            await TimeasrStore.initialize(MockBinding);
+            try {
+                await TimeasrStore.closeTimelog();
+            } catch (error) {
+                expect((error as Error).message).toStrictEqual(ERROR_CODE_TIME_CONFLICT);
+                expect(persistTimelogEntryMock).toHaveBeenCalledTimes(0);
+            }
         });
     });
 });

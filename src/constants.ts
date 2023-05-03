@@ -17,6 +17,7 @@ export const ACCEPTED_TIME_KEY_SET = [
     "Delete",
     "Shift",
 ];
+export const ERROR_CODE_TIME_CONFLICT = "TMS-TIME-CONFLICT";
 export const FIVE_MINUTES_IN_MILLIS = 300000;
 export const ONE_HOUR_IN_MILLIS = 3600000;
 export const ONE_MINUTE_IN_MILLIS = 60000;
