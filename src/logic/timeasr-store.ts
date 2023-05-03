@@ -4,7 +4,9 @@ import {
     parseTimelogEntriesToTimelogs,
 } from "./timelog-store-utils";
 import { CurrentTime } from "./current-time";
+import { ERROR_CODE_TIME_CONFLICT } from "../constants";
 import { FinishedTimelog, isTimelogFinished, StartedTimelog, Timelog } from "../types";
+import { isNewerThanLastEntry } from "./utils";
 import { parseToTaskAndNamespace } from "./model-parsers";
 import { randomUUID } from "./browser-wrapper";
 import { TimeasrStoreBinding } from "./types";
@@ -40,15 +42,20 @@ const getLastTimelog = (): Timelog | null => {
 const closeTimelog = async (): Promise<Timelog | null> => {
     const lastTimelog = getLastTimelog();
     if (isTimelogRunning(lastTimelog)) {
-        const newTimelog = {
-            ...lastTimelog,
-            closingLogId: randomUUID(),
-            endTime: CurrentTime.get() - 1, // Due to time uniqueness in the underlying DB
-        } as FinishedTimelog;
-        await binding.persistTimelogEntry(convertTimelogToTimelogEntry(newTimelog, "end"));
-        timelogList.shift();
-        timelogList.unshift(newTimelog);
-        notifyWatchers();
+        const expectedEndTime = CurrentTime.get() - 1; // Due to time uniqueness in the underlying DB
+        if (isNewerThanLastEntry(expectedEndTime, lastTimelog)) {
+            const newTimelog = {
+                ...lastTimelog,
+                closingLogId: randomUUID(),
+                endTime: expectedEndTime,
+            } as FinishedTimelog;
+            await binding.persistTimelogEntry(convertTimelogToTimelogEntry(newTimelog, "end"));
+            timelogList.shift();
+            timelogList.unshift(newTimelog);
+            notifyWatchers();
+        } else {
+            throw new Error(ERROR_CODE_TIME_CONFLICT);
+        }
     }
     return lastTimelog;
 };
@@ -58,16 +65,20 @@ const startTimelog = async (task?: string): Promise<Timelog> => {
     if (isTimelogRunning(lastTimelog)) {
         closeTimelog();
     }
-    const newTimelog = {
-        logId: randomUUID(),
-        startTime: CurrentTime.get(),
-        task: taskName,
-        namespace: namespace,
-    } as StartedTimelog;
-    await binding.persistTimelogEntry(convertTimelogToTimelogEntry(newTimelog, "start"));
-    timelogList.unshift(newTimelog);
-    notifyWatchers();
-    return newTimelog;
+    const expectedStartTime = CurrentTime.get();
+    if (isNewerThanLastEntry(expectedStartTime, lastTimelog)) {
+        const newTimelog = {
+            logId: randomUUID(),
+            startTime: expectedStartTime,
+            task: taskName,
+            namespace: namespace,
+        } as StartedTimelog;
+        await binding.persistTimelogEntry(convertTimelogToTimelogEntry(newTimelog, "start"));
+        timelogList.unshift(newTimelog);
+        notifyWatchers();
+        return newTimelog;
+    }
+    throw new Error(ERROR_CODE_TIME_CONFLICT);
 };
 
 export const TimeasrStore = {

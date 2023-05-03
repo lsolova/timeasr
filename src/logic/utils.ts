@@ -1,5 +1,9 @@
+import { isTimelogFinished, Milliseconds, Timelog } from "../types";
+
+const TIME_REGEX = /^([01]?\d|2[0123])[:]?[012345]\d$/;
+
 export const parseEnteredTime = (timeString: string | undefined) => {
-    if (timeString !== undefined && !/^([01]?\d|2[0123])[:]?[012345]\d$/.test(timeString)) {
+    if (timeString !== undefined && !TIME_REGEX.test(timeString)) {
         return null;
     }
     const preParsedTimeString = timeString?.replaceAll(/[^\d]/g, "") ?? "";
@@ -12,4 +16,10 @@ export const parseEnteredTime = (timeString: string | undefined) => {
         };
     }
     return null;
+};
+export const isNewerThanLastEntry = (time: Milliseconds, lastTimelog: Timelog | null) => {
+    if (lastTimelog !== null) {
+        return isTimelogFinished(lastTimelog) ? lastTimelog.endTime < time : lastTimelog.startTime < time;
+    }
+    return true;
 };
