@@ -4,7 +4,8 @@
     import { stats } from "./stores";
     import { toDayTime, toHoursAndMinutes } from "../logic/time-formatters";
     import CumulatedTimeSvg from "./svg/cumulated-time-svg.svelte";
-    import DailyTimeSvg from "./svg/selected-day-time-svg.svelte";
+    import CurrentTimeSvg from "./svg/current-time-svg.svelte";
+    import DailyTimeSvg from "./svg/day-time-svg.svelte";
     import MeasureClockSvg from "./svg/measure-clock-svg.svelte";
     import SolovaLogoSvg from "./svg/solova-logo-svg.svelte";
 
@@ -50,8 +51,9 @@
         <span>{toHoursAndMinutes($stats.averageTimePerDay)} / {$stats.dayCount}</span>
     </div>
     <div class={`Stats__CurrentTime Stats__CurrentTime--${currentTimeRealtimeClass} ${currentTimeEditableClass}`} on:click={onCurrentTimeClick}  title="Current time, click to change">
+        <CurrentTimeSvg />
         <span>{toDayTime($stats.currentInfo.time)}</span>
-        <input id="Stats__CurrentTime__Field" value={toDayTime($stats.currentInfo.time)} type="text" on:keydown={onKeyDown} title="Set current time and Enter. Or Escape to cancel changes."/>
+        <input id="Stats__CurrentTime__Field" value={toDayTime($stats.currentInfo.time)} type="text" on:keydown={onKeyDown} title="Set current time and Enter. Or Escape to cancel changes. Time will reset in 5 minutes."/>
     </div>
     <div class="Copyright">
         <SolovaLogoSvg />

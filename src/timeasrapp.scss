@@ -72,6 +72,79 @@ input {
     line-height: 2vh;
     width: 100vw;
 
+    svg {
+        height: 4.5vh;
+        width: 4.5vh;
+        color: var(--icon-color);
+        fill: var(--icon-color);
+        stroke: var(--icon-color);
+    }
+
+    .MeasureList {
+        align-content: flex-start;
+        background-color: var(--main-background-color);
+        column-gap: 10%;
+        display: flex;
+        flex-grow: 1;
+        flex-wrap: wrap;
+        overflow: auto;
+        padding: 5%;
+        position: relative;
+        row-gap: 5%;
+    }
+
+    .MeasureList__Item {
+        align-items: center;
+        background-color: var(--first-side-background-color);
+        display: flex;
+        height: 15%;
+        justify-content: center;
+        position: relative;
+        width: 45%;
+
+        > div {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+            flex-grow: 0;
+            margin-right: 6vh;
+        }
+
+        svg {
+            min-width: 4.5vh;
+        }
+
+        &__Close {
+            background-color: var(--second-side-background-color);
+            border: 0;
+            padding: 5px;
+            position: absolute;
+            right: 5px;
+            top: 5px;
+
+            svg {
+                fill: transparent;
+                height: 3vh;
+                width: 3vh;
+            }
+        }
+
+        &--active {
+            background-color: var(--second-side-background-color);
+
+            div {
+                text-align: left;
+            }
+        }
+    }
+
+    .Copyright {
+        bottom: 10%;
+        position: absolute;
+        right: 0;
+    }
+
     aside {
         flex-grow: 0;
         height: 10%;
@@ -125,296 +198,4 @@ input {
             }
         }
     }
-
-    svg {
-        height: 5vh;
-        width: 5vh;
-        color: var(--icon-color);
-        fill: var(--icon-color);
-        stroke: var(--icon-color);
-    }
-
-    .MeasureList {
-        align-content: flex-start;
-        background-color: var(--main-background-color);
-        column-gap: 10%;
-        display: flex;
-        flex-grow: 1;
-        flex-wrap: wrap;
-        overflow: auto;
-        padding: 5%;
-        position: relative;
-        row-gap: 5%;
-    }
-
-    .MeasureList__Item {
-        align-items: center;
-        background-color: var(--first-side-background-color);
-        display: flex;
-        flex-direction: column;
-        height: 15%;
-        justify-content: center;
-        position: relative;
-        width: 45%;
-
-        &__Close {
-            background-color: var(--second-side-background-color);
-            border: 0;
-            padding: 5px;
-            position: absolute;
-            right: 5px;
-            top: 5px;
-
-            svg {
-                fill: transparent;
-                height: 3vh;
-                width: 3vh;
-            }
-        }
-
-        &--active {
-            background-color: var(--second-side-background-color);
-        }
-    }
-
-    .Copyright {
-        bottom: 10%;
-        position: absolute;
-        right: 0;
-    }
 }
-
-/* <-- New version finished here
-
-body {
-    background-color: var(--main-background-color);
-    color: var(--text-color);
-    font-family: Verdana, Arial, sans-serif;
-    height: 100vh;
-    line-height: 21px;
-    margin: 0;
-    padding: 0;
-    user-select: none;
-    width: 100vw;
-}
-
-input, textarea {
-    background-color: var(--background-color);
-    color: var(--text-color);
-}
-
-div#counter {
-    position: relative;
-    text-align: center;
-    top: 5em;
-}
-
-div#counter.running #counterValue {
-    color: var(--dark-primary-color);
-}
-
-div#counter.paused #counterValue {
-    color: var(--light-primary-color);
-}
-
-div#counter div {
-    line-height: normal;
-}
-
-div#counter div#counterValue {
-    cursor: pointer;
-    font-size: 4em;
-    font-weight: bold;
-}
-
-div#counter div#lastChangeTime,
-div#counter div#leaveValue {
-    color: var(--counter-info-color);
-}
-
-div#counter div#leaveValue {
-    margin-top: 12px;
-    opacity: 1;
-    transition: opacity 5s ease;
-}
-
-div#counter div#leaveValue:before {
-    font-family: TimeasrIcons, sans-serif;
-    padding-right: .5em;
-}
-
-div#counter.paused div#leaveValue {
-    opacity: 0;
-    transition: none;
-}
-
-#taskTypesList div {
-    display: inline-block;
-    padding: 20px;
-    background: var(--task-item-color);
-    margin: 15px;
-    min-width: 100px;
-    color: var(--inverse-text-color);
-    font-weight: bold;
-    cursor: pointer;
-}
-
-#taskTypesList div.sel {
-    background-color: var(--task-item-color);
-}
-
-#taskTypesList span {
-    display: block;
-}
-
-div#summaryToolbar,
-div#topTitleBar {
-    background-color: var(--header-color);
-    color: var(--inverse-text-color);
-    height: 2em;
-    padding-top: 0.5em;
-}
-
-div#summaryToolbar {
-    text-align: center;
-}
-
-div#topTitleBar {
-    left: 0;
-    margin-bottom: 1em;
-    position: fixed;
-    top: 0;
-    width: 100vw;
-}
-
-div#topTitleBar h1 {
-    font-size: 1em;
-    margin: 0;
-    padding: 0 0.5em;
-}
-
-div#summaryToolbar #month {
-    font-weight: bold;
-    margin-right: 2em;
-}
-
-div#summaryToolbar #daycount {
-    background-color: var(--dark-primary-color);
-    border-radius: .3em;
-    padding: .1em .5em;
-}
-
-div#summaryToolbar #daycount.more {
-    background-color: var(--positive-sum-color);
-}
-
-div#summaryToolbar #daycount.less {
-    background-color: var(--negative-sum-color);
-}
-
-div#topNavBar {
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    z-index: 1;
-}
-
-div#daySelector {
-    display: table;
-    width: 100%;
-}
-
-div#daySelector .day {
-    background-color: var(--dark-primary-color);
-    color: var(--inverse-text-color);
-    cursor: pointer;
-    display: table-cell;
-    padding: 1px 0 2px 0;
-    text-align: center;
-}
-
-div#daySelector .actl {
-    background-color: var(--light-primary-color);
-    cursor: auto;
-}
-
-div#copyright {
-    bottom: 0;
-    font-size: .75em;
-    left: 0;
-    padding: 5px;
-    position: fixed;
-}
-div.menuBar {
-    cursor: pointer;
-    position: fixed;
-    right: 0;
-    top: 0;
-    z-index: 2;
-    --svg-height: 30px;
-    --svg-width: 30px;
-}
-
-div.menuBar a,
-div.menuBar span {
-    color: var(--inverse-text-color);
-    display: inline-block;
-    font-family: TimeasrIcons, sans-serif;
-    font-size: 1.5em;
-    height: 2em;
-    padding-top: .5em;
-    text-align: center;
-    text-decoration: none;
-    width: 1.5em;
-}
-
-div#settings {
-    padding: 2em 0;
-}
-
-div.settingsrow {
-    font-size: .75em;
-    padding: .5em 1em;
-}
-
-div.settingsrow #monthlywladj {
-    overflow-y: hidden;
-    margin: 0;
-    padding: 0;
-    width: 92vw;
-}
-
-div.settingsrow label,
-div.license span {
-    display: block;
-    margin-top: 15px;
-}
-
-div#notification {
-    background-color: var(--notification-color);
-    position: absolute;
-    height: 3em;
-    left: 2vw;
-    width: 96vw;
-
-    top: -3em;
-    opacity: 0;
-    transition: opacity 500ms ease-out, top 100ms ease 500ms;
-
-    text-align: center;
-    vertical-align: middle;
-    font-size: 2.5em;
-    font-weight: bold;
-    color: var(--inverse-text-color);
-    line-height: 2.75em;
-
-    z-index: 3;
-}
-
-div#notification.show {
-    top: 0;
-    opacity: 1;
-    transition: opacity 250ms, top 500ms ease;
-}
-*/
