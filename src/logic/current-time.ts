@@ -7,11 +7,11 @@ import { TimeasrStore } from "./timeasr-store";
 
 let currentTimeOffset: Milliseconds = 0;
 let lastUpdate = 0;
-let watcher: (() => void) | null = null;
+let _eventListener: (() => void) | null = null;
 
 const notifyWatcher = () => {
-    if (typeof watcher === "function") {
-        watcher();
+    if (typeof _eventListener === "function") {
+        _eventListener();
     }
 };
 
@@ -37,9 +37,9 @@ const setCurrentTimeByString = (timeString: string | undefined): void => {
         // Change only if it is newer than the last log entry
         if (isNewerThanLastEntry(preparedTime, TimeasrStore.getLastTimelog())) {
             currentTimeOffset = preparedTime - now();
-            if (preparedTime) {
-                lastUpdate = now();
-            }
+            lastUpdate = now();
+        } else {
+            throw new Error("Time cannot be set, it is earlier than last log.");
         }
     } else {
         currentTimeOffset = 0;
@@ -51,7 +51,7 @@ export const CurrentTime = {
     get: getCurrentTime,
     isDifferent: () => currentTimeOffset !== 0,
     set: setCurrentTimeByString,
-    watch: (eventListener: () => void) => {
-        watcher = eventListener;
+    addEventListener: (eventListener: () => void) => {
+        _eventListener = eventListener;
     },
 };

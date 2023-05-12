@@ -47,7 +47,7 @@ export const stats = readable(
                 ...getCurrentInfo(),
             });
         };
-        CurrentTime.watch(updateStats);
+        CurrentTime.addEventListener(updateStats);
         TimeasrStore.watch(updateStats);
         addTimeasrTickListener(updateStats);
     }
