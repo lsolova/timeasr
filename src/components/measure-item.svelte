@@ -3,6 +3,7 @@
     import { toHoursAndMinutes } from "../logic/time-formatters";
     import EyeCrossedSvg from "./svg/eye-crossed-svg.svelte";
     import InProgressTimerSvg from "./svg/in-progress-timer-svg.svelte";
+    import Tooltip from "./tooltip.svelte";
 
     export let onHideClick: (task: Task) => void;
     export let onSelectClick: (task: Task) => void;
@@ -43,7 +44,10 @@
                 onHideClick(task);
             }}
         >
-            <EyeCrossedSvg />
+            <Tooltip stopPropagation={false}>
+                <EyeCrossedSvg slot="trigger" />
+                <p slot="tooltip">Hide from view temprary</p>
+            </Tooltip>
         </button>
     {/if}
 </div>
