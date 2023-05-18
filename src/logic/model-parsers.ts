@@ -1,8 +1,7 @@
 import { asDay, dayEnd, dayStart } from "./time-conversions";
 import { hasStartTimeWithinRequestedPeriod, isTimelogWithinPeriod } from "./timelog-store-utils";
 import { DataStat, defaultNamespace, defaultTask, isTimelogFinished, Timelog, Milliseconds, Task } from "../types";
-
-export const ONE_DAY_WORKTIME = 8 * 60 * 60 * 1000; // Default 8 hours worktime
+import { MAX_DAY_WORKTIME, MIN_DAY_WORKTIME } from "../settings";
 
 const prepareTaskNameWithNamespace = (timelog: Timelog) =>
     `${timelog.namespace === defaultNamespace ? "" : timelog.namespace + ":"}${timelog.task}`;
@@ -50,22 +49,25 @@ export const parseTimelogsToTasks = (timelogs: Timelog[], currentEpoch: Millisec
 export const parseTimelogsToStat = (timelogs: Timelog[], currentEpoch: Milliseconds): DataStat => {
     const todayStart = dayStart(currentEpoch);
     const todayEnd = dayEnd(currentEpoch);
-    const allTimeInfo = timelogs.reduce(
-        (allTimeObject, timelog) => {
-            allTimeObject.days.add(asDay(timelog.startTime));
-            if (isTimelogFinished(timelog)) {
-                allTimeObject.days.add(asDay(timelog.endTime));
-                allTimeObject.allTime += timelog.endTime - timelog.startTime;
-            } else {
-                allTimeObject.allTime += currentEpoch - timelog.startTime;
+    // All time except current day
+    const allTimeInfo = timelogs
+        .filter((timelog) => !isTimelogWithinPeriod(timelog, todayStart, todayEnd))
+        .reduce(
+            (allTimeObject, timelog) => {
+                allTimeObject.days.add(asDay(timelog.startTime));
+                if (isTimelogFinished(timelog)) {
+                    allTimeObject.days.add(asDay(timelog.endTime));
+                    allTimeObject.allTime += timelog.endTime - timelog.startTime;
+                } else {
+                    allTimeObject.allTime += currentEpoch - timelog.startTime;
+                }
+                return allTimeObject;
+            },
+            {
+                allTime: 0,
+                days: new Set(),
             }
-            return allTimeObject;
-        },
-        {
-            allTime: 0,
-            days: new Set(),
-        }
-    );
+        );
     const dayTimeInfo = timelogs
         .filter((timelog) => isTimelogWithinPeriod(timelog, todayStart, todayEnd))
         .reduce(
@@ -84,12 +86,17 @@ export const parseTimelogsToStat = (timelogs: Timelog[], currentEpoch: Milliseco
                 lastChange: 0,
             }
         );
-    const leftTimeByDayRemaining = ONE_DAY_WORKTIME - dayTimeInfo.dayTime;
-    const allDaysWorkload = (allTimeInfo.days.size + (dayTimeInfo.dayTime === 0 ? 1 : 0)) * ONE_DAY_WORKTIME;
-    const leftTimeByOverallRemaining = allDaysWorkload - allTimeInfo.allTime;
     const averageTimePerDay = allTimeInfo.days.size ? allTimeInfo.allTime / allTimeInfo.days.size : 0;
+    const calculatedDayWorktime =
+        averageTimePerDay > 0
+            ? Math.min(Math.max(MIN_DAY_WORKTIME, averageTimePerDay), MAX_DAY_WORKTIME)
+            : MAX_DAY_WORKTIME;
+    const leftTimeByDayRemaining = calculatedDayWorktime - dayTimeInfo.dayTime;
+    const allDaysWorkload = allTimeInfo.days.size * calculatedDayWorktime;
+    const leftTimeByOverallRemaining = allDaysWorkload - allTimeInfo.allTime + leftTimeByDayRemaining;
     return {
         averageTimePerDay,
+        calculatedDayWorktime,
         dayCount: allTimeInfo.days.size,
         daily: {
             leftTimeByDay: {
