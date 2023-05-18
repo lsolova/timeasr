@@ -22,6 +22,7 @@ export type Task = {
 };
 export type DataStat = {
     averageTimePerDay: Milliseconds;
+    calculatedDayWorktime: Milliseconds;
     dayCount: number;
     daily: {
         leftTimeByDay: {

@@ -1,6 +1,6 @@
 import { CurrentTime } from "./current-time";
 import { defaultNamespace, defaultTask } from "../types";
-import { ONE_DAY_WORKTIME, parseTimelogsToStat, parseTimelogsToTasks, parseToTaskAndNamespace } from "./model-parsers";
+import { parseTimelogsToStat, parseTimelogsToTasks, parseToTaskAndNamespace } from "./model-parsers";
 import { FIFTH_TASK, FIRST_TASK, FOURTH_TASK, SECOND_TASK, THIRD_TASK } from "./__fixtures__/tasks";
 import {
     FIFTH_FULL_TIMELOG,
@@ -11,6 +11,7 @@ import {
     SEVENTH_FULL_TIMELOG,
     SIXTH_FULL_TIMELOG,
 } from "./__fixtures__/timelogs";
+import { MAX_DAY_WORKTIME, MIN_DAY_WORKTIME } from "../settings";
 
 describe("Model parser", () => {
     describe("parseToTaskAndNamespace() returns", () => {
@@ -67,34 +68,43 @@ describe("Model parser", () => {
     });
     describe("parseTimelogsToStat() returns", () => {
         test("negative left time by day, if actual day longer than a workday", () => {
-            const leftTimeByDay = parseTimelogsToStat([MORE_THAN_WORKDAY_TIMELOG], 1641057840000).daily.leftTimeByDay;
+            const currentTime = 1641057840000;
+            const leftTimeByDay = parseTimelogsToStat([MORE_THAN_WORKDAY_TIMELOG], currentTime).daily.leftTimeByDay;
+            const expectedRemainingTime =
+                MAX_DAY_WORKTIME - (MORE_THAN_WORKDAY_TIMELOG.endTime - MORE_THAN_WORKDAY_TIMELOG.startTime);
             expect(leftTimeByDay).toStrictEqual({
-                remaining: -5436000,
-                estimatedLeave: 1641052404000,
+                remaining: expectedRemainingTime,
+                estimatedLeave: currentTime + expectedRemainingTime,
             });
         });
         test("negative left time by day, if actual day longer than a workday and there are logs from more days", () => {
-            const leftTimeByDay = parseTimelogsToStat([FIRST_FULL_TIMELOG, MORE_THAN_WORKDAY_TIMELOG], 1641057840000)
+            const currentTime = 1641057840000;
+            const leftTimeByDay = parseTimelogsToStat([FIRST_FULL_TIMELOG, MORE_THAN_WORKDAY_TIMELOG], currentTime)
                 .daily.leftTimeByDay;
+            const expectedRemainingTime =
+                MIN_DAY_WORKTIME - (MORE_THAN_WORKDAY_TIMELOG.endTime - MORE_THAN_WORKDAY_TIMELOG.startTime);
             expect(leftTimeByDay).toStrictEqual({
-                remaining: -5436000,
-                estimatedLeave: 1641052404000,
+                remaining: expectedRemainingTime,
+                estimatedLeave: currentTime + expectedRemainingTime,
             });
         });
         test("active time by day, if there is an active log", () => {
             const leftTimeByDay = parseTimelogsToStat([FIRST_START_TIMELOG], FIRST_FULL_TIMELOG.endTime).daily
                 .leftTimeByDay;
+            const expectedRemainingTime =
+                MAX_DAY_WORKTIME - (FIRST_FULL_TIMELOG.endTime - FIRST_FULL_TIMELOG.startTime);
             expect(leftTimeByDay).toStrictEqual({
-                remaining: ONE_DAY_WORKTIME - (FIRST_FULL_TIMELOG.endTime - FIRST_FULL_TIMELOG.startTime),
-                estimatedLeave: FIRST_START_TIMELOG.startTime + ONE_DAY_WORKTIME,
+                remaining: expectedRemainingTime,
+                estimatedLeave: FIRST_START_TIMELOG.startTime + MAX_DAY_WORKTIME,
             });
         });
         test("full workday left time by overall, if there are logs for previous days only", () => {
-            const leftTimeByDay = parseTimelogsToStat([FIRST_FULL_TIMELOG, MORE_THAN_WORKDAY_TIMELOG], 1641115744000)
+            const currentTime = 1641115744000;
+            const leftTimeByDay = parseTimelogsToStat([FIRST_FULL_TIMELOG, MORE_THAN_WORKDAY_TIMELOG], currentTime)
                 .daily.leftTimeByDay;
             expect(leftTimeByDay).toStrictEqual({
-                remaining: ONE_DAY_WORKTIME,
-                estimatedLeave: 1641144544000,
+                remaining: MIN_DAY_WORKTIME, // Too short previous day
+                estimatedLeave: currentTime + MIN_DAY_WORKTIME,
             });
         });
         test("less left time by overall, if previous days were longer than a workday", () => {
