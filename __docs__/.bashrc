@@ -1,0 +1,12 @@
+alias yi="yarn install --ignore-engines --update-checksums"
+alias gca="git commit --amend -S"
+alias gcl="git branch --merged | egrep -v \"(^\*|main)\" | xargs git branch -d"
+alias gco="git checkout"
+alias gf="git fetch -f -p -t"
+alias gp="git pull"
+alias gpn="git push -u origin"
+alias gpf="git push -f"
+alias gpt="git push -f --tags"
+alias gr="git rebase -S"
+
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"

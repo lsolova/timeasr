@@ -1,9 +1,13 @@
+@import "toastify-js/src/toastify.css";
+
 html {
     /* Base RGB 462E74 https://paletton.com/ */
     --main-background-color: #8c7aae;
     --first-side-background-color: #665091;
     --second-side-background-color: #462e74;
     --warning-color: #d4c669;
+    --error-color: #e23434;
+    --error-border-color: #9b2121;
 
     /* <-- new values */
     --background-color: white;
@@ -253,5 +257,10 @@ input {
                     var(--second-side-background-color) var(--main-background-color);
             }
         }
+    }
+
+    .Toaster {
+        background: var(--error-color);
+        border: 2px solid var(--error-border-color);
     }
 }

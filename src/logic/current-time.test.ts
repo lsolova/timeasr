@@ -1,7 +1,8 @@
 import { CurrentTime } from "./current-time";
-import * as BrowserWrapper from "./browser-wrapper";
+import { ERROR_CODE_TIME_EARLIER_THAN_LASTLOG } from "../constants";
 import { FinishedTimelog, Milliseconds, Timelog } from "../types";
 import { TimeasrStore } from "./timeasr-store";
+import * as BrowserWrapper from "./browser-wrapper";
 
 const CURRENT_TIME_IN_MILLIS = new Date(2023, 4, 2, 12, 54, 49).getTime();
 
@@ -109,7 +110,7 @@ describe("Current time handler", () => {
                     task: "test task",
                 } as FinishedTimelog)
         );
-        expect(() => CurrentTime.set("9:14")).toThrowError("Time cannot be set, it is earlier than last log.");
+        expect(() => CurrentTime.set("9:14")).toThrowError(ERROR_CODE_TIME_EARLIER_THAN_LASTLOG);
         expect(CurrentTime.get()).toStrictEqual(CURRENT_TIME_IN_MILLIS);
     });
 });
