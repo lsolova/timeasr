@@ -1,5 +1,10 @@
 import { dayStart } from "./time-conversions";
-import { FIVE_MINUTES_IN_MILLIS, ONE_HOUR_IN_MILLIS, ONE_MINUTE_IN_MILLIS } from "../constants";
+import {
+    ERROR_CODE_TIME_EARLIER_THAN_LASTLOG,
+    FIVE_MINUTES_IN_MILLIS,
+    ONE_HOUR_IN_MILLIS,
+    ONE_MINUTE_IN_MILLIS,
+} from "../constants";
 import { isNewerThanLastEntry, parseEnteredTime } from "./utils";
 import { Milliseconds } from "../types";
 import { now } from "./browser-wrapper";
@@ -39,7 +44,7 @@ const setCurrentTimeByString = (timeString: string | undefined): void => {
             currentTimeOffset = preparedTime - now();
             lastUpdate = now();
         } else {
-            throw new Error("Time cannot be set, it is earlier than last log.");
+            throw new Error(ERROR_CODE_TIME_EARLIER_THAN_LASTLOG);
         }
     } else {
         currentTimeOffset = 0;

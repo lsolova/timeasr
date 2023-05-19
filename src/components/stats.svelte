@@ -3,6 +3,7 @@
     import { CurrentTime } from "../logic/current-time";
     import { stats } from "./stores";
     import { toDayTime, toHoursAndMinutes } from "../logic/time-formatters";
+    import { wrapInCatch } from "../logic/error-notification";
     import CumulatedTimeSvg from "./svg/cumulated-time-svg.svelte";
     import CurrentTimeSvg from "./svg/current-time-svg.svelte";
     import DailyTimeSvg from "./svg/day-time-svg.svelte";
@@ -27,7 +28,7 @@
             currentTimeEditableClass = "";
             const timeString = (document.getElementById("Stats__CurrentTime__Field") as HTMLInputElement)?.value;
             if (key !== "Escape") {
-                CurrentTime.set(timeString);
+                wrapInCatch(() => CurrentTime.set(timeString));
             }
         }
     };
@@ -69,8 +70,8 @@
         aria-details="Current time, click to change"
     >
         <Tooltip>
-            <CurrentTimeSvg slot="trigger"/>
-            <svelte:fragment  slot="tooltip">
+            <CurrentTimeSvg slot="trigger" />
+            <svelte:fragment slot="tooltip">
                 <p>By clicking the time it can be changed. Set current time and Enter. Press Escape to cancel.</p>
                 <p>Time will reset in 5 minutes. It can be reseted by clearing the field and pressing Enter.</p>
             </svelte:fragment>
