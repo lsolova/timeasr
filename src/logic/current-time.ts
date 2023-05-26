@@ -2,6 +2,7 @@ import { dayStart } from "./time-conversions";
 import {
     ERROR_CODE_TIME_EARLIER_THAN_LASTLOG,
     FIVE_MINUTES_IN_MILLIS,
+    ONE_DAY_IN_MILLIS,
     ONE_HOUR_IN_MILLIS,
     ONE_MINUTE_IN_MILLIS,
 } from "../constants";
@@ -31,14 +32,18 @@ const getCurrentTime = (): Milliseconds => {
 const setCurrentTimeByString = (timeString: string | undefined): void => {
     const parsedTime = parseEnteredTime(timeString);
     if (parsedTime) {
+        const realTime = now();
         const { hours, minutes } = parsedTime;
         const currentDayStart = dayStart(getCurrentTime());
-        const offset = new Date(currentDayStart).getTimezoneOffset();
-        const preparedTime =
+        const timeOffset = new Date(currentDayStart).getTimezoneOffset();
+        let preparedTime =
             currentDayStart +
             hours * ONE_HOUR_IN_MILLIS +
             minutes * ONE_MINUTE_IN_MILLIS +
-            offset * ONE_MINUTE_IN_MILLIS;
+            timeOffset * ONE_MINUTE_IN_MILLIS;
+        if (preparedTime > realTime + FIVE_MINUTES_IN_MILLIS) {
+            preparedTime = preparedTime - ONE_DAY_IN_MILLIS;
+        }
         // Change only if it is newer than the last log entry
         if (isNewerThanLastEntry(preparedTime, TimeasrStore.getLastTimelog())) {
             currentTimeOffset = preparedTime - now();

@@ -2,7 +2,7 @@
     import { ACCEPTED_TIME_KEY_SET } from "../constants";
     import { CurrentTime } from "../logic/current-time";
     import { stats } from "./stores";
-    import { toDayTime, toHoursAndMinutes } from "../logic/time-formatters";
+    import { toDayTime, toFormattedDate, toHoursAndMinutes } from "../logic/time-formatters";
     import { wrapInCatch } from "../logic/error-notification";
     import CumulatedTimeSvg from "./svg/cumulated-time-svg.svelte";
     import CurrentTimeSvg from "./svg/current-time-svg.svelte";
@@ -44,7 +44,9 @@
             <p slot="tooltip">Remaining worktime, calculated including overtimes</p>
         </Tooltip>
         <span class="Stats__Item__Remaining">{toHoursAndMinutes($stats.daily.leftTimeByOverall.remaining)}</span>
-        <span class="Stats__Item__EstimatedLeave">{toDayTime($stats.daily.leftTimeByOverall.estimatedLeave)}</span>
+        <span class="Stats__Item__EstimatedLeave additionalInfo"
+            >{toDayTime($stats.daily.leftTimeByOverall.estimatedLeave)}</span
+        >
     </div>
     <div class="Stats__DailyLeftTime" aria-details="Time left based on today's worktime">
         <Tooltip>
@@ -52,7 +54,9 @@
             <p slot="tooltip">Remaining worktime, calculated from daily workload</p>
         </Tooltip>
         <span class="Stats__Item__Remaining">{toHoursAndMinutes($stats.daily.leftTimeByDay.remaining)}</span>
-        <span class="Stats__Item__EstimatedLeave">{toDayTime($stats.daily.leftTimeByDay.estimatedLeave)}</span>
+        <span class="Stats__Item__EstimatedLeave additionalInfo"
+            >{toDayTime($stats.daily.leftTimeByDay.estimatedLeave)}</span
+        >
     </div>
     <div class="Stats__AverageTime" aria-details="Average time for workday count">
         <Tooltip>
@@ -73,7 +77,8 @@
             <CurrentTimeSvg slot="trigger" />
             <svelte:fragment slot="tooltip">
                 <p>By clicking the time it can be changed. Set current time and Enter. Press Escape to cancel.</p>
-                <p>Time will reset in 5 minutes. It can be reseted by clearing the field and pressing Enter.</p>
+                <p>If time would be a future time, then it would be taken as yesterday's time.</p>
+                <p>Time will reset in 5 minutes. It can be reset by clearing the field and pressing Enter.</p>
             </svelte:fragment>
         </Tooltip>
         <span>{toDayTime($stats.currentInfo.time)}</span>
@@ -82,7 +87,9 @@
             value={toDayTime($stats.currentInfo.time)}
             type="text"
             on:keydown={onKeyDown}
+            on:blur={() => (currentTimeEditableClass = "")}
         />
+        <span class="additionalInfo">{toFormattedDate($stats.currentInfo.time)}</span>
     </div>
     <div class="Copyright">
         <SolovaLogoSvg />
