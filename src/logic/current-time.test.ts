@@ -55,9 +55,21 @@ describe("Current time handler", () => {
             lastTimelog: null,
         },
         {
-            useCase: "well formatted time - day end",
+            useCase: "well formatted time - yesterday end",
             input: "23:59",
-            expected: new Date(2023, 4, 2, 23, 59, 0).getTime(),
+            expected: new Date(2023, 4, 1, 23, 59, 0).getTime(),
+            lastTimelog: null,
+        },
+        {
+            useCase: "well formatted time - six minutes from now - for yesterday",
+            input: "13:00",
+            expected: new Date(2023, 4, 1, 13, 0, 0).getTime(),
+            lastTimelog: null,
+        },
+        {
+            useCase: "well formatted time - four minutes from now - for today",
+            input: "12:58",
+            expected: new Date(2023, 4, 2, 12, 58, 0).getTime(),
             lastTimelog: null,
         },
         {

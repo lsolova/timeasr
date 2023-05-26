@@ -7,3 +7,10 @@ export const toDayTime = (timeInMillis: number): string => {
     const date = new Date(timeInMillis);
     return `${date.getHours()}:${date.getMinutes().toString().padStart(2, "0")}`;
 };
+export const toFormattedDate = (timeInMillis: number): string => {
+    const date = new Date(timeInMillis);
+    return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, "0")}-${date
+        .getDate()
+        .toString()
+        .padStart(2, "0")}`;
+};

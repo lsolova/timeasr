@@ -163,17 +163,24 @@ input {
                 align-items: center;
                 display: flex;
             }
+
+            & span.additionalInfo {
+                margin-left: 1em;
+                font-size: 0.75em;
+                border: 1px solid var(--text-color);
+                padding: 0.1em 1em;
+                border-radius: 2em;
+                color: var(--text-color);
+            }
         }
 
         .Stats__Item__EstimatedLeave {
             margin-left: 0.5em;
 
             &::before {
-                content: "> (";
-            }
-
-            &::after {
-                content: ")";
+                content: "⇥ ";
+                font-size: 17px;
+                line-height: 9px;
             }
         }
 
