@@ -8,6 +8,7 @@
     import CurrentTimeSvg from "./svg/current-time-svg.svelte";
     import DailyTimeSvg from "./svg/day-time-svg.svelte";
     import MeasureClockSvg from "./svg/measure-clock-svg.svelte";
+    import ShowTasksButton from "./svg/show-tasks-button.svelte";
     import SolovaLogoSvg from "./svg/solova-logo-svg.svelte";
     import Tooltip from "./tooltip.svelte";
 
@@ -91,7 +92,10 @@
         />
         <span class="additionalInfo">{toFormattedDate($stats.currentInfo.time)}</span>
     </div>
-    <div class="Copyright">
-        <SolovaLogoSvg />
+    <div class="Stats__Actions">
+        <ShowTasksButton />
+        <div class="Copyright">
+            <SolovaLogoSvg />
+        </div>
     </div>
 </aside>

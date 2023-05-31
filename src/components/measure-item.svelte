@@ -1,9 +1,9 @@
 <script lang="ts">
     import { Task } from "../types";
     import { toHoursAndMinutes } from "../logic/time-formatters";
+    import ActionButton from "./action-button.svelte";
     import EyeCrossedSvg from "./svg/eye-crossed-svg.svelte";
     import InProgressTimerSvg from "./svg/in-progress-timer-svg.svelte";
-    import Tooltip from "./tooltip.svelte";
 
     export let onHideClick: (task: Task) => void;
     export let onSelectClick: (task: Task) => void;
@@ -35,19 +35,13 @@
         <span>{toHoursAndMinutes(task.loggedTime)}</span>
     </div>
     {#if !task.active}
-        <button
-            class="MeasureList__Item__Close"
-            title="Hide this item until page reload"
-            on:click={(event) => {
-                event.preventDefault();
-                event.stopImmediatePropagation();
-                onHideClick(task);
-            }}
+        <ActionButton
+            className="MeasureList__Item__Hide"
+            onClick={() => onHideClick(task)}
+            ariaDetails="Hide this item temporary"
         >
-            <Tooltip stopPropagation={false}>
-                <EyeCrossedSvg slot="trigger" />
-                <p slot="tooltip">Hide from view temprary</p>
-            </Tooltip>
-        </button>
+            <EyeCrossedSvg slot="icon" />
+            <p slot="tooltip">Hide from view temporary</p>
+        </ActionButton>
     {/if}
 </div>
