@@ -119,19 +119,10 @@ input {
             min-width: 4.5vh;
         }
 
-        &__Close {
-            background-color: var(--second-side-background-color);
-            border: 0;
-            padding: 5px;
+        &__Hide {
             position: absolute;
             right: 5px;
             top: 5px;
-
-            svg {
-                fill: transparent;
-                height: 3vh;
-                width: 3vh;
-            }
         }
 
         &--active {
@@ -140,6 +131,17 @@ input {
             div {
                 text-align: left;
             }
+        }
+    }
+
+    .ActionButton {
+        background-color: var(--second-side-background-color);
+        border: 0;
+        padding: 5px;
+
+        svg {
+            height: 3vh;
+            width: 3vh;
         }
     }
 
@@ -156,7 +158,8 @@ input {
         &.Stats {
             background-color: var(--first-side-background-color);
             display: grid;
-            grid-template-areas: "cumulative daily" "avg copyright";
+            grid-template-areas: "cumulative daily actions" "avg nowtime actions";
+            grid-template-columns: auto auto min-content;
             z-index: 2;
 
             & > div {
@@ -184,7 +187,22 @@ input {
             }
         }
 
+        .Stats__Actions {
+            grid-area: actions;
+            padding: 0 1vh;
+        }
+
+        .Stats__AverageTime {
+            grid-area: avg;
+        }
+
+        .Stats__CumulatedLeftTime {
+            grid-area: cumulative;
+        }
+
         .Stats__CurrentTime {
+            grid-area: nowtime;
+
             span {
                 display: inline-block;
             }
@@ -213,6 +231,10 @@ input {
                     display: none;
                 }
             }
+        }
+
+        .Stats__DailyLeftTime {
+            grid-area: daily;
         }
     }
 

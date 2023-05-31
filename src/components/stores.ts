@@ -1,3 +1,4 @@
+import { addTaskHideChangeEventListener, isTaskHidden } from "./task-hiding";
 import { addTimeasrTickListener } from "../logic/view-tick";
 import { CurrentTime } from "../logic/current-time";
 import { dayEnd, dayStart } from "../logic/time-conversions";
@@ -7,7 +8,6 @@ import { readable, writable } from "svelte/store";
 import { Stat, Task } from "../types";
 import { TimeasrStore } from "../logic/timeasr-store";
 
-const hiddenTasks = new Set<string>();
 const getCurrentInfo = () => {
     return {
         currentInfo: {
@@ -28,10 +28,11 @@ export const tasks = writable<Task[]>([], (set: (tasks: Task[]) => void) => {
         const todayEnd = dayEnd(currentEpoch);
         const timelogs = TimeasrStore.getTimelogsOfPeriod(todayStart - 10 * 86400000, todayEnd);
         const tasks = parseTimelogsToTasks(timelogs, currentEpoch);
-        set(tasks.filter((task) => !hiddenTasks.has(task.name)));
+        set(tasks.filter((task) => !isTaskHidden(task.name)));
     };
     TimeasrStore.watch(updateTasks);
     addTimeasrTickListener(updateTasks);
+    addTaskHideChangeEventListener(updateTasks);
 });
 export const stats = readable(
     {
@@ -52,8 +53,3 @@ export const stats = readable(
         addTimeasrTickListener(updateStats);
     }
 );
-
-export const hideTask = (task: Task) => {
-    hiddenTasks.add(task.name);
-    tasks.update((originalTasks) => originalTasks.filter((task) => !hiddenTasks.has(task.name)));
-};

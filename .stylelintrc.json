@@ -7,11 +7,6 @@
     ],
     "rules": {
         "selector-class-pattern": "",
-        "selector-list-comma-newline-after": "always",
-        "indentation": [4],
-        "max-empty-lines": 1,
-        "max-line-length": 120,
-        "no-missing-end-of-source-newline": true,
         "plugin/no-unsupported-browser-features": [
             true,
             {
@@ -19,7 +14,6 @@
                 "ignore": ["multicolumn"],
                 "severity": "warning"
             }
-        ],
-        "no-extra-semicolons": true
+        ]
     }
 }

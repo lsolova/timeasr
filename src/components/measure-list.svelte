@@ -1,6 +1,7 @@
 <script lang="ts">
-    import { hideTask, tasks } from "./stores";
+    import { hideTask } from "./task-hiding";
     import { Task } from "../types";
+    import { tasks } from "./stores";
     import { TimeasrStore } from "../logic/timeasr-store";
     import { wrapInCatch } from "../logic/error-notification";
     import AddTask from "./add-task.svelte";
@@ -10,7 +11,7 @@
         wrapInCatch(() => (task.active ? TimeasrStore.closeTimelog() : TimeasrStore.startTimelog(task.name)));
     };
     const onHideClick = (task: Task) => {
-        hideTask(task);
+        hideTask(task.name);
     };
 </script>
 
